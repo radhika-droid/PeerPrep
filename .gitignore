@@ -1,0 +1,30 @@
+# Python virtual environment
+venv/
+
+# Byte-compiled Python files
+__pycache__/
+*.pyc
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp # Vim swap files
+*.iml # IntelliJ IDEA module files
+
+# Operating System files
+.DS_Store # macOS
+Thumbs.db # Windows
+
+# Misc
+*.log
+*.tmp
+*.bak
+*.swp
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Build and output directories
+/dist
+/build
+/out
