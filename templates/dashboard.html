@@ -1,0 +1,102 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Peer Prep</title>
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+</head>
+<body>
+    <!-- Background Orbs -->
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+    <div class="bg-orb bg-orb-3"></div>
+    <div class="bg-orb bg-orb-4"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-icon">P</div>
+                Peer Prep
+            </div>
+            <ul class="nav-menu">
+                <li><a href="{% url 'dashboard' %}" class="nav-link active">Dashboard</a></li>
+                <li><a href="/" class="nav-link">Home</a></li>
+                <li><a href="{% url 'logout' %}" class="nav-link">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Dashboard Content -->
+    <main class="main-content">
+        <div class="container" style="grid-template-columns: 1fr;">
+            <div class="dashboard-header">
+                <h1 class="main-title">Welcome, {{ user.username }}!</h1>
+                <p class="subtitle">
+                    Ready to start your collaborative learning journey? Explore the features below.
+                </p>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">👥</div>
+                    <h3 class="feature-title">Find Study Partners</h3>
+                    <p class="feature-description">Connect with peers who share your learning goals and interests.</p>
+                    <button class="submit-btn" style="margin-top: 1rem;">Coming Soon</button>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📚</div>
+                    <h3 class="feature-title">Study Materials</h3>
+                    <p class="feature-description">Access curated learning materials and practice problems.</p>
+                    <button class="submit-btn" style="margin-top: 1rem;">Coming Soon</button>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📈</div>
+                    <h3 class="feature-title">Progress Tracking</h3>
+                    <p class="feature-description">Monitor your learning progress and achievements.</p>
+                    <button class="submit-btn" style="margin-top: 1rem;">Coming Soon</button>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">💬</div>
+                    <h3 class="feature-title">Live Chat</h3>
+                    <p class="feature-description">Get instant support from peers and mentors.</p>
+                    <button class="submit-btn" style="margin-top: 1rem;">Coming Soon</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <style>
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .feature-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(59, 130, 246, 0.4);
+        }
+    </style>
+</body>
+</html>
