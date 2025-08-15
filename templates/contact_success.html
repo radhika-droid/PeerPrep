@@ -1,0 +1,77 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Message Sent - Peer Prep</title>
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+</head>
+<body>
+    <!-- Background Orbs -->
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+    <div class="bg-orb bg-orb-3"></div>
+    <div class="bg-orb bg-orb-4"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-icon">P</div>
+                Peer Prep
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/" class="nav-link">Home</a></li>
+                <li><a href="/#features" class="nav-link">Features</a></li>
+                <li><a href="/#about" class="nav-link">About</a></li>
+                <li><a href="/#contact" class="nav-link">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Success Message -->
+    <main class="main-content">
+        <div class="container" style="grid-template-columns: 1fr; text-align: center; align-items: center;">
+            <div class="success-content">
+                <div class="success-icon">✓</div>
+                <h1 class="main-title">Message Sent Successfully!</h1>
+                <p class="subtitle">
+                    Thank you for reaching out to PeerPrep. We've received your message and will get back to you within 24 hours.
+                </p>
+                <div class="success-actions">
+                    <a href="/" class="submit-btn" style="display: inline-block; text-decoration: none; margin-top: 2rem;">
+                        Return to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <style>
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            font-size: 2rem;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .success-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+    </style>
+</body>
+</html>
