@@ -1,0 +1,170 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - PeerPrep</title>
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+    <style>
+        body {
+            color: #f0f0f0;
+        }
+
+        .about-header {
+            text-align: center;
+            padding: 6rem 2rem 3rem;
+        }
+
+        .about-header h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #00e6ff;
+            text-shadow: 0 0 15px rgba(0,230,255,0.8);
+        }
+
+        .about-header p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 1rem auto 0;
+            color: #dcdcdc;
+        }
+
+        .about-section {
+            padding: 3rem 2rem;
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        .about-section h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #ffffff;
+            border-left: 4px solid #00e6ff;
+            padding-left: 10px;
+        }
+
+        .about-section p {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+            color: #cccccc;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 0 15px #00e6ff;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            width: 250px;
+            text-align: center;
+        }
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #00e6ff;
+        }
+
+        .card p {
+            font-size: 1rem;
+            color: #dddddd;
+        }
+        .cards {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
+.card:hover {
+  transform: translateY(-10px) scale(1.03);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+    </style>
+</head>
+<body>
+    <!-- Background Orbs -->
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+    <div class="bg-orb bg-orb-3"></div>
+    <div class="bg-orb bg-orb-4"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-icon">P</div>
+                PeerPrep
+            </div>
+            <ul class="nav-menu">
+                <li><a href="{% url 'index' %}" class="nav-link">Home</a></li>
+                <li><a href="{% url 'feature' %}" class="nav-link">Features</a></li>
+                <li><a href="{% url 'about' %}" class="nav-link active">About</a></li>
+                <li><a href="{% url 'contact' %}" class="nav-link">Contact</a></li>
+
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'dashboard' %}" class="nav-link">Dashboard</a></li>
+                    <li><a href="{% url 'logout' %}" class="nav-link">Logout</a></li>
+                {% else %}
+                    <li><a href="{% url 'login' %}" class="nav-link">Login</a></li>
+                    <li><a href="{% url 'register' %}" class="nav-link">Register</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- About Header -->
+    <header class="about-header">
+        <h1>About PeerPrep</h1>
+        <p>Discover the mission, vision, and future of PeerPrep – the collaborative platform designed for open-source project management.</p>
+    </header>
+
+    <!-- About Content Sections -->
+    <section class="about-section">
+        <h2>Our Mission</h2>
+        <p>At PeerPrep, our mission is to empower open-source communities by giving project maintainers and contributors the tools they need to collaborate effectively. 
+        We believe in making project management transparent, efficient, and engaging.</p>
+    </section>
+
+    <section class="about-section">
+        <h2>Our Vision</h2>
+        <p>We envision a future where open-source development is seamless, where contributors feel valued, and where project maintainers 
+        can focus on innovation instead of repetitive management tasks.</p>
+    </section>
+
+    <section class="about-section">
+        <h2>What We Offer</h2>
+        <div class="cards">
+            <div class="card">
+                <h3>Collaboration</h3>
+                <p>Streamlined dashboards for project admins and contributors to stay in sync.</p>
+            </div>
+            <div class="card">
+                <h3>Transparency</h3>
+                <p>Track contributions, pull requests, and issues with clear visibility.</p>
+            </div>
+            <div class="card">
+                <h3>Community</h3>
+                <p>Encourage growth and engagement within open-source projects.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="about-section">
+        <h2>Looking Ahead</h2>
+        <p>We are constantly working on new features, such as advanced analytics, AI-powered contribution recommendations, and integrations with 
+        popular developer tools. The journey of PeerPrep has just begun, and the future looks exciting.</p>
+    </section>
+    {% include "footer.html" %}
+</body>
+</html>

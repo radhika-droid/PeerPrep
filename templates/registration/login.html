@@ -54,6 +54,22 @@
                             <label class="form-label">Password <span class="required">*</span></label>
                             <input type="password" name="password" class="form-input" placeholder="Enter your password" required>
                         </div>
+                        <p style="text-align: right; margin-top: 0.5rem;">
+    <a href="{% url 'forgot_password' %}" class="forgot-link">Forgot your password?</a>
+
+</p>
+
+<style>
+.forgot-link {
+    color: lightblue;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+.forgot-link:hover {
+    color: #1e90ff;  /* darker blue on hover */
+}
+</style>
+
                     </div>
                     <button type="submit" class="submit-btn">Sign In</button>
                 </form>

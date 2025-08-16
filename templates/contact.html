@@ -1,0 +1,131 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peer Prep - Collaborative Learning Platform</title>
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+</head>
+<body>
+    <!-- Background Orbs -->
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+    <div class="bg-orb bg-orb-3"></div>
+    <div class="bg-orb bg-orb-4"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-icon">P</div>
+                Peer Prep
+            </div>
+            <ul class="nav-menu">
+    <li><a href="{% url 'index' %}" class="nav-link active">Home</a></li>
+    <li><a href="{% url 'feature' %}" class="nav-link">Features</a></li>
+    <li><a href="{% url 'about' %}" class="nav-link">About</a></li>
+    <li><a href="{% url 'contact' %}" class="nav-link">Contact</a></li>
+
+    {% if user.is_authenticated %}
+        <li><a href="{% url 'dashboard' %}" class="nav-link">Dashboard</a></li>
+        <li><a href="{% url 'logout' %}" class="nav-link">Logout</a></li>
+    {% else %}
+        <li><a href="{% url 'login' %}" class="nav-link">Login</a></li>
+        <li><a href="{% url 'register' %}" class="nav-link">Register</a></li>
+    {% endif %}
+</ul>
+
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Left Section -->
+            <div class="left-section">
+                <h1 class="main-title">Get in Touch</h1>
+                <p class="subtitle">
+                    We'd love to hear from you. Send us a message and we'll respond as soon as possible with our innovative peer learning solutions.
+                </p>
+
+                <div class="contact-cards">
+                    <div class="contact-card">
+                        <div class="contact-icon">📧</div>
+                        <h3 class="contact-title">Email Us</h3>
+                        <div class="contact-info">
+                            hello@peerprep.com<br>
+                            support@peerprep.com
+                        </div>
+                    </div>
+
+                    <div class="contact-card">
+                        <div class="contact-icon">📞</div>
+                        <h3 class="contact-title">Call Us</h3>
+                        <div class="contact-info">
+                            +1 (555) 123-4567<br>
+                            Mon-Fri 9AM-6PM EST
+                        </div>
+                    </div>
+
+                    <div class="contact-card">
+                        <div class="contact-icon">💬</div>
+                        <h3 class="contact-title">Live Chat</h3>
+                        <div class="contact-info">
+                            Available 24/7 for<br>
+                            instant support
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Section - Contact Form -->
+            <div class="right-section">
+                <h2 class="form-title">Send us a Message</h2>
+                <p class="form-subtitle">
+                    Fill out the form below and we'll get back to you within 24 hours with personalized assistance.
+                </p>
+
+                <form class="contact-form" method="post" id="contactForm">
+                    {% csrf_token %}
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">First Name <span class="required">*</span></label>
+                            {{ form.first_name }}
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Last Name <span class="required">*</span></label>
+                            {{ form.last_name }}
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email Address <span class="required">*</span></label>
+                            {{ form.email }}
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Phone Number</label>
+                            {{ form.phone }}
+                        </div>
+                        <div class="form-group full-width">
+                            <label class="form-label">Subject <span class="required">*</span></label>
+                            {{ form.subject }}
+                        </div>
+                        <div class="form-group full-width">
+                            <label class="form-label">Message <span class="required">*</span></label>
+                            {{ form.message }}
+                        </div>
+                    </div>
+                    <button type="submit" class="submit-btn">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script src="{% static 'js/index.js' %}"></script>
+    {% include "footer.html" %}
+</body>
+</html>

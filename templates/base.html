@@ -1,0 +1,22 @@
+{% load static %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}PeerPrep{% endblock %}</title>
+    <!--<link rel="stylesheet" href="{% static 'css/styles.css' %}"> -->
+</head>
+<body>
+    <!-- Navbar or header can go here -->
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer included -->
+    {% include "footer.html" %}
+</body>
+</html>

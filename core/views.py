@@ -45,9 +45,37 @@ def register(request):
         form = UserCreationForm()
     return render(request, 'registration/register.html', {'form': form})
 
+def forgot_password(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        email = request.POST.get("email")
+        # later you can verify details
+        return render(request, "registration/forgot_password.html", {
+            "message": "If details are correct, reset instructions will be sent."
+        })
+    return render(request, "registration/forgot_password.html")
+
+
 @login_required
 def dashboard(request):
     context = {
         'user': request.user,
     }
     return render(request, 'dashboard.html', context)
+
+from django.shortcuts import render
+
+def home(request):
+    return render(request, 'home.html')
+
+def feature(request):
+    return render(request, 'feature.html')
+
+def about(request):
+    return render(request, 'about.html')
+
+def contact(request):
+    return render(request, 'contact.html')
+
+
+
