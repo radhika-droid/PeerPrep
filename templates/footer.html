@@ -1,0 +1,30 @@
+<style>
+    .footer {
+  background: #222;
+  color: #fff;
+  text-align: center;
+  padding: 20px 0;
+  margin-top: 40px;
+}
+
+.footer a {
+  color: #ff9800;
+  margin: 0 8px;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer a:hover {
+  color: #fff176;
+}
+</style>
+
+
+<footer class="footer">
+    <p>&copy; 2025 PeerPrep. All rights reserved.</p>
+    <p>
+        <a href="{% url 'about' %}">About</a> |
+        <a href="{% url 'contact' %}">Contact</a> |
+        <a href="{% url 'index' %}">Home</a>
+    </p>
+</footer>

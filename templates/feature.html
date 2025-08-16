@@ -1,0 +1,75 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peer Prep - Collaborative Learning Platform</title>
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+</head>
+<body>
+    <!-- Background Orbs -->
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+    <div class="bg-orb bg-orb-3"></div>
+    <div class="bg-orb bg-orb-4"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-icon">P</div>
+                Peer Prep
+            </div>
+            <ul class="nav-menu">
+    <li><a href="{% url 'index' %}" class="nav-link active">Home</a></li>
+    <li><a href="{% url 'feature' %}" class="nav-link">Features</a></li>
+    <li><a href="{% url 'about' %}" class="nav-link">About</a></li>
+    <li><a href="{% url 'contact' %}" class="nav-link">Contact</a></li>
+
+    {% if user.is_authenticated %}
+        <li><a href="{% url 'dashboard' %}" class="nav-link">Dashboard</a></li>
+        <li><a href="{% url 'logout' %}" class="nav-link">Logout</a></li>
+    {% else %}
+        <li><a href="{% url 'login' %}" class="nav-link">Login</a></li>
+        <li><a href="{% url 'register' %}" class="nav-link">Register</a></li>
+    {% endif %}
+</ul>
+
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Features Section -->
+        <section class="features-section">
+            <div class="container" style="grid-template-columns: 1fr;">
+                <h2 class="form-title" style="text-align: center; margin-bottom: 1rem;">Why Choose Peer Prep?</h2>
+                <p class="form-subtitle" style="text-align: center; max-width: 600px; margin: 0 auto;">
+                    Discover the benefits of collaborative learning with our innovative peer preparation platform.
+                </p>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🤝</div>
+                        <h3 class="feature-title">Collaborative Learning</h3>
+                        <p class="feature-description">Connect with peers worldwide for effective study sessions and knowledge sharing.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📚</div>
+                        <h3 class="feature-title">Structured Content</h3>
+                        <p class="feature-description">Access curated learning materials and practice problems tailored to your needs.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🎯</div>
+                        <h3 class="feature-title">Goal Tracking</h3>
+                        <p class="feature-description">Monitor your progress and achieve your learning objectives with detailed analytics.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="{% static 'js/index.js' %}"></script>
+    {% include "footer.html" %}
+</body>
+</html>
