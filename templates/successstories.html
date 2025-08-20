@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Success Stories - Peer Prep</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 30%, #334155 100%);
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Background orbs */
+        .bg-orb {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(59, 130, 246, 0.15);
+            filter: blur(2px);
+            animation: float 20s infinite ease-in-out;
+            z-index: 1;
+        }
+
+        .bg-orb-1 {
+            width: 350px;
+            height: 350px;
+            top: -100px;
+            left: -100px;
+            animation-delay: 0s;
+        }
+
+        .bg-orb-2 {
+            width: 250px;
+            height: 250px;
+            bottom: 200px;
+            left: 150px;
+            animation-delay: 7s;
+        }
+
+        .bg-orb-3 {
+            width: 400px;
+            height: 400px;
+            top: -150px;
+            right: -150px;
+            animation-delay: 3s;
+        }
+
+        /* Navbar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            z-index: 1000;
+            padding: 1.2rem 2rem;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 3rem;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .nav-link:hover {
+            color: #3b82f6;
+            transform: translateY(-1px);
+        }
+
+        .nav-link.active {
+            color: white;
+        }
+
+        /* Auth status indicator */
+        .auth-status {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            margin-left: 1rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding-top: 120px;
+            min-height: 100vh;
+            position: relative;
+            z-index: 2;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Header Section */
+        .header-section {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 24px;
+            padding: 3rem;
+            margin-bottom: 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 3rem;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+            animation: slideInUp 1s ease;
+        }
+
+        .quote-section {
+            flex: 2;
+        }
+
+        .quote-text {
+            font-size: 1.8rem;
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.4;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .quote-text::before {
+            content: """;
+            font-size: 4rem;
+            color: #3b82f6;
+            position: absolute;
+            left: -1rem;
+            top: -1rem;
+        }
+
+        .quote-author {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 500;
+            margin-left: 2rem;
+        }
+
+        .submit-section {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+
+        .submit-story-btn {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            padding: 1.5rem 2.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            justify-content: center;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            text-decoration: none;
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.2);
+            text-align: center;
+        }
+
+        .submit-story-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(59, 130, 246, 0.4);
+        }
+
+        .submit-story-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Stories Section */
+        .stories-section {
+            margin-top: 2rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            text-align: center;
+            background: linear-gradient(135deg, #ffffff 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .story-card {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            animation: slideInUp 1s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .story-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(59, 130, 246, 0.4);
+            box-shadow: 0 20px 40px rgba(59, 130, 246, 0.1);
+        }
+
+        .story-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .story-meta {
+            flex: 1;
+        }
+
+        .story-author {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 0.2rem;
+        }
+
+        .story-date {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .story-category {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .story-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+
+        .story-content {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .story-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tag {
+            background: rgba(51, 65, 85, 0.6);
+            color: rgba(255, 255, 255, 0.8);
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .story-reactions {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .reaction {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 0.5rem;
+            border-radius: 8px;
+        }
+
+        .reaction:hover {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+
+        .reaction.active {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+        }
+
+        .reaction-icon {
+            font-size: 1.1rem;
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.1rem;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(59, 130, 246, 0.3);
+            border-top: 3px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        /* Modal for Submit Story */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(15px);
+            margin: 5% auto;
+            padding: 2.5rem;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            border-radius: 20px;
+            color: white;
+            position: relative;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        .close {
+            position: absolute;
+            right: 1.5rem;
+            top: 1.5rem;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.6);
+            transition: all 0.3s ease;
+        }
+
+        .close:hover {
+            color: #3b82f6;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            padding: 1rem;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        /* Error messages */
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+        }
+
+        .debug-info {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #93c5fd;
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            font-family: monospace;
+        }
+
+        /* Animations */
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(20px, -30px) rotate(90deg); }
+            50% { transform: translate(-10px, 20px) rotate(180deg); }
+            75% { transform: translate(-30px, -10px) rotate(270deg); }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .stories-grid {
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            }
+            
+            .header-section {
+                flex-direction: column;
+                text-align: center;
+                gap: 2rem;
+            }
+            
+            .quote-text {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+            
+            .stories-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 0 1rem;
+            }
+            
+            .header-section {
+                padding: 2rem;
+            }
+            
+            .quote-text {
+                font-size: 1.3rem;
+            }
+            
+            .modal-content {
+                width: 95%;
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background orbs -->
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+    <div class="bg-orb bg-orb-3"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-icon">P</div>
+                Peer Prep
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/" class="nav-link">Home</a></li>
+                <li><a href="/feature/" class="nav-link">Features</a></li>
+                <li><a href="/about/" class="nav-link">About</a></li>
+                <li><a href="/contact/" class="nav-link">Contact</a></li>
+                <li><a href="/success-stories/" class="nav-link active">Success Stories</a></li>
+                <li><a href="/dashboard/" class="nav-link">Dashboard</a></li>
+                <li><a href="/logout/" class="nav-link">Logout</a></li>
+            </ul>
+            <div id="authStatus" class="auth-status">Checking...</div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Header Section -->
+            <section class="header-section">
+                <div class="quote-section">
+                    <div class="quote-text">
+                        Success is not final, failure is not fatal: it is the courage to continue that counts.
+                    </div>
+                    <div class="quote-author">- Winston Churchill</div>
+                </div>
+                <div class="submit-section">
+                    <button id="submitBtn" class="submit-story-btn" onclick="openModal()">
+                        <span>📝</span>
+                        Share Your Story
+                    </button>
+                </div>
+            </section>
+
+            <!-- Debug Info -->
+            <div id="debugInfo" class="debug-info" style="display: none;">
+                Debug Information:<br>
+                Authentication Status: <span id="debugAuth">Unknown</span><br>
+                CSRF Token: <span id="debugCSRF">Not found</span><br>
+                Session ID: <span id="debugSession">Not found</span><br>
+            </div>
+
+            <!-- Stories Section -->
+            <section class="stories-section">
+                <h2 class="section-title">Success Stories</h2>
+                
+                <!-- Loading State -->
+                <div id="loading" class="loading">
+                    <div class="spinner"></div>
+                    Loading success stories...
+                </div>
+
+                <!-- Stories Grid -->
+                <div id="stories-grid" class="stories-grid" style="display: none;">
+                    <!-- Stories will be loaded here dynamically -->
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Submit Story Modal -->
+    <div id="submitModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Share Your Success Story</h2>
+            
+            <div id="errorMessage" class="error-message" style="display: none;"></div>
+            
+            <form id="storyForm">
+                <div class="form-group">
+                    <label class="form-label" for="title">Story Title *</label>
+                    <input type="text" id="title" name="title" class="form-input" placeholder="Enter a compelling title..." required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="content">Your Story *</label>
+                    <textarea id="content" name="content" class="form-textarea" placeholder="Share your inspiring journey..." required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="category">Category</label>
+                    <select id="category" name="category" class="form-select">
+                        <option value="">Select a category</option>
+                        <option value="career">Career Growth</option>
+                        <option value="business">Business & Entrepreneurship</option>
+                        <option value="personal">Personal Development</option>
+                        <option value="health">Health & Fitness</option>
+                        <option value="education">Education & Learning</option>
+                        <option value="creative">Creative Pursuits</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="tags">Tags</label>
+                    <input type="text" id="tags" name="tags" class="form-input" placeholder="motivation, success, achievement (comma separated)">
+                </div>
+                
+                <button type="submit" class="submit-story-btn" style="width: 100%; margin-top: 1rem;">
+                    Submit Story
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let isAuthenticated = false;
+        let csrfToken = null;
+        let debugMode = false; // Set to true to show debug info
+        
+        /* ---- Helper Functions ---- */
+        function getCookie(name) {
+            const cookieArr = document.cookie.split(';');
+            for (let cookie of cookieArr) {
+                cookie = cookie.trim();
+                if (cookie.startsWith(name + '=')) {
+                    return decodeURIComponent(cookie.substring(name.length + 1));
+                }
+            }
+            return null;
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+
+        function hideError() {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.style.display = 'none';
+        }
+
+        function updateDebugInfo() {
+            if (debugMode) {
+                document.getElementById('debugInfo').style.display = 'block';
+                document.getElementById('debugAuth').textContent = isAuthenticated ? 'Authenticated' : 'Not authenticated';
+                document.getElementById('debugCSRF').textContent = csrfToken || 'Not found';
+                document.getElementById('debugSession').textContent = getCookie('sessionid') || 'Not found';
+            }
+        }
+        
+        /* ---- Authentication Check ---- */
+        function checkAuthentication() {
+    // Fallback check based on Django session cookie
+    const sessionId = getCookie('sessionid');
+    if (sessionId) {
+        isAuthenticated = true;
+    }
+
+    // Immediately update the UI once from cookie fallback
+    updateAuthUI();
+
+    // Call your backend API for confirmation (the view you pasted!)
+    fetch('/auth-check/', {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        isAuthenticated = data.authenticated;
+        updateAuthUI();
+        updateDebugInfo();
+    })
+    .catch((error) => {
+        console.error('Auth check failed:', error);
+        updateAuthUI();
+        updateDebugInfo();
+    });
+}
+
+
+        function updateAuthUI() {
+            const submitBtn = document.getElementById('submitBtn');
+            const authStatus = document.getElementById('authStatus');
+            
+            if (isAuthenticated) {
+                submitBtn.innerHTML = '<span>📝</span> Share Your Story';
+                submitBtn.disabled = false;
+                authStatus.textContent = 'Logged In';
+                authStatus.style.background = 'rgba(34, 197, 94, 0.2)';
+                authStatus.style.color = '#4ade80';
+                authStatus.style.borderColor = 'rgba(34, 197, 94, 0.3)';
+            } else {
+                submitBtn.innerHTML = '<span>🔐</span> Login to Share';
+                submitBtn.disabled = false; // Keep enabled to show login prompt
+                authStatus.textContent = 'Not Logged In';
+                authStatus.style.background = 'rgba(239, 68, 68, 0.2)';
+                authStatus.style.color = '#fca5a5';
+                authStatus.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+            }
+        }
+
+        /* ---- Modal Functions ---- */
+        function openModal() {
+            if (!isAuthenticated) {
+                if (confirm('You need to log in to share your story. Would you like to go to the login page?')) {
+                    window.location.href = '/login/';
+                }
+                return;
+            }
+            hideError();
+            document.getElementById('submitModal').style.display = 'block';
+        }
+        
+        function closeModal() {
+            document.getElementById('submitModal').style.display = 'none';
+            hideError();
+        }
+        
+        window.onclick = function (event) {
+            const modal = document.getElementById('submitModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+                hideError();
+            }
+        };
+
+        /* ---- Story Display Functions ---- */
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+    
+        function getInitials(name) {
+            if (!name) return 'AN';
+            return name
+                .split(' ')
+                .map(part => part[0])
+                .join('')
+                .toUpperCase()
+                .substring(0, 2);
+        }
+    
+        function createStoryCard(story) {
+            return `
+            <div class="story-card">
+                <div class="story-header">
+                    <div class="user-avatar">${story.user_initials || getInitials(story.author_name)}</div>
+                    <div class="story-meta">
+                        <div class="story-author">${story.author_name || 'Anonymous'}</div>
+                        <div class="story-date">${formatDate(story.created_at)}</div>
+                    </div>
+                    ${story.category ? `<div class="story-category">${story.category.charAt(0).toUpperCase() + story.category.slice(1)}</div>` : ""}
+                </div>
+                <h3 class="story-title">${story.title}</h3>
+                <p class="story-content">${story.content}</p>
+                ${story.tags && story.tags.length ? `
+                    <div class="story-tags">
+                        ${story.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                    </div>` : ''
+                }
+                <div class="story-reactions">
+                    <div class="reaction" onclick="reactToStory(${story.id}, 'like')">
+                        <span class="reaction-icon">👍</span>
+                        <span>${story.likes_count || 0}</span>
+                    </div>
+                    <div class="reaction" onclick="reactToStory(${story.id}, 'heart')">
+                        <span class="reaction-icon">❤️</span>
+                        <span>${story.hearts_count || 0}</span>
+                    </div>
+                    <div class="reaction" onclick="reactToStory(${story.id}, 'celebration')">
+                        <span class="reaction-icon">🎉</span>
+                        <span>${story.celebrations_count || 0}</span>
+                    </div>
+                </div>
+            </div>`;
+        }
+    
+        /* ---- Load Stories ---- */
+        function loadStories() {
+            const endpoints = ['/get-success-stories/'];
+
+
+            async function tryEndpoint(endpoint) {
+                try {
+                    const response = await fetch(endpoint, {
+                        credentials: 'include',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+                    
+                    return await response.json();
+                } catch (error) {
+                    console.log(`Endpoint ${endpoint} failed:`, error);
+                    throw error;
+                }
+            }
+
+            // Try endpoints in sequence
+            (async () => {
+                for (const endpoint of endpoints) {
+                    try {
+                        const data = await tryEndpoint(endpoint);
+                        console.log('Successfully loaded from:', endpoint, data);
+                        
+                        document.getElementById('loading').style.display = 'none';
+                        const grid = document.getElementById('stories-grid');
+                        grid.style.display = 'grid';
+        
+                        // Handle different response formats
+                        const stories = Array.isArray(data) ? data : (data.stories || []);
+                        
+                        if (stories.length > 0) {
+                            grid.innerHTML = stories.map(createStoryCard).join('');
+                        } else {
+                            grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: rgba(255,255,255,0.7);">No success stories yet. Be the first to share!</p>';
+                        }
+                        return; // Success, exit the loop
+                        
+                    } catch (error) {
+                        continue; // Try next endpoint
+                    }
+                }
+                
+                // All endpoints failed
+                console.error('All story loading endpoints failed');
+                document.getElementById('loading').innerHTML = 
+                    '<p>Unable to load stories. Please refresh the page or try again later.</p>';
+            })();
+        }
+    
+        /* ---- Story Submit ---- */
+        document.getElementById('storyForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+    
+            if (!isAuthenticated) {
+                showError('Please log in to submit a story.');
+                return;
+            }
+
+            // Get CSRF token
+            if (!csrfToken) {
+                csrfToken = getCookie('csrftoken');
+            }
+
+            if (!csrfToken) {
+                showError('CSRF token not found. Please refresh the page and try again.');
+                return;
+            }
+    
+            const formData = new FormData();
+            formData.append('title', document.getElementById('title').value.trim());
+            formData.append('content', document.getElementById('content').value.trim());
+            formData.append('category', document.getElementById('category').value);
+            formData.append('tags', document.getElementById('tags').value.trim());
+    
+            const submitButton = document.querySelector('#storyForm button[type="submit"]');
+            const originalText = submitButton.innerHTML;
+            submitButton.innerHTML = '<span>⏳</span> Submitting...';
+            submitButton.disabled = true;
+            const submitEndpoints = ['/add-success-story/'];
+
+
+            async function trySubmitEndpoint(endpoint) {
+                try {
+                    const response = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': csrfToken,
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        credentials: 'include',
+                        body: formData
+                    });
+
+                    if (!response.ok) {
+                        const text = await response.text();
+                        throw new Error(`HTTP ${response.status}: ${text}`);
+                    }
+
+                    return await response.json();
+                } catch (error) {
+                    console.log(`Submit endpoint ${endpoint} failed:`, error);
+                    throw error;
+                }
+            }
+
+            // Try submit endpoints
+            (async () => {
+                for (const endpoint of submitEndpoints) {
+                    try {
+                        const json = await trySubmitEndpoint(endpoint);
+                        console.log('Submit successful:', json);
+                        
+                        if (json.success) {
+                            alert(json.message || 'Story posted successfully!');
+                            closeModal();
+                            document.getElementById('storyForm').reset();
+                            loadStories();
+                            return;
+                        } else {
+                            // Handle form validation errors
+                            let errorMessage = 'Failed to submit story:\n';
+                            if (json.errors) {
+                                Object.entries(json.errors).forEach(([field, errors]) => {
+                                    if (Array.isArray(errors)) {
+                                        errorMessage += `${field}: ${errors.join(', ')}\n`;
+                                    } else {
+                                        errorMessage += `${field}: ${errors}\n`;
+                                    }
+                                });
+                            } else if (json.error) {
+                                errorMessage += json.error;
+                            }
+                            throw new Error(errorMessage);
+                        }
+                    } catch (error) {
+                        if (endpoint === submitEndpoints[submitEndpoints.length - 1]) {
+                            // Last endpoint failed
+                            throw error;
+                        }
+                        continue;
+                    }
+                }
+            })().catch(error => {
+                console.error('All submit endpoints failed:', error);
+                showError('Error submitting story: ' + error.message);
+            }).finally(() => {
+                submitButton.innerHTML = originalText;
+                submitButton.disabled = false;
+            });
+        });
+    
+        /* ---- React to Story ---- */
+        function reactToStory(storyId, type) {
+            if (!isAuthenticated) {
+                if (confirm('Please log in to react to stories. Go to login page?')) {
+                    window.location.href = '/login/';
+                }
+                return;
+            }
+
+            if (!csrfToken) {
+                csrfToken = getCookie('csrftoken');
+            }
+    
+            fetch(`/react-to-story/${storyId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include',
+                body: JSON.stringify({ reaction_type: type })
+            })
+            .then(res => {
+                if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+                return res.json();
+            })
+            .then(json => {
+                if (json.success) {
+                    // Reload stories to update reaction counts
+                    loadStories();
+                } else {
+                    throw new Error(json.error || 'Failed to react');
+                }
+            })
+            .catch(err => {
+                console.error('Reaction error:', err);
+                alert('Error reacting to story: ' + err.message);
+            });
+        }
+
+        // Toggle debug mode with Ctrl+Shift+D
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+                debugMode = !debugMode;
+                updateDebugInfo();
+                console.log('Debug mode:', debugMode ? 'enabled' : 'disabled');
+            }
+        });
+    
+        /* ---- Initialize ---- */
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Page loaded, initializing...');
+            checkAuthentication();
+            loadStories();
+            
+            // Show current cookies for debugging
+            console.log('Current cookies:', document.cookie);
+            console.log('CSRF token from cookie:', getCookie('csrftoken'));
+            console.log('Session ID from cookie:', getCookie('sessionid'));
+        });
+    </script>
+</body>
+</html>
