@@ -1,30 +1,72 @@
+
 <style>
-    .footer {
-  background: #222;
-  color: #fff;
-  text-align: center;
-  padding: 20px 0;
-  margin-top: 40px;
+.footer { 
+  background: #222; color: #fff; text-align: center; padding: 20px 0; margin-top: 40px; } 
+.footer a { color: #ff9800; margin: 0 8px; text-decoration: none; transition: color 0.3s ease; } 
+.footer a:hover { color: #fff176; } 
+</style> 
+<footer class="footer"> 
+  <p>&copy; 2025 PeerPrep. All rights reserved.</p> <p> <a href="{% url 'about' %}">About</a> | <a href="{% url 'contact' %}">Contact</a> | <a href="{% url 'index' %}">Home</a> 
+  </p> 
+</footer>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    // Main ball (replaces cursor)
+    const mainBall = document.createElement("div");
+    mainBall.className = "cursor-main";
+    document.body.appendChild(mainBall);
+
+    document.addEventListener("mousemove", (e) => {
+        mainBall.style.left = `${e.pageX}px`;
+        mainBall.style.top = `${e.pageY}px`;
+
+        // Trail effect
+        const trail = document.createElement("div");
+        trail.className = "cursor-trail";
+        trail.style.left = `${e.pageX}px`;
+        trail.style.top = `${e.pageY}px`;
+        document.body.appendChild(trail);
+
+        setTimeout(() => {
+            trail.remove();
+        }, 500);
+    });
+});
+</script>
+
+<style>
+/* Hide the default mouse cursor */
+body {
+  cursor: none;
 }
 
-.footer a {
-  color: #ff9800;
-  margin: 0 8px;
-  text-decoration: none;
-  transition: color 0.3s ease;
+/* Main cursor ball */
+.cursor-main {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: rgb(107, 107, 197);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 10px rgba(255, 152, 0, 0.8);
 }
 
-.footer a:hover {
-  color: #fff176;
+/* Trail dots */
+.cursor-trail {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgb(107, 107, 197);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  animation: fadeTrail 0.5s linear forwards;
+}
+
+@keyframes fadeTrail {
+  from { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  to { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
 }
 </style>
-
-
-<footer class="footer">
-    <p>&copy; 2025 PeerPrep. All rights reserved.</p>
-    <p>
-        <a href="{% url 'about' %}">About</a> |
-        <a href="{% url 'contact' %}">Contact</a> |
-        <a href="{% url 'index' %}">Home</a>
-    </p>
-</footer>
