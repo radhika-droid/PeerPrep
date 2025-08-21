@@ -23,6 +23,7 @@ urlpatterns = [
     path('dashboard/', views.dashboard, name='dashboard'),
     path('forgot-password/', views.forgot_password, name='forgot_password'),
     
+
     # Success Stories
     path('success-stories/', views.success_stories, name='success_stories'),
     path('auth-check/', views.auth_check, name='auth_check'),
@@ -32,6 +33,7 @@ urlpatterns = [
     path('react-to-story/<int:story_id>/', views.react_to_story, name='react_to_story'),
     path('user-reactions/<int:story_id>/', views.get_user_reactions, name='get_user_reactions'),
 ]
+
 
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0])

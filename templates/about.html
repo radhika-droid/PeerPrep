@@ -2,289 +2,177 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About - PeerPrep</title>
-    <link rel="stylesheet" href="{% static 'css/index.css' %}">
-    <style>
-        body {
-            color: #f0f0f0;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About - PeerPrep</title>
+<link rel="stylesheet" href="{% static 'css/index.css' %}">
+<style>
+body { color: #f0f0f0; font-family: Arial, sans-serif; }
 
-        .about-header {
-            text-align: center;
-            padding: 6rem 2rem 3rem;
-        }
+/* Navbar logout button */
+.nav-link-button {
+    background: none;
+    border: none;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    padding: 0;
+}
+.nav-link-button:hover { color: #00e6ff; }
 
-        .about-header h1 {
-            font-size: 3rem;
-            font-weight: 800;
-            color: #00e6ff;
-            text-shadow: 0 0 15px rgba(0,230,255,0.8);
-        }
+/* About header */
+.about-header { text-align: center; padding: 6rem 2rem 3rem; }
+.about-header h1 { font-size: 3rem; font-weight: 800; color: #00e6ff; text-shadow: 0 0 15px rgba(0,230,255,0.8); }
+.about-header p { font-size: 1.2rem; max-width: 800px; margin: 1rem auto 0; color: #dcdcdc; }
 
-        .about-header p {
-            font-size: 1.2rem;
-            max-width: 800px;
-            margin: 1rem auto 0;
-            color: #dcdcdc;
-        }
+/* About sections */
+.about-section { padding: 3rem 2rem; max-width: 1000px; margin: auto; }
+.about-section h2 { font-size: 2rem; margin-bottom: 1rem; color: #ffffff; border-left: 4px solid #00e6ff; padding-left: 10px; }
+.about-section p { font-size: 1.1rem; line-height: 1.7; margin-bottom: 1.5rem; color: #cccccc; }
 
-        .about-section {
-            padding: 3rem 2rem;
-            max-width: 1000px;
-            margin: auto;
-        }
+/* "What We Offer" cards */
+.cards { display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center; margin-top: 2rem; }
+.card { background: rgba(255,255,255,0.05); border-radius:12px; padding:1.5rem; text-align:center; box-shadow:0 0 15px #00e6ff; transition: transform 0.3s ease, box-shadow 0.3s ease; cursor:pointer; width:250px; }
+.card:hover { transform: translateY(-10px) scale(1.03); box-shadow:0 8px 16px rgba(0,0,0,0.3); }
+.card img { width:100px; height:100px; border-radius:50%; margin-bottom:1rem; border:3px solid #00e6ff; }
+.card h3 { font-size:1.3rem; margin-bottom:0.5rem; color:#00e6ff; }
+.card a { color:#ffffff; text-decoration:none; font-size:1rem; transition: color 0.3s ease; }
+.card a:hover { color:#00e6ff; }
 
-        .about-section h2 {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-            color: #ffffff;
-            border-left: 4px solid #00e6ff;
-            padding-left: 10px;
-        }
+/* Contributors carousel */
+.carousel-container { overflow:hidden; max-width:1000px; margin:auto; position:relative; }
+.carousel-track { display:flex; transition: transform 0.6s ease-in-out; }
+.contributor-card { min-width: 250px; margin: 0 10px; background: rgba(255,255,255,0.05); border-radius:12px; padding:1rem; text-align:center; box-shadow:0 0 10px #00e6ff; }
+.contributor-card img { width:80px; height:80px; border-radius:50%; border:2px solid #00e6ff; margin-bottom:0.5rem; }
+.contributor-card h3 { color:#00e6ff; margin-bottom:0.3rem; font-size:1.1rem; }
+.contributor-card a { color:#fff; font-size:0.95rem; text-decoration:none; }
+.contributor-card a:hover { color:#00e6ff; }
 
-        .about-section p {
-            font-size: 1.1rem;
-            line-height: 1.7;
-            margin-bottom: 1.5rem;
-            color: #cccccc;
-        }
-
-        /* Card Styles */
-        .cards {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1.5rem;
-            justify-content: center;
-            margin-top: 2rem;
-        }
-
-        .card {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            padding: 1.5rem;
-            text-align: center;
-            box-shadow: 0 0 15px #00e6ff;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            cursor: pointer;
-            width: 250px;
-        }
-
-        .card:hover {
-            transform: translateY(-10px) scale(1.03);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-        }
-
-        .card img {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            margin-bottom: 1rem;
-            border: 3px solid #00e6ff;
-        }
-
-        .card h3 {
-            font-size: 1.3rem;
-            margin-bottom: 0.5rem;
-            color: #00e6ff;
-        }
-
-        .card a {
-            color: #ffffff;
-            text-decoration: none;
-            font-size: 1rem;
-            transition: color 0.3s ease;
-        }
-
-        .card a:hover {
-            color: #00e6ff;
-        }
-    </style>
+/* Responsive carousel */
+@media (max-width: 768px) { .contributor-card { min-width: 200px; } }
+@media (max-width: 480px) { .contributor-card { min-width: 150px; } }
+</style>
 </head>
 <body>
-    <!-- Background Orbs -->
-    <div class="bg-orb bg-orb-1"></div>
-    <div class="bg-orb bg-orb-2"></div>
-    <div class="bg-orb bg-orb-3"></div>
-    <div class="bg-orb bg-orb-4"></div>
 
-    <!-- Navbar -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="logo">
-                <div class="logo-icon">P</div>
-                PeerPrep
-            </div>
-            <ul class="nav-menu">
-                <li><a href="{% url 'index' %}" class="nav-link">Home</a></li>
-                <li><a href="{% url 'feature' %}" class="nav-link">Features</a></li>
-                <li><a href="{% url 'about' %}" class="nav-link active">About</a></li>
-                <li><a href="{% url 'contact' %}" class="nav-link">Contact</a></li>
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="nav-container">
+        <div class="logo"><div class="logo-icon">P</div>PeerPrep</div>
+        <ul class="nav-menu">
+            <li><a href="{% url 'index' %}" class="nav-link">Home</a></li>
+            <li><a href="{% url 'feature' %}" class="nav-link">Features</a></li>
+            <li><a href="{% url 'about' %}" class="nav-link active">About</a></li>
+            <li><a href="{% url 'contact' %}" class="nav-link">Contact</a></li>
 
-                {% if user.is_authenticated %}
-                    <li><a href="{% url 'dashboard' %}" class="nav-link">Dashboard</a></li>
-                    <li><a href="{% url 'logout' %}" class="nav-link">Logout</a></li>
-                {% else %}
-                    <li><a href="{% url 'login' %}" class="nav-link">Login / Register</a></li>
-                    <!--<li><a href="{% url 'register' %}" class="nav-link">Register</a></li>-->
-                {% endif %}
-            </ul>
-        </div>
-    </nav>
+            {% if user.is_authenticated %}
+                <li><a href="{% url 'dashboard' %}" class="nav-link">Dashboard</a></li>
+                <li>
+                    <form action="{% url 'logout' %}" method="post" onsubmit="return confirm('Do you really want to logout?');" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="nav-link-button">Logout</button>
+                    </form>
+                </li>
+            {% else %}
+                <li><a href="{% url 'login' %}" class="nav-link">Login / Register</a></li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>
 
-    <!-- About Header -->
-    <header class="about-header">
-        <h1>About PeerPrep</h1>
-        <p>Discover the mission, vision, and future of PeerPrep – the collaborative platform designed for open-source project management.</p>
-    </header>
+<!-- About Header -->
+<header class="about-header">
+    <h1>About PeerPrep</h1>
+    <p>Discover the mission, vision, and future of PeerPrep – the collaborative platform designed for open-source project management.</p>
+</header>
 
-    <!-- About Content Sections -->
-    <section class="about-section">
-        <h2>Our Mission</h2>
-        <p>At PeerPrep, our mission is to empower open-source communities by giving project maintainers and contributors the tools they need to collaborate effectively. 
-        We believe in making project management transparent, efficient, and engaging.</p>
-    </section>
+<!-- About Sections -->
+<section class="about-section">
+    <h2>Our Mission</h2>
+    <p>At PeerPrep, our mission is to empower open-source communities by giving project maintainers and contributors the tools they need to collaborate effectively. We believe in making project management transparent, efficient, and engaging.</p>
+</section>
 
-    <section class="about-section">
-        <h2>Our Vision</h2>
-        <p>We envision a future where open-source development is seamless, where contributors feel valued, and where project maintainers 
-        can focus on innovation instead of repetitive management tasks.</p>
-    </section>
+<section class="about-section">
+    <h2>Our Vision</h2>
+    <p>We envision a future where open-source development is seamless, where contributors feel valued, and where project maintainers can focus on innovation instead of repetitive management tasks.</p>
+</section>
 
-    <section class="about-section">
-        <h2>What We Offer</h2>
-        <div class="cards">
-            <div class="card">
-                <h3>Collaboration</h3>
-                <p>Streamlined dashboards for project admins and contributors to stay in sync.</p>
-            </div>
-            <div class="card">
-                <h3>Transparency</h3>
-                <p>Track contributions, pull requests, and issues with clear visibility.</p>
-            </div>
-            <div class="card">
-                <h3>Community</h3>
-                <p>Encourage growth and engagement within open-source projects.</p>
-            </div>
-        </div>
-    </section>
+<section class="about-section">
+    <h2>What We Offer</h2>
+    <div class="cards">
+        <div class="card"><h3>Collaboration</h3><p>Streamlined dashboards for project admins and contributors to stay in sync.</p></div>
+        <div class="card"><h3>Transparency</h3><p>Track contributions, pull requests, and issues with clear visibility.</p></div>
+        <div class="card"><h3>Community</h3><p>Encourage growth and engagement within open-source projects.</p></div>
+    </div>
+</section>
 
-    <section class="about-section">
-        <h2>Looking Ahead</h2>
-        <p>We are constantly working on new features, such as advanced analytics, AI-powered contribution recommendations, and integrations with 
-        popular developer tools. The journey of PeerPrep has just begun, and the future looks exciting.</p>
-    </section>
+<section class="about-section">
+    <h2>Looking Ahead</h2>
+    <p>We are constantly working on new features, such as advanced analytics, AI-powered contribution recommendations, and integrations with popular developer tools. The journey of PeerPrep has just begun, and the future looks exciting.</p>
+</section>
 
-    <!-- 🔹 Contributors Section -->
-    <section class="about-section">
+<!-- Contributors Section -->
+<section class="about-section">
     <h2>Our Contributors</h2>
     <div class="carousel-container">
-        <div id="contributors-carousel" class="carousel-track">
-            <!-- Contributor cards will load dynamically here -->
-        </div>
+        <div id="contributors-carousel" class="carousel-track"></div>
     </div>
     <p style="text-align:center; margin-top:1.5rem; font-size:1rem; color:#aaa;">
-        Want to see your name here? Contribute to PeerPrep on 
-        <a href="https://github.com/radhika-droid/PeerPrep" target="_blank" style="color:#00e6ff;">GitHub</a>.
+        Want to see your name here? Contribute to PeerPrep on <a href="https://github.com/radhika-droid/PeerPrep" target="_blank" style="color:#00e6ff;">GitHub</a>.
     </p>
 </section>
 
-<style>
-.carousel-container {
-    overflow: hidden;
-    max-width: 1000px;
-    margin: auto;
-    position: relative;
-}
-
-.carousel-track {
-    display: flex;
-    transition: transform 0.6s ease-in-out;
-}
-
-.card {
-    min-width: 300px;
-    margin: 0 10px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
-    padding: 1.5rem;
-    text-align: center;
-    box-shadow: 0 0 15px #00e6ff;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.card img {
-    width: 90px;
-    height: 100px;
-    border-radius: 50%;
-    margin-bottom: 1rem;
-    border: 3px solid #00e6ff;
-}
-</style>
-
 <script>
-    async function loadContributors() {
-        try {
-            const response = await fetch("https://api.github.com/repos/radhika-droid/PeerPrep/pulls?state=closed&per_page=100");
-            const pulls = await response.json();
+async function loadContributors() {
+    try {
+        const response = await fetch("https://api.github.com/repos/radhika-droid/PeerPrep/pulls?state=closed&per_page=100");
+        const pulls = await response.json();
+        const merged = pulls.filter(pr => pr.merged_at !== null);
 
-            const merged = pulls.filter(pr => pr.merged_at !== null);
-
-            const contributorsMap = {};
-            merged.forEach(pr => {
-                if (pr.user && !contributorsMap[pr.user.login]) {
-                    contributorsMap[pr.user.login] = {
-                        login: pr.user.login,
-                        avatar: pr.user.avatar_url,
-                        url: pr.user.html_url
-                    };
-                }
-            });
-
-            const contributorsDiv = document.getElementById("contributors-carousel");
-            Object.values(contributorsMap).forEach(c => {
-                const card = document.createElement("div");
-                card.className = "card";
-                card.innerHTML = `
-                    <img src="${c.avatar}" alt="${c.login}">
-                    <h3>@${c.login}</h3>
-                    <a href="${c.url}" target="_blank">View Profile</a>
-                `;
-                contributorsDiv.appendChild(card);
-            });
-
-            if (Object.keys(contributorsMap).length === 0) {
-                contributorsDiv.innerHTML = "<p>No contributors yet. Be the first!</p>";
-            } else {
-                startCarousel();
+        const contributorsMap = {};
+        merged.forEach(pr => {
+            if(pr.user && !contributorsMap[pr.user.login]){
+                contributorsMap[pr.user.login] = {
+                    login: pr.user.login,
+                    avatar: pr.user.avatar_url,
+                    url: pr.user.html_url
+                };
             }
-        } catch (error) {
-            console.error("Error loading contributors:", error);
-            document.getElementById("contributors-carousel").innerHTML = "<p>Failed to load contributors.</p>";
-        }
-    }
+        });
 
-    function startCarousel() {
         const track = document.getElementById("contributors-carousel");
-        const cards = track.querySelectorAll(".card");
-        let index = 0;
-        const visible = 3; // Show 3 at a time
-        const cardWidth = cards[0].offsetWidth + 20; // card width + margin
+        Object.values(contributorsMap).forEach(c => {
+            const card = document.createElement("div");
+            card.className = "contributor-card";
+            card.innerHTML = `<img src="${c.avatar}" alt="${c.login}"><h3>@${c.login}</h3><a href="${c.url}" target="_blank">View Profile</a>`;
+            track.appendChild(card);
+        });
 
-        setInterval(() => {
-            index++;
-            if (index > cards.length - visible) {
-                index = 0; // reset to start
-            }
-            track.style.transform = `translateX(-${index * cardWidth}px)`;
-        }, 3000); // change every 3s
+        if(track.children.length > 0) startCarousel();
+        else track.innerHTML = "<p>No contributors yet. Be the first!</p>";
+    } catch(err) {
+        console.error(err);
+        document.getElementById("contributors-carousel").innerHTML = "<p>Failed to load contributors.</p>";
     }
+}
 
-    loadContributors();
+function startCarousel() {
+    const track = document.getElementById("contributors-carousel");
+    const cards = track.children;
+    if(cards.length <= 3) return; // No scrolling needed
+
+    let index = 0;
+    setInterval(() => {
+        index++;
+        if(index > cards.length - 3) index = 0;
+        const cardWidth = cards[0].offsetWidth + 20;
+        track.style.transform = `translateX(-${index * cardWidth}px)`;
+    }, 3000);
+}
+
+loadContributors();
 </script>
 
-
-    {% include "footer.html" %}
+{% include "footer.html" %}
 </body>
 </html>

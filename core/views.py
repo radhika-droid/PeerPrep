@@ -13,6 +13,8 @@ from .forms import SuccessStoryForm
 import json
 from django.views.decorators.http import require_GET
 
+
+
 @require_GET
 def auth_check(request):
     """API endpoint to check if user is authenticated"""

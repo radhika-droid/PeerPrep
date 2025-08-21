@@ -11,6 +11,11 @@ urlpatterns = [
     path('about/', views.about, name='about'),
     path('contact/', views.contact, name='contact'),
     path("forgot-password/", views.forgot_password, name="forgot_password"),
+
+    #adding edit pagw ka url here
+    # urls.py
+
+
     
     # Success Stories URLs
     path('success-stories/', views.success_stories, name='success_stories'),
