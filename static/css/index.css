@@ -12,6 +12,17 @@ body {
     overflow-x: hidden;
     position: relative;
 }
+.cursor-dot {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ff9800;   /* orange glow */
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 8px rgba(255, 152, 0, 0.6);
+  transition: left 0.15s linear, top 0.15s linear;
+}
 
 /* Floating background orbs */
 .bg-orb {

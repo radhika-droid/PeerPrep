@@ -1,278 +1,72 @@
+
 <style>
-  .footer {
-        position: relative;
-        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-        color: #fff;
-        padding: 60px 0 20px;
-        margin-top: 40px;
-        overflow: hidden;
-        box-shadow: 0 -5px 30px rgba(0, 191, 255, 0.1);
-  }
-  .footer::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 1px;
-        background: linear-gradient(90deg, transparent, #00bfff, transparent);
-    }
-
-    .footer::after {
-        content: '';
-        position: absolute;
-        top: -30px;
-        right: -30px;
-        width: 60px;
-        height: 60px;
-        background: radial-gradient(circle, rgba(255, 152, 0, 0.15) 0%, transparent 70%);
-        border-radius: 50%;
-        animation: pulse 4s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-        0%, 100% { transform: scale(1); opacity: 0.3; }
-        50% { transform: scale(1.2); opacity: 0.6; }
-    }
-
-    .footer-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 20px;
-    }
-
-    .footer-content {
-        display: grid;
-        grid-template-columns: 2fr 1fr 1fr 1fr;
-        gap: 40px;
-        margin-bottom: 40px;
-    }
-
-    .footer-section h3 {
-        color: #00bfff;
-        font-size: 1.3rem;
-        font-weight: 700;
-        margin-bottom: 20px;
-        position: relative;
-    }
-
-    .footer-section h3::after {
-        content: '';
-        position: absolute;
-        bottom: -8px;
-        left: 0;
-        width: 40px;
-        height: 2px;
-        background: linear-gradient(90deg, #00bfff, #ff9800);
-        border-radius: 2px;
-    }
-
-    .footer-brand {
-        max-width: 300px;
-    }
-
-    .footer-brand .logo {
-        display: flex;
-        align-items: center;
-        margin-bottom: 20px;
-        font-size: 1.8rem;
-        font-weight: 900;
-        color: white;
-    }
-
-    .footer-brand .logo-icon {
-        width: 40px;
-        height: 40px;
-        background: linear-gradient(135deg,#3b82f6, #1d4ed8);
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-right: 12px;
-        color: #fff;
-        font-weight: 900;
-        font-size: 1.2rem;
-    }
-
-    .footer-description {
-        color: #b0b0b0;
-        line-height: 1.6;
-        margin-bottom: 20px;
-    }
-
-    .footer-links {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-
-    .footer-links li {
-        margin-bottom: 12px;
-    }
-
-    .footer-links a {
-        color: #e0e0e0;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        position: relative;
-        padding-left: 15px;
-    }
-
-    .footer-links a::before {
-        content: '→';
-        position: absolute;
-        left: 0;
-        color: #00bfff;
-        opacity: 0;
-        transform: translateX(-10px);
-        transition: all 0.3s ease;
-    }
-
-    .footer-links a:hover {
-        color: #00bfff;
-        transform: translateX(5px);
-    }
-
-    .footer-links a:hover::before {
-        opacity: 1;
-        transform: translateX(0);
-    }
-
-    .contact-info {
-        color: #b0b0b0;
-        line-height: 1.8;
-    }
-
-    .contact-info strong {
-        color: #fff;
-        display: block;
-        margin-bottom: 5px;
-    }
-
-    .social-links {
-        display: flex;
-        gap: 15px;
-        margin-top: 20px;
-    }
-
-    .social-links a {
-        width: 40px;
-        height: 40px;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #fff;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        font-weight: bold;
-    }
-
-    .social-links a:hover {
-        background: linear-gradient(45deg, #00bfff, #ff9800);
-        transform: translateY(-3px);
-        box-shadow: 0 5px 15px rgba(0, 191, 255, 0.3);
-    }
-
-    .footer-bottom {
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-        padding-top: 30px;
-        text-align: center;
-        color: #b0b0b0;
-    }
-
-    .footer-bottom p {
-        margin: 0;
-        font-size: 0.9rem;
-    }
-
-    /* Responsive Design */
-    @media (max-width: 768px) {
-        .footer-content {
-            grid-template-columns: 1fr;
-            gap: 30px;
-            text-align: center;
-        }
-
-        .footer-brand {
-            max-width: 100%;
-        }
-
-        .footer-section h3::after {
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        .social-links {
-            justify-content: center;
-        }
-    }
-</style>
-
-<footer class="footer">
-    <div class="footer-container">
-        <div class="footer-content">
-
-            <!-- Brand Section -->
-            <div class="footer-section footer-brand">
-                <div class="logo">
-                    <div class="logo-icon">P</div>
-                    Peer Prep
-                </div>
-                <p class="footer-description">
-                    A web-based Project Admin dashboard designed to simplify the management of open source projects. 
-                    Streamline collaboration and improve project workflows.
-                </p>
-            </div>
-
-            <!-- Quick Links -->
-            <div class="footer-section">
-                <h3>Quick Links</h3>
-                <ul class="footer-links">
-                    <li><a href="{% url 'index' %}">Home</a></li>
-                    <li><a href="{% url 'feature' %}">Features</a></li>
-                    <li><a href="{% url 'about' %}">About Us</a></li>
-                    <li><a href="{% url 'contact' %}">Contact</a></li>
-
-                </ul>
-            </div>
-
-            <!-- Account -->
-            <div class="footer-section">
-                <h3>Account</h3>
-                <ul class="footer-links">
-                    {% if user.is_authenticated %}
-                        <li><a href="{% url 'dashboard' %}">My Dashboard</a></li>
-                        <li><a href="#">Profile Settings</a></li>
-                        <li><a href="{% url 'logout' %}">Logout</a></li>
-                    {% else %}
-                        <li><a href="{% url 'login' %}">Login</a></li>
-                        <li><a href="{% url 'register' %}">Register</a></li>
-                    {% endif %}
-                </ul>
-            </div>
-
-            <!-- Contact Info -->
-            <div class="footer-section">
-                <h3>Get in Touch</h3>
-                <div class="contact-info">
-                    <strong>Email:</strong>
-                    hello@peerprep.com
-                    support@peerprep.com
-                    <br><br>
-                    <strong>Call us</strong>
-                    +1 (555) 123-4567
-                    Mon-Fri 9AM-6PM EST
-                    <br><br>
-                    <strong>Support:</strong>
-                    24/7 Community Support
-                </div>
-            </div>
-        </div>
-
-        <div class="footer-bottom">
-            <p>&copy; 2025 PeerPrep. All rights reserved. Built with ❤️ for the open source community.</p>
-        </div>
-    </div>
+.footer { 
+  background: #222; color: #fff; text-align: center; padding: 20px 0; margin-top: 40px; } 
+.footer a { color: #ff9800; margin: 0 8px; text-decoration: none; transition: color 0.3s ease; } 
+.footer a:hover { color: #fff176; } 
+</style> 
+<footer class="footer"> 
+  <p>&copy; 2025 PeerPrep. All rights reserved.</p> <p> <a href="{% url 'about' %}">About</a> | <a href="{% url 'contact' %}">Contact</a> | <a href="{% url 'index' %}">Home</a> 
+  </p> 
 </footer>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    // Main ball (replaces cursor)
+    const mainBall = document.createElement("div");
+    mainBall.className = "cursor-main";
+    document.body.appendChild(mainBall);
+
+    document.addEventListener("mousemove", (e) => {
+        mainBall.style.left = `${e.pageX}px`;
+        mainBall.style.top = `${e.pageY}px`;
+
+        // Trail effect
+        const trail = document.createElement("div");
+        trail.className = "cursor-trail";
+        trail.style.left = `${e.pageX}px`;
+        trail.style.top = `${e.pageY}px`;
+        document.body.appendChild(trail);
+
+        setTimeout(() => {
+            trail.remove();
+        }, 500);
+    });
+});
+</script>
+
+<style>
+/* Hide the default mouse cursor */
+body {
+  cursor: none;
+}
+
+/* Main cursor ball */
+.cursor-main {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: rgb(107, 107, 197);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 10px rgba(255, 152, 0, 0.8);
+}
+
+/* Trail dots */
+.cursor-trail {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgb(107, 107, 197);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  animation: fadeTrail 0.5s linear forwards;
+}
+
+@keyframes fadeTrail {
+  from { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  to { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+}
+</style>
