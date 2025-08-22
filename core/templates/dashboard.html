@@ -23,7 +23,14 @@
             <ul class="nav-menu">
                 <li><a href="{% url 'dashboard' %}" class="nav-link active">Dashboard</a></li>
                 <li><a href="/" class="nav-link">Home</a></li>
-                <li><a href="{% url 'logout' %}" class="nav-link">Logout</a></li>
+                <li>
+    <form method="post" action="{% url 'logout' %}" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="nav-link" style="background:none; border:none; color:white; font-size:1rem; cursor:pointer;">
+            Logout
+        </button>
+    </form>
+</li>
             </ul>
         </div>
     </nav>
