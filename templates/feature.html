@@ -17,10 +17,9 @@
     <!-- Navbar -->
     <nav class="navbar">
         <div class="nav-container">
-             <div class="logo">
-                <img src="{% static 'logo/peerperp-dark-removebg.png' %}" alt="PeerPrep Logo" class="logo-icon">
-                <img src="{% static 'logo/peerperp-name-dark-removebg.png' %}" alt="PeerPrep Logo" class="logo-icon">
-            </div> 
+            <div class="logo">
+                <img src="/static/PeerPrep.png" alt="PeerPrep Logo">
+            </div>
             <ul class="nav-menu">
     <li><a href="{% url 'index' %}" class="nav-link active">Home</a></li>
     <li><a href="{% url 'feature' %}" class="nav-link">Features</a></li>
@@ -31,8 +30,8 @@
         <li><a href="{% url 'dashboard' %}" class="nav-link">Dashboard</a></li>
         <li><a href="{% url 'logout' %}" class="nav-link">Logout</a></li>
     {% else %}
-        <li><a href="{% url 'login' %}" class="nav-link">Login / Register</a></li>
-       <!-- <li><a href="{% url 'register' %}" class="nav-link">Register</a></li>-->
+        <li><a href="{% url 'login' %}" class="nav-link">Login</a></li>
+        <li><a href="{% url 'register' %}" class="nav-link">Register</a></li>
     {% endif %}
 </ul>
 
@@ -64,16 +63,6 @@
                         <h3 class="feature-title">Goal Tracking</h3>
                         <p class="feature-description">Monitor your progress and achieve your learning objectives with detailed analytics.</p>
                     </div>
-                    <a href="{% url 'success_stories' %}">
-                        <div class="feature-card">
-                            <div class="feature-icon">🏆</div>
-                            <h3 class="feature-title">Success Stories</h3>
-                            <p class="feature-description">Read success stories of your peers from around the world. Share your Journey.</p>
-                        </div>
-                    </a>
-                    
-                    
-                    
                 </div>
             </div>
         </section>

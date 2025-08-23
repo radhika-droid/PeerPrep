@@ -12,17 +12,6 @@ body {
     overflow-x: hidden;
     position: relative;
 }
-.cursor-dot {
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #ff9800;   /* orange glow */
-  pointer-events: none;
-  transform: translate(-50%, -50%);
-  box-shadow: 0 0 8px rgba(255, 152, 0, 0.6);
-  transition: left 0.15s linear, top 0.15s linear;
-}
 
 /* Floating background orbs */
 .bg-orb {
@@ -85,40 +74,21 @@ body {
     justify-content: space-between;
     align-items: center;
 }
-
-/* .logo {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: white;
-}
-
-.logo-icon {
-    width: 40px;
-    height: 40px;
-    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-    border-radius: 10px;
-    display: flex;
+.logo {
+    width: 60px;            
+    height: 60px;            
     align-items: center;
     justify-content: center;
-    font-size: 1.2rem;
-    color: white;
-} */
-
-.logo {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    /* spacing between icon + text if you add text later */
+    background: rgb(193, 172, 255); 
+    border-radius: 8px;      
+    overflow: hidden;       
 }
 
-.logo-icon {
-    height: 40px;
-    /* lock image height */
-    width: auto;
-    /* keep proportions */
+.logo img{
+   width: 100%;
+   height: 100%;
+   object-fit: contain;
+   display: block; 
 }
 
 .nav-menu {
@@ -508,38 +478,4 @@ body {
     .right-section {
         padding: 2rem;
     }
-}
-/* Modal */
-.modal {
-    display: none; 
-    position: fixed; 
-    z-index: 10000; 
-    left: 0;
-    top: 0;
-    width: 100%; 
-    height: 100%; 
-    overflow: auto; 
-    background-color: rgba(0,0,0,0.7);
-}
-
-.modal-content {
-    background-color: #1e293b;
-    margin: 10% auto; 
-    padding: 2rem;
-    border: 1px solid #3b82f6;
-    width: 50%; 
-    border-radius: 16px;
-    color: white;
-}
-
-.modal .close {
-    color: #aaa;
-    float: right;
-    font-size: 2rem;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.modal .close:hover {
-    color: #3b82f6;
 }
