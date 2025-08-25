@@ -3,6 +3,7 @@ name: PR Points Tracker
 on:
   pull_request:
     types: [closed]
+  workflow_dispatch: 
 
 jobs:
   track-points:
