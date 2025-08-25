@@ -1,0 +1,33 @@
+name: PR Counter
+
+on:
+  pull_request:
+    types: [opened, closed]
+
+jobs:
+  count-prs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Count PRs by User
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: pulls } = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'all',
+              per_page: 100
+            });
+
+            const counts = {};
+            for (const pr of pulls) {
+              const user = pr.user.login;
+              counts[user] = (counts[user] || 0) + 1;
+            }
+
+            console.log("PR Counts:", counts);
