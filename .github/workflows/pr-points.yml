@@ -1,0 +1,71 @@
+name: PR Points Tracker
+
+on:
+  workflow_dispatch:   # Allows you to run manually
+  pull_request:
+    types: [closed]    # Runs when a PR is closed (merged or not)
+
+permissions:
+  contents: write   # <-- this gives GITHUB_TOKEN write access
+
+jobs:
+  track-prs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          # If you are using Fine-grained PAT:
+          token: ${{ secrets.GH_TOKEN }}
+          # If you want to just use the default GITHUB_TOKEN, replace with:
+          # token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: pip install requests PyGithub
+
+      - name: Run PR Points Script
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          python - <<'EOF'
+          import os
+          from github import Github
+
+          token = os.getenv("GITHUB_TOKEN")
+          repo_name = os.getenv("REPO")
+          g = Github(token)
+          repo = g.get_repo(repo_name)
+
+          # Dictionary to store points
+          points = {}
+
+          # Fetch all closed PRs
+          for pr in repo.get_pulls(state="closed"):
+              if pr.merged:  # Only count merged PRs
+                  user = pr.user.login
+                  points[user] = points.get(user, 0) + 10  # 10 points per PR
+
+          # Save results
+          with open("PR_POINTS.md", "w") as f:
+              f.write("# 🏆 PR Points Tracker\n\n")
+              for user, score in sorted(points.items(), key=lambda x: x[1], reverse=True):
+                  f.write(f"- **{user}**: {score} points\n")
+
+          print("✅ PR points calculated and saved to PR_POINTS.md")
+          EOF
+
+      - name: Commit & Push Results
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add PR_POINTS.md
+          git commit -m "Update PR Points" || echo "No changes to commit"
+          git push
+
