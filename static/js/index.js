@@ -106,3 +106,46 @@ document.querySelectorAll('.form-input').forEach(input => {
         this.parentElement.style.transform = 'translateY(0)';
     });
 });
+
+// Dark Mode to Light Mode toggle
+
+const THEME_KEY="theme";
+
+function applyThemeFromStorage() { 
+  let theme = localStorage.getItem(THEME_KEY); 
+  if (!theme) {
+    theme = "dark";
+    localStorage.setItem(THEME_KEY, theme);
+  }
+
+  if (theme === "light") { 
+    document.body.classList.add("light-mode");
+    document.body.classList.remove("dark-mode"); 
+    setLightModeIcon(true); 
+  } else { 
+    document.body.classList.remove("light-mode");
+    document.body.classList.add("dark-mode");
+    setLightModeIcon(false); 
+  } 
+}
+
+function setLightModeIcon(isLight){
+  const icon = document.getElementById("modeToggle").querySelector("i"); 
+  if (!icon) return; 
+  if (isLight) { 
+    icon.classList.remove("fa-sun"); 
+    icon.classList.add("fa-moon"); 
+  } else { 
+    icon.classList.remove("fa-moon"); 
+    icon.classList.add("fa-sun"); 
+  } 
+}
+function toggleMode()
+{
+    const isNowLight=!document.body.classList.contains("light-mode");
+    document.body.classList.toggle("light-mode");
+    setLightModeIcon(isNowLight);
+    localStorage.setItem(THEME_KEY, isNowLight ? "light" : "dark");
+    applyThemeFromStorage();
+}
+window.addEventListener("DOMContentLoaded", applyThemeFromStorage);

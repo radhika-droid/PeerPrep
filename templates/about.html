@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About - PeerPrep</title>
     <link rel="stylesheet" href="{% static 'css/index.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         body {
             color: #f0f0f0;
@@ -106,6 +107,9 @@
                 <img src="/static/PeerPrep.png" alt="PeerPrep Logo">
             </div>
             <ul class="nav-menu">
+                <button class="mode-toggle" id="modeToggle" title="Toggle Mode" onclick="toggleMode()">
+                        <i class="fas fa-moon"></i>
+                </button>
                 <li><a href="{% url 'index' %}" class="nav-link">Home</a></li>
                 <li><a href="{% url 'feature' %}" class="nav-link">Features</a></li>
                 <li><a href="{% url 'about' %}" class="nav-link active">About</a></li>
@@ -165,5 +169,6 @@
         popular developer tools. The journey of PeerPrep has just begun, and the future looks exciting.</p>
     </section>
     {% include "footer.html" %}
+    <script src="{% static 'js/index.js' %}"></script>
 </body>
 </html>

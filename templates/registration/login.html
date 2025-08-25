@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Peer Prep</title>
     <link rel="stylesheet" href="{% static 'css/index.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
     <!-- Background Orbs -->
@@ -21,6 +22,9 @@
                 <img src="/static/PeerPrep.png" alt="PeerPrep Logo">
             </div>
             <ul class="nav-menu">
+                <button class="mode-toggle" id="modeToggle" title="Toggle Mode" onclick="toggleMode()">
+                    <i class="fas fa-moon"></i>
+                </button>
                 <li><a href="/" class="nav-link">Home</a></li>
                 <li><a href="{% url 'register' %}" class="nav-link">Register</a></li>
             </ul>
@@ -79,5 +83,6 @@
             </div>
         </div>
     </main>
+    <script src="{% static 'js/index.js' %}"></script>
 </body>
 </html>
