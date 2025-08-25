@@ -164,6 +164,118 @@
         <p>We are constantly working on new features, such as advanced analytics, AI-powered contribution recommendations, and integrations with 
         popular developer tools. The journey of PeerPrep has just begun, and the future looks exciting.</p>
     </section>
+
+    <!-- 🔹 Contributors Section -->
+    <section class="about-section">
+    <h2>Our Contributors</h2>
+    <div class="carousel-container">
+        <div id="contributors-carousel" class="carousel-track">
+            <!-- Contributor cards will load dynamically here -->
+        </div>
+    </div>
+    <p style="text-align:center; margin-top:1.5rem; font-size:1rem; color:#aaa;">
+        Want to see your name here? Contribute to PeerPrep on 
+        <a href="https://github.com/radhika-droid/PeerPrep" target="_blank" style="color:#00e6ff;">GitHub</a>.
+    </p>
+</section>
+
+<style>
+.carousel-container {
+    overflow: hidden;
+    max-width: 1000px;
+    margin: auto;
+    position: relative;
+}
+
+.carousel-track {
+    display: flex;
+    transition: transform 0.6s ease-in-out;
+}
+
+.card {
+    min-width: 300px;
+    margin: 0 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: 0 0 15px #00e6ff;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card img {
+    width: 90px;
+    height: 100px;
+    border-radius: 50%;
+    margin-bottom: 1rem;
+    border: 3px solid #00e6ff;
+}
+</style>
+
+<script>
+    async function loadContributors() {
+        try {
+            const response = await fetch("https://api.github.com/repos/radhika-droid/PeerPrep/pulls?state=closed&per_page=100");
+            const pulls = await response.json();
+
+            const merged = pulls.filter(pr => pr.merged_at !== null);
+
+            const contributorsMap = {};
+            merged.forEach(pr => {
+                if (pr.user && !contributorsMap[pr.user.login]) {
+                    contributorsMap[pr.user.login] = {
+                        login: pr.user.login,
+                        avatar: pr.user.avatar_url,
+                        url: pr.user.html_url
+                    };
+                }
+            });
+
+            const contributorsDiv = document.getElementById("contributors-carousel");
+            Object.values(contributorsMap).forEach(c => {
+                const card = document.createElement("div");
+                card.className = "card";
+                card.innerHTML = `
+                    <img src="${c.avatar}" alt="${c.login}">
+                    <h3>@${c.login}</h3>
+                    <a href="${c.url}" target="_blank">View Profile</a>
+                `;
+                contributorsDiv.appendChild(card);
+            });
+
+            if (Object.keys(contributorsMap).length === 0) {
+                contributorsDiv.innerHTML = "<p>No contributors yet. Be the first!</p>";
+            } else {
+                startCarousel();
+            }
+        } catch (error) {
+            console.error("Error loading contributors:", error);
+            document.getElementById("contributors-carousel").innerHTML = "<p>Failed to load contributors.</p>";
+        }
+    }
+
+    function startCarousel() {
+        const track = document.getElementById("contributors-carousel");
+        const cards = track.querySelectorAll(".card");
+        let index = 0;
+        const visible = 3; // Show 3 at a time
+        const cardWidth = cards[0].offsetWidth + 20; // card width + margin
+
+        setInterval(() => {
+            index++;
+            if (index > cards.length - visible) {
+                index = 0; // reset to start
+            }
+            track.style.transform = `translateX(-${index * cardWidth}px)`;
+        }, 3000); // change every 3s
+    }
+
+    loadContributors();
+</script>
+{% load static %}
+
+<script src="{% static 'js/cursorTrail.js' %}"></script>
+
     {% include "footer.html" %}
 </body>
 </html>
