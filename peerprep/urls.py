@@ -1,27 +1,36 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
-from core.views import (
-    index, contact_success, register, dashboard,
-    home, feature, about, contact,forgot_password
-)
+from core import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', index, name='index'),
-    path('home/', home, name='home'),
-    path('feature/', feature, name='feature'),
-    path('about/', about, name='about'),
-    path('contact/', contact, name='contact'),
-
-    path('contact-success/', contact_success, name='contact_success'),
-    path('register/', register, name='register'),
+    
+    # Main pages
+    path('', views.index, name='index'),
+    path('home/', views.home, name='home'),
+    path('feature/', views.feature, name='feature'),
+    path('about/', views.about, name='about'),
+    path('contact/', views.contact, name='contact'),
+    
+    # Auth pages
+    path('contact-success/', views.contact_success, name='contact_success'),
+    path('register/', views.register, name='register'),
     path('login/', auth_views.LoginView.as_view(), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
-    path('dashboard/', dashboard, name='dashboard'),
-    path('forgot-password/', forgot_password, name='forgot_password'),
+    path('dashboard/', views.dashboard, name='dashboard'),
+    path('forgot-password/', views.forgot_password, name='forgot_password'),
+    
+    # Success Stories
+    path('success-stories/', views.success_stories, name='success_stories'),
+    path('auth-check/', views.auth_check, name='auth_check'),
+    path('get-success-stories/', views.get_success_stories, name='get_success_stories'),
+    path('api/success-stories/', views.get_success_stories, name='api_success_stories'),
+    path('add-success-story/', views.add_success_story, name='add_success_story'),
+    path('react-to-story/<int:story_id>/', views.react_to_story, name='react_to_story'),
+    path('user-reactions/<int:story_id>/', views.get_user_reactions, name='get_user_reactions'),
 ]
 
 if settings.DEBUG:

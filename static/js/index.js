@@ -106,6 +106,59 @@ document.querySelectorAll('.form-input').forEach(input => {
         this.parentElement.style.transform = 'translateY(0)';
     });
 });
+// Adding success stories
+
+document.addEventListener("DOMContentLoaded", function () {
+    const modal = document.getElementById("storyModal");
+    const btn = document.getElementById("addStoryBtn");
+    const span = document.querySelector(".modal .close");
+    const form = document.getElementById("storyForm");
+    const storiesContainer = document.getElementById("storiesContainer");
+
+    // Open modal
+    btn?.addEventListener("click", () => modal.style.display = "block");
+
+    // Close modal
+    span?.addEventListener("click", () => modal.style.display = "none");
+    window.addEventListener("click", e => {
+        if (e.target == modal) modal.style.display = "none";
+    });
+
+    // AJAX form submission
+    form?.addEventListener("submit", function (e) {
+        e.preventDefault();
+        const url = form.action;
+        const formData = new FormData(form);
+
+        fetch(url, {
+            method: "POST",
+            headers: { "X-Requested-With": "XMLHttpRequest" },
+            body: formData,
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Close modal
+                modal.style.display = "none";
+                form.reset();
+
+                // Append new story
+                const newStory = document.createElement("div");
+                newStory.classList.add("feature-card");
+                newStory.innerHTML = `
+                    <div class="feature-icon">🏆</div>
+                    <h3 class="feature-title">${data.title}</h3>
+                    <p class="feature-description">${data.story}</p>
+                    <small>By ${data.user}</small>
+                `;
+                storiesContainer.prepend(newStory);
+            } else {
+                alert("Error: " + JSON.stringify(data.errors));
+            }
+        })
+        .catch(err => console.error(err));
+    });
+});
 
 // Dark Mode to Light Mode toggle
 
