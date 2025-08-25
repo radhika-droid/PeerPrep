@@ -5,13 +5,21 @@ on:
   pull_request:
     types: [closed]    # Runs when a PR is closed (merged or not)
 
+permissions:
+  contents: write   # <-- this gives GITHUB_TOKEN write access
+
 jobs:
   track-prs:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          # If you are using Fine-grained PAT:
+          token: ${{ secrets.GH_TOKEN }}
+          # If you want to just use the default GITHUB_TOKEN, replace with:
+          # token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -56,7 +64,8 @@ jobs:
       - name: Commit & Push Results
         run: |
           git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add PR_POINTS.md
-          git commit -m "Update PR Points"
+          git commit -m "Update PR Points" || echo "No changes to commit"
           git push
+
