@@ -6,37 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PeerPrep - Collaborative Learning Platform</title>
     <link rel="stylesheet" href="{% static 'css/index.css' %}">
-    
-    <style>
-        /* Hero Section */
-        .hero {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            min-height: 100vh;
-            padding-top: 6rem; /* pushes content down below navbar */
-        }
-
-        .hero h1 {
-            font-size: 4rem;
-            font-weight: 900;
-            background: linear-gradient(90deg, #00bfff, #ffffff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-transform: uppercase;
-            margin-bottom: 1rem;
-        }
-
-        .hero p {
-            font-size: 1.5rem;
-            color: #e0e0e0;
-            max-width: 700px;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
+    
     <!-- Background Orbs -->
     <div class="bg-orb bg-orb-1"></div>
     <div class="bg-orb bg-orb-2"></div>
@@ -50,6 +23,9 @@
                 <img src="/static/PeerPrep.png" alt="PeerPrep Logo">
             </div>
             <ul class="nav-menu">
+                    <button class="mode-toggle" id="modeToggle" title="Toggle Mode" onclick="toggleMode()">
+                    <i class="fas fa-moon"></i>
+                    </button>
                 <li><a href="{% url 'index' %}" class="nav-link active">Home</a></li>
                 <li><a href="{% url 'feature' %}" class="nav-link">Features</a></li>
                 <li><a href="{% url 'about' %}" class="nav-link">About</a></li>
@@ -76,6 +52,6 @@
             PeerPrep aims to improve collaboration and streamline project workflows for maintainers and contributors alike. </p>
     </section>
     {% include "footer.html" %}
-
+     <script src="{% static 'js/index.js' %}"></script>
 </body>
 </html>

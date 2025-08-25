@@ -209,3 +209,69 @@
         }
     }
 </style>
+<footer class="footer">
+    <div class="footer-container">
+        <div class="footer-content">
+
+            <!-- Brand Section -->
+            <div class="footer-section footer-brand">
+                <div class="logo">
+                    <img src="/static/PeerPrep.png" alt="PeerPrep Logo">
+                </div>
+                <p class="footer-description">
+                    A web-based Project Admin dashboard designed to simplify the management of open source projects. 
+                    Streamline collaboration and improve project workflows.
+                </p>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="{% url 'index' %}">Home</a></li>
+                    <li><a href="{% url 'feature' %}">Features</a></li>
+                    <li><a href="{% url 'about' %}">About Us</a></li>
+                    <li><a href="{% url 'contact' %}">Contact</a></li>
+
+                </ul>
+            </div>
+
+            <!-- Account -->
+            <div class="footer-section">
+                <h3>Account</h3>
+                <ul class="footer-links">
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url 'dashboard' %}">My Dashboard</a></li>
+                        <li><a href="#">Profile Settings</a></li>
+                        <li><a href="{% url 'logout' %}">Logout</a></li>
+                    {% else %}
+                        <li><a href="{% url 'login' %}">Login</a></li>
+                        <li><a href="{% url 'register' %}">Register</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+
+            <!-- Contact Info -->
+            <div class="footer-section">
+                <h3>Get in Touch</h3>
+                <div class="contact-info">
+                    <strong>Email:</strong>
+                    hello@peerprep.com
+                    support@peerprep.com
+                    <br><br>
+                    <strong>Call us</strong>
+                    +1 (555) 123-4567
+                    Mon-Fri 9AM-6PM EST
+                    <br><br>
+                    <strong>Support:</strong>
+                    24/7 Community Support
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2025 PeerPrep. All rights reserved. Built with ❤️ for the open source community.</p>
+        </div>
+    </div>
+    
+</footer>
