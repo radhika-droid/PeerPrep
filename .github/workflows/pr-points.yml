@@ -1,52 +1,33 @@
-name: PR Counter
+name: PR Level Points
 
 on:
   pull_request:
-    types: [opened, closed]
+    types: [opened, synchronize, reopened, labeled]
 
 jobs:
-  count-prs:
+  assign-points:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v3
+      - name: Check PR labels
+        id: check
+        run: |
+          echo "LEVEL=0" >> $GITHUB_ENV
+          labels=$(jq -r '.pull_request.labels[].name' < "$GITHUB_EVENT_PATH")
+          echo "Labels: $labels"
 
-      - name: Count PRs by User
-        uses: actions/github-script@v6
+          if echo "$labels" | grep -iq "level 1"; then
+            echo "LEVEL=3" >> $GITHUB_ENV
+          elif echo "$labels" | grep -iq "level 2"; then
+            echo "LEVEL=7" >> $GITHUB_ENV
+          elif echo "$labels" | grep -iq "level 3"; then
+            echo "LEVEL=10" >> $GITHUB_ENV
+          fi
+
+      - name: Comment points on PR
+        uses: peter-evans/create-or-update-comment@v3
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { data: pulls } = await github.rest.pulls.list({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              state: 'all',
-              per_page: 100
-            });
-
-            const counts = {};
-            for (const pr of pulls) {
-              const user = pr.user.login;
-              counts[user] = (counts[user] || 0) + 1;
-            }
-
-            function getLevel(points) {
-              if (points >= 10) return "Level 3";
-              if (points >= 7) return "Level 2";
-              if (points >= 3) return "Level 1";
-              return "Beginner";
-            }
-
-            const results = {};
-            for (const user in counts) {
-              const prCount = counts[user];
-              let points = 0;
-
-              if (prCount >= 10) points = 10;
-              else if (prCount >= 7) points = 7;
-              else if (prCount >= 3) points = 3;
-
-              results[user] = { PRs: prCount, Points: points, Level: getLevel(points) };
-            }
-
-            console.log("PR Levels:", results);
+          token: ${{ secrets.GH_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            🎯 PR Points Assigned: **${{ env.LEVEL }}**
+            (Based on PR label: Level 1 → 3, Level 2 → 7, Level 3 → 10)
