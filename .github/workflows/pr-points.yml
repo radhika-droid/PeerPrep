@@ -1,33 +1,39 @@
-name: PR Level Points
+name: PR Points Tracker
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, labeled]
+    types:
+      - closed
 
 jobs:
-  assign-points:
+  track-points:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+
     steps:
-      - name: Check PR labels
-        id: check
-        run: |
-          echo "LEVEL=0" >> $GITHUB_ENV
-          labels=$(jq -r '.pull_request.labels[].name' < "$GITHUB_EVENT_PATH")
-          echo "Labels: $labels"
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-          if echo "$labels" | grep -iq "level 1"; then
-            echo "LEVEL=3" >> $GITHUB_ENV
-          elif echo "$labels" | grep -iq "level 2"; then
-            echo "LEVEL=7" >> $GITHUB_ENV
-          elif echo "$labels" | grep -iq "level 3"; then
-            echo "LEVEL=10" >> $GITHUB_ENV
-          fi
-
-      - name: Comment points on PR
-        uses: peter-evans/create-or-update-comment@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
         with:
-          token: ${{ secrets.GH_TOKEN }}
-          issue-number: ${{ github.event.pull_request.number }}
-          body: |
-            🎯 PR Points Assigned: **${{ env.LEVEL }}**
-            (Based on PR label: Level 1 → 3, Level 2 → 7, Level 3 → 10)
+          node-version: '16'
+
+      - name: Assign Points Based on Labels
+        id: assign-points
+        run: |
+          echo "POINTS=0" >> $GITHUB_ENV
+          for label in "${{ toJSON(github.event.pull_request.labels) }}"; do
+            if [[ "$label" == *"level1"* ]]; then
+              echo "POINTS=3" >> $GITHUB_ENV
+            elif [[ "$label" == *"level2"* ]]; then
+              echo "POINTS=7" >> $GITHUB_ENV
+            elif [[ "$label" == *"level3"* ]]; then
+              echo "POINTS=10" >> $GITHUB_ENV
+            fi
+          done
+
+      - name: Send Points to Google Sheets
+        run: |
+          echo "PR #${{ github.event.pull_request.number }} merged with $POINTS points"
+          # Here you can add code to push data to Google Sheets via API / n8n / Apps Script Webhook
