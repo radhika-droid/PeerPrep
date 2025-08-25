@@ -1,0 +1,51 @@
+name: PR Points Tracker
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  track-points:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Calculate points
+        id: calculate
+        run: |
+          LABELS=$(echo "${{ toJson(github.event.pull_request.labels) }}" | jq -r '.[].name')
+          POINTS=0
+
+          if echo "$LABELS" | grep -q "level1"; then
+            POINTS=3
+          elif echo "$LABELS" | grep -q "level2"; then
+            POINTS=7
+          elif echo "$LABELS" | grep -q "level3"; then
+            POINTS=10
+          fi
+
+          echo "points=$POINTS" >> $GITHUB_OUTPUT
+
+      - name: Update points.csv
+        run: |
+          FILE="points.csv"
+          if [ ! -f "$FILE" ]; then
+            echo "PR,Author,Points" > $FILE
+          fi
+          echo "${{ github.event.pull_request.number }},${{ github.event.pull_request.user.login }},${{ steps.calculate.outputs.points }}" >> $FILE
+
+      - name: Commit changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add points.csv
+          git commit -m "Update points for PR #${{ github.event.pull_request.number }}"
+          git push
