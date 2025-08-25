@@ -159,3 +159,51 @@ document.addEventListener("DOMContentLoaded", function () {
         .catch(err => console.error(err));
     });
 });
+// Add this new section for the login form
+document.querySelector('.login-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const submitBtn = this.querySelector('.submit-btn');
+    const originalText = submitBtn.textContent;
+    const formData = new FormData(this);
+
+    submitBtn.textContent = 'Signing In...';
+    submitBtn.disabled = true;
+
+    // The fetch URL should be the login endpoint
+    fetch(this.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            submitBtn.textContent = 'Success! ✓';
+            submitBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+            showNotification('Login successful!', 'success');
+
+            // Redirect to dashboard or home page on successful login
+            window.location.href = data.redirect_url || '{% url "dashboard" %}';
+        } else {
+            submitBtn.textContent = 'Try Again';
+            submitBtn.disabled = false;
+            showNotification(data.message || 'Please check your credentials and try again.', 'error');
+
+            setTimeout(() => {
+                submitBtn.textContent = originalText;
+            }, 2000);
+        }
+    })
+    .catch(error => {
+        submitBtn.textContent = 'Try Again';
+        submitBtn.disabled = false;
+        showNotification('Something went wrong. Please try again.', 'error');
+
+        setTimeout(() => {
+            submitBtn.textContent = originalText;
+        }, 2000);
+    });
+});

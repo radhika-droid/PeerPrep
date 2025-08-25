@@ -12,6 +12,33 @@ from .models import SuccessStory, StoryReaction
 from .forms import SuccessStoryForm
 import json
 from django.views.decorators.http import require_GET
+from django.contrib.auth import authenticate, login
+def user_login(request):
+    if request.method == 'POST':
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            # Handle AJAX login
+            data = request.POST
+            username = data.get('username')
+            password = data.get('password')
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return JsonResponse({'success': True, 'redirect_url': '/dashboard/'})
+            else:
+                return JsonResponse({'success': False, 'message': 'Invalid username or password.'})
+        else:
+            # Handle standard form login (if needed)
+            # You would typically use a form here, but this is a simplified example
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('dashboard')
+            else:
+                messages.error(request, 'Invalid username or password.')
+                return render(request, 'login.html')
+    return render(request, 'login.html')
 
 @require_GET
 def auth_check(request):
@@ -51,13 +78,16 @@ def register(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            username = form.cleaned_data.get('username')
-            messages.success(request, f'Account created for {username}! You can now log in.')
+            form.save()
+            messages.success(request, 'Account created successfully! You can now log in.')
             return redirect('login')
+        else:
+            # If the form is invalid, re-render the template with the form containing errors
+            messages.error(request, 'There was an error with your submission. Please correct the form fields.')
     else:
         form = UserCreationForm()
-    return render(request, 'registration/register.html', {'form': form})
+    
+    return render(request, 'register.html', {'form': form})
 
 def forgot_password(request):
     if request.method == "POST":
