@@ -1,52 +1,62 @@
 name: PR Points Tracker
 
 on:
+  workflow_dispatch:   # Allows you to run manually
   pull_request:
-    types: [closed]
-  workflow_dispatch: 
+    types: [closed]    # Runs when a PR is closed (merged or not)
 
 jobs:
-  track-points:
+  track-prs:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          node-version: 16
+          python-version: '3.x'
 
-      - name: Calculate points
-        id: calculate
+      - name: Install dependencies
+        run: pip install requests PyGithub
+
+      - name: Run PR Points Script
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
         run: |
-          LABELS=$(echo "${{ toJson(github.event.pull_request.labels) }}" | jq -r '.[].name')
-          POINTS=0
+          python - <<'EOF'
+          import os
+          from github import Github
 
-          if echo "$LABELS" | grep -q "level1"; then
-            POINTS=3
-          elif echo "$LABELS" | grep -q "level2"; then
-            POINTS=7
-          elif echo "$LABELS" | grep -q "level3"; then
-            POINTS=10
-          fi
+          token = os.getenv("GITHUB_TOKEN")
+          repo_name = os.getenv("REPO")
+          g = Github(token)
+          repo = g.get_repo(repo_name)
 
-          echo "points=$POINTS" >> $GITHUB_OUTPUT
+          # Dictionary to store points
+          points = {}
 
-      - name: Update points.csv
-        run: |
-          FILE="points.csv"
-          if [ ! -f "$FILE" ]; then
-            echo "PR,Author,Points" > $FILE
-          fi
-          echo "${{ github.event.pull_request.number }},${{ github.event.pull_request.user.login }},${{ steps.calculate.outputs.points }}" >> $FILE
+          # Fetch all closed PRs
+          for pr in repo.get_pulls(state="closed"):
+              if pr.merged:  # Only count merged PRs
+                  user = pr.user.login
+                  points[user] = points.get(user, 0) + 10  # 10 points per PR
 
-      - name: Commit changes
+          # Save results
+          with open("PR_POINTS.md", "w") as f:
+              f.write("# 🏆 PR Points Tracker\n\n")
+              for user, score in sorted(points.items(), key=lambda x: x[1], reverse=True):
+                  f.write(f"- **{user}**: {score} points\n")
+
+          print("✅ PR points calculated and saved to PR_POINTS.md")
+          EOF
+
+      - name: Commit & Push Results
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add points.csv
-          git commit -m "Update points for PR #${{ github.event.pull_request.number }}"
+          git add PR_POINTS.md
+          git commit -m "Update PR Points"
           git push
