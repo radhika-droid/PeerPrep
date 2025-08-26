@@ -25,6 +25,7 @@
             background: linear-gradient(90deg, #00bfff, #ffffff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-clip: text;
             text-transform: uppercase;
             margin-bottom: 1rem;
         }
@@ -57,7 +58,14 @@
 
                 {% if user.is_authenticated %}
                     <li><a href="{% url 'dashboard' %}" class="nav-link">Dashboard</a></li>
-                    <li><a href="{% url 'logout' %}" class="nav-link">Logout</a></li>
+                    <li>
+    <form method="post" action="{% url 'logout' %}" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="nav-link" style="background:none; border:none; color:white; font-size:1rem; cursor:pointer;">
+            Logout
+        </button>
+    </form>
+</li>
                 {% else %}
                     <li><a href="{% url 'login' %}" class="nav-link">Login</a></li>
                     <li><a href="{% url 'register' %}" class="nav-link">Register</a></li>
