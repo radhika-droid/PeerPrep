@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PeerPrep - Collaborative Learning Platform</title>
     <link rel="stylesheet" href="{% static 'css/index.css' %}">
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         /* Hero Section */
         .hero {
@@ -38,6 +38,7 @@
     </style>
 </head>
 <body>
+    
     <!-- Background Orbs -->
     <div class="bg-orb bg-orb-1"></div>
     <div class="bg-orb bg-orb-2"></div>
@@ -51,6 +52,9 @@
                 <img src="/static/PeerPrep.png" alt="PeerPrep Logo">
             </div>
             <ul class="nav-menu">
+                    <button class="mode-toggle" id="modeToggle" title="Toggle Mode" onclick="toggleMode()">
+                    <i class="fas fa-moon"></i>
+                    </button>
                 <li><a href="{% url 'index' %}" class="nav-link active">Home</a></li>
                 <li><a href="{% url 'feature' %}" class="nav-link">Features</a></li>
                 <li><a href="{% url 'about' %}" class="nav-link">About</a></li>
@@ -84,6 +88,6 @@
             PeerPrep aims to improve collaboration and streamline project workflows for maintainers and contributors alike. </p>
     </section>
     {% include "footer.html" %}
-
+     <script src="{% static 'js/index.js' %}"></script>
 </body>
 </html>
