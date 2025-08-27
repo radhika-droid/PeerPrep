@@ -7,6 +7,35 @@
     <title>PeerPrep - Collaborative Learning Platform</title>
     <link rel="stylesheet" href="{% static 'css/index.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        /* Hero Section */
+        .hero {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            min-height: 100vh;
+            padding-top: 6rem; /* pushes content down below navbar */
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: 900;
+            background: linear-gradient(90deg, #00bfff, #ffffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            color: #e0e0e0;
+            max-width: 700px;
+        }
+    </style>
 </head>
 <body>
     
@@ -33,7 +62,14 @@
 
                 {% if user.is_authenticated %}
                     <li><a href="{% url 'dashboard' %}" class="nav-link">Dashboard</a></li>
-                    <li><a href="{% url 'logout' %}" class="nav-link">Logout</a></li>
+                    <li>
+    <form method="post" action="{% url 'logout' %}" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="nav-link" style="background:none; border:none; color:white; font-size:1rem; cursor:pointer;">
+            Logout
+        </button>
+    </form>
+</li>
                 {% else %}
                     <li><a href="{% url 'login' %}" class="nav-link">Login</a></li>
                     <li><a href="{% url 'register' %}" class="nav-link">Register</a></li>
