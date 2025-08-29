@@ -20,6 +20,9 @@ urlpatterns = [
     path('react-to-story/<int:story_id>/', views.react_to_story, name='react_to_story'),
     path('user-reactions/<int:story_id>/', views.get_user_reactions, name='get_user_reactions'),
     path('api/success-stories/', views.get_success_stories, name='api_success_stories'),  # Simplified
-      path('api/auth-check/', views.auth_check, name='auth_check'),
+    path('api/auth-check/', views.auth_check, name='auth_check'),
+
+    path('faq/', views.faq_list, name='faq'),
+    path('faq/add/', views.add_faq, name='add_faq')
 
 ]

@@ -31,7 +31,11 @@ urlpatterns = [
     path('add-success-story/', views.add_success_story, name='add_success_story'),
     path('react-to-story/<int:story_id>/', views.react_to_story, name='react_to_story'),
     path('user-reactions/<int:story_id>/', views.get_user_reactions, name='get_user_reactions'),
+
+    path('faq/', views.faq_list, name='faq'),
+    path('faq/add/', views.add_faq, name='add_faq'),
 ]
+
 
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0])

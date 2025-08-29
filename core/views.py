@@ -13,6 +13,12 @@ from .forms import SuccessStoryForm
 import json
 from django.views.decorators.http import require_GET
 from django.contrib.auth import authenticate, login
+from django.shortcuts import render
+from .models import FAQ
+from django.contrib.auth.decorators import user_passes_test
+from django.views.decorators.http import require_POST
+
+
 def user_login(request):
     if request.method == 'POST':
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
@@ -299,4 +305,19 @@ def api_create_success_story(request):
             'error': str(e)
         }, status=500)
     
-    
+def faq_list(request):
+    faqs = FAQ.objects.all().order_by('-created_at')
+    return render(request, 'faq.html', {'faqs': faqs})
+
+@user_passes_test(lambda u: u.is_superuser)   # only admins can add FAQs
+@require_POST
+def add_faq(request):
+    """Handle FAQ submission from modal form"""
+    question = request.POST.get("question")
+    answer = request.POST.get("answer")
+    if question and answer:
+        FAQ.objects.create(question=question, answer=answer)
+        messages.success(request, "FAQ added successfully!")
+    else:
+        messages.error(request, "Both question and answer are required.")
+    return redirect("faq")
