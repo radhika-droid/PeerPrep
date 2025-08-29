@@ -21,6 +21,7 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('dashboard/', views.dashboard, name='dashboard'),
     path('forgot-password/', views.forgot_password, name='forgot_password'),
+    path("timetable/", views.timetable, name="timetable"),
     
     # Success Stories
     path('success-stories/', views.success_stories, name='success_stories'),

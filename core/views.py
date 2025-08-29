@@ -39,6 +39,8 @@ def user_login(request):
                 messages.error(request, 'Invalid username or password.')
                 return render(request, 'login.html')
     return render(request, 'login.html')
+def timetable(request):
+    return render(request, "timetable.html")
 
 @require_GET
 def auth_check(request):
@@ -296,3 +298,5 @@ def api_create_success_story(request):
             'success': False,
             'error': str(e)
         }, status=500)
+    
+    
