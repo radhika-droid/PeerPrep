@@ -11,6 +11,8 @@ urlpatterns = [
     path('about/', views.about, name='about'),
     path('contact/', views.contact, name='contact'),
     path("forgot-password/", views.forgot_password, name="forgot_password"),
+    path("timetable/", views.timetable, name="timetable"),
+
     
     # Success Stories URLs
     path('success-stories/', views.success_stories, name='success_stories'),
@@ -19,4 +21,5 @@ urlpatterns = [
     path('user-reactions/<int:story_id>/', views.get_user_reactions, name='get_user_reactions'),
     path('api/success-stories/', views.get_success_stories, name='api_success_stories'),  # Simplified
       path('api/auth-check/', views.auth_check, name='auth_check'),
+
 ]

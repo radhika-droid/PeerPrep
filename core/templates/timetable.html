@@ -1,0 +1,172 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reminders & Timetable - PeerPrep</title>
+  <link rel="stylesheet" href="{% static 'css/index.css' %}">
+  <style>
+    /* Form & Input Styling */
+    .form-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .form-group label {
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: #e5e7eb;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      background: rgba(30, 41, 59, 0.6);
+      color: #f8fafc;
+      font-size: 1rem;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: rgba(59, 130, 246, 0.7);
+      background: rgba(30, 41, 59, 0.8);
+    }
+
+    .form-group textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    /* Events List Styling */
+    #event-items {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    #event-items li {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.2s ease;
+    }
+
+    #event-items li:hover {
+      border-color: rgba(59, 130, 246, 0.6);
+      transform: translateY(-3px);
+    }
+
+    #event-items li strong {
+      color: #3b82f6;
+    }
+
+    #event-items li button {
+      background: none;
+      border: none;
+      color: #ef4444;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    #event-items li button:hover {
+      transform: scale(1.2);
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="logo">
+        <img src="/static/PeerPrep.png" alt="PeerPrep Logo">
+      </div>
+      <ul class="nav-menu">
+        <li><a href="{% url 'dashboard' %}" class="nav-link">Dashboard</a></li>
+        <li><a href="/" class="nav-link">Home</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="container">
+      <h1 class="main-title">Reminders & Timetable</h1>
+      <p class="subtitle">Add and manage your study events</p>
+
+      <!-- Add Event Form -->
+      <form class="feature-card form-container" id="event-form">
+        <div class="form-group">
+          <label for="date">📅 Date</label>
+          <input type="date" name="date" required>
+        </div>
+        <div class="form-group">
+          <label for="time">⏰ Time</label>
+          <input type="time" name="time" required>
+        </div>
+        <div class="form-group">
+          <label for="subject">📘 Subject</label>
+          <input type="text" name="subject" placeholder="Enter subject..." required>
+        </div>
+        <div class="form-group">
+          <label for="description">📝 Description</label>
+          <textarea name="description" placeholder="Add details (optional)..."></textarea>
+        </div>
+        <button type="submit" class="submit-btn">➕ Add Event</button>
+      </form>
+
+      <!-- Events List -->
+      <div class="feature-card" id="events-list">
+        <h3>📋 Upcoming Events</h3>
+        <ul id="event-items">
+          <!-- Events will be inserted dynamically -->
+        </ul>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const form = document.getElementById("event-form");
+    const eventList = document.getElementById("event-items");
+
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+      const date = form.date.value;
+      const time = form.time.value;
+      const subject = form.subject.value;
+      const description = form.description.value;
+
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <div>
+          <strong>${subject}</strong><br>
+          <small>${date} ${time}</small><br>
+          ${description ? `<em>${description}</em>` : ""}
+        </div>
+        <button onclick="this.parentElement.remove()">❌</button>
+      `;
+      eventList.appendChild(li);
+
+      form.reset();
+    });
+  </script>
+
+  {% include "footer.html" %}
+</body>
+</html>
