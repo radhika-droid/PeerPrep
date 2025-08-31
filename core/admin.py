@@ -1,6 +1,5 @@
 from django.contrib import admin
-from .models import Contact
-from .models import SuccessStory, StoryReaction
+from .models import Contact, SuccessStory, StoryReaction, Question, Answer, QuestionUpvote, AnswerUpvote
 from .models import FAQ
 
 @admin.register(Contact)
@@ -56,7 +55,3 @@ class StoryReactionAdmin(admin.ModelAdmin):
     list_filter = ('reaction_type', 'created_at')
     search_fields = ('user__username', 'story__title')
     ordering = ('-created_at',)
-
-@admin.register(FAQ)
-class FAQAdmin(admin.ModelAdmin):
-    list_display = ("question", "created_at", "updated_at")

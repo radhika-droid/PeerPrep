@@ -4,6 +4,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
 from core import views
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     
@@ -31,6 +32,16 @@ urlpatterns = [
     path('add-success-story/', views.add_success_story, name='add_success_story'),
     path('react-to-story/<int:story_id>/', views.react_to_story, name='react_to_story'),
     path('user-reactions/<int:story_id>/', views.get_user_reactions, name='get_user_reactions'),
+    
+    # Questions & Answers
+    path('questions/', views.questions, name='questions'),
+    path('api/questions/', views.get_questions, name='api_questions'),
+    path('api/ask-question/', views.ask_question, name='api_ask_question'),
+    path('api/question/<int:question_id>/', views.get_question_detail, name='api_question_detail'),
+    path('api/answer-question/<int:question_id>/', views.answer_question, name='api_answer_question'),
+    path('api/upvote-question/<int:question_id>/', views.upvote_question, name='api_upvote_question'),
+    path('api/upvote-answer/<int:answer_id>/', views.upvote_answer, name='api_upvote_answer'),
+    path('api/accept-answer/<int:answer_id>/', views.accept_answer, name='api_accept_answer'),
 
     path('faq/', views.faq_list, name='faq'),
     path('faq/add/', views.add_faq, name='add_faq'),
