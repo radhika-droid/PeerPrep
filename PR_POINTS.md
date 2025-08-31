@@ -3,6 +3,7 @@
 - **Lakshmihollat**: 70 points
 - **InderjotSingh17**: 40 points
 - **khushi-verma1504**: 20 points
+- **Rabia-Parveen**: 10 points
 - **Soumyosish**: 10 points
 - **sarthakbhatele**: 10 points
 - **Sejal-collection**: 10 points
