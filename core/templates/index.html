@@ -8,7 +8,45 @@
     <link rel="stylesheet" href="{% static 'css/index.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        /* Hero Section */
+        /* General */
+        section {
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        p {
+            max-width: 800px;
+            margin: 0 auto 1.5rem;
+            line-height: 1.6;
+        }
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            margin: 0.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: 0.3s ease;
+        }
+        .btn-primary {
+            background: #00bfff;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #0099cc;
+        }
+        .btn-outline {
+            border: 2px solid #00bfff;
+            color: #00bfff;
+        }
+        .btn-outline:hover {
+            background: #00bfff;
+            color: white;
+        }
+
+        /* Hero */
         .hero {
             display: flex;
             flex-direction: column;
@@ -16,24 +54,80 @@
             align-items: center;
             text-align: center;
             min-height: 100vh;
-            padding-top: 6rem; /* pushes content down below navbar */
+            padding-top: 6rem;
         }
-
         .hero h1 {
             font-size: 4rem;
             font-weight: 900;
             background: linear-gradient(90deg, #00bfff, #ffffff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-transform: uppercase;
             margin-bottom: 1rem;
         }
-
         .hero p {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             color: #e0e0e0;
             max-width: 700px;
+        }
+
+        /* Features */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            border-radius: 12px;
+            transition: transform 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        .feature-card i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #00bfff;
+        }
+
+        /* How It Works */
+        .steps {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .step {
+            max-width: 250px;
+        }
+        .step i {
+            font-size: 2rem;
+            color: #00bfff;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Community */
+        .community-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        .community-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 10px;
+        }
+
+        /* CTA */
+        .cta {
+            background: linear-gradient(90deg, #00bfff, #0099cc);
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: 16px;
         }
     </style>
 </head>
@@ -52,24 +146,23 @@
                 <img src="/static/PeerPrep.png" alt="PeerPrep Logo">
             </div>
             <ul class="nav-menu">
-                    <button class="mode-toggle" id="modeToggle" title="Toggle Mode" onclick="toggleMode()">
+                <button class="mode-toggle" id="modeToggle" title="Toggle Mode" onclick="toggleMode()">
                     <i class="fas fa-moon"></i>
-                    </button>
+                </button>
                 <li><a href="{% url 'index' %}" class="nav-link active">Home</a></li>
                 <li><a href="{% url 'feature' %}" class="nav-link">Features</a></li>
                 <li><a href="{% url 'about' %}" class="nav-link">About</a></li>
                 <li><a href="{% url 'contact' %}" class="nav-link">Contact</a></li>
-
                 {% if user.is_authenticated %}
                     <li><a href="{% url 'dashboard' %}" class="nav-link">Dashboard</a></li>
                     <li>
-    <form method="post" action="{% url 'logout' %}" style="display:inline;">
-        {% csrf_token %}
-        <button type="submit" class="nav-link" style="background:none; border:none; color:white; font-size:1rem; cursor:pointer;">
-            Logout
-        </button>
-    </form>
-</li>
+                        <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="nav-link" style="background:none; border:none; color:white; font-size:1rem; cursor:pointer;">
+                                Logout
+                            </button>
+                        </form>
+                    </li>
                 {% else %}
                     <li><a href="{% url 'login' %}" class="nav-link">Login</a></li>
                     <li><a href="{% url 'register' %}" class="nav-link">Register</a></li>
@@ -81,13 +174,106 @@
     <!-- Hero Section -->
     <section class="hero">
         <h1>Welcome to PeerPrep</h1>
-        <p>A smarter way to manage open-source collaboration</p>
-        <p> PeerPrep is a web-based Project Admin dashboard designed to simplify the management of open source projects.
-             It provides project admins with tools to efficiently track contributors, manage issues and pull requests, and share announcements
-              with the community. Built using <strong>Django, HTML, CSS, and JavaScript</strong>, 
-            PeerPrep aims to improve collaboration and streamline project workflows for maintainers and contributors alike. </p>
+        <p>Collaborative learning made simple and engaging.</p>
+        <div>
+            <a href="{% url 'register' %}" class="btn btn-primary">Get Started</a>
+            <a href="{% url 'feature' %}" class="btn btn-outline">Explore Features</a>
+        </div>
     </section>
+
+    <!-- About Section -->
+    <section id="about">
+        <h2>About PeerPrep</h2>
+        <p>PeerPrep is a platform built to empower students and contributors through collaboration, structured learning, and real-time support. 
+           Our mission is to make open-source and peer learning accessible, enjoyable, and impactful.</p>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features">
+        <h2>Features</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <i class="fas fa-users"></i>
+                <h3>Collaborative Learning</h3>
+                <p>Study together, solve problems, and grow as a team.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-book"></i>
+                <h3>Structured Content</h3>
+                <p>Well-organized resources to help you stay on track.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-bullseye"></i>
+                <h3>Goal Tracking</h3>
+                <p>Set milestones and monitor your learning journey.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-comments"></i>
+                <h3>Live Chat</h3>
+                <p>Instant messaging to connect with peers and mentors.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-rocket"></i>
+                <h3>Upcoming Features</h3>
+                <p>Stay tuned for exciting tools coming soon!</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works">
+        <h2>How It Works</h2>
+        <div class="steps">
+            <div class="step">
+                <i class="fas fa-user-plus"></i>
+                <h4>1. Sign Up</h4>
+                <p>Create your free account and join PeerPrep.</p>
+            </div>
+            <div class="step">
+                <i class="fas fa-users"></i>
+                <h4>2. Join a Session</h4>
+                <p>Collaborate with peers in real-time sessions.</p>
+            </div>
+            <div class="step">
+                <i class="fas fa-tasks"></i>
+                <h4>3. Track Progress</h4>
+                <p>Set learning goals and measure achievements.</p>
+            </div>
+            <div class="step">
+                <i class="fas fa-graduation-cap"></i>
+                <h4>4. Grow Together</h4>
+                <p>Learn, share, and succeed as part of the community.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Community Section -->
+    <section id="community">
+        <h2>Our Community</h2>
+        <p>We’re proud to be powered by contributors, learners, and mentors worldwide.</p>
+        <div class="community-grid">
+            <div class="community-card">
+                <p><strong>1000+</strong> Active Learners</p>
+            </div>
+            <div class="community-card">
+                <p><strong>200+</strong> Contributors</p>
+            </div>
+            <div class="community-card">
+                <p><strong>50+</strong> Countries</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call To Action -->
+    <section class="cta">
+        <h2>Start Your Learning Journey Today</h2>
+        <p>Join PeerPrep and become part of a global collaborative learning community.</p>
+        <a href="{% url 'register' %}" class="btn btn-primary">Sign Up Now</a>
+    </section>
+
+    <!-- Footer -->
     {% include "footer.html" %}
-     <script src="{% static 'js/index.js' %}"></script>
+
+    <script src="{% static 'js/index.js' %}"></script>
 </body>
 </html>
