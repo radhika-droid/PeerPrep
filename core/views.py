@@ -9,11 +9,6 @@ from django.views.decorators.http import require_POST, require_GET
 from django.db.models import F
 import json
 from django.contrib.auth import authenticate, login
-from django.shortcuts import render
-from .models import FAQ
-from django.contrib.auth.decorators import user_passes_test
-from django.views.decorators.http import require_POST
-
 
 def user_login(request):
     if request.method == 'POST':
@@ -413,5 +408,119 @@ def answer_question(request, question_id):
             'success': False,
             'error': str(e)
         }, status=500)
-    
-    
+
+@login_required
+@require_POST
+def upvote_question(request, question_id):
+    """Handle question upvoting"""
+    try:
+        question = get_object_or_404(Question, id=question_id)
+        
+        existing_upvote = QuestionUpvote.objects.filter(
+            user=request.user,
+            question=question
+        ).first()
+        
+        if existing_upvote:
+            existing_upvote.delete()
+            question.upvotes_count = F('upvotes_count') - 1
+            question.save()
+            question.refresh_from_db()
+            
+            return JsonResponse({
+                'success': True,
+                'action': 'removed',
+                'new_count': question.upvotes_count
+            })
+        else:
+            QuestionUpvote.objects.create(
+                user=request.user,
+                question=question
+            )
+            question.upvotes_count = F('upvotes_count') + 1
+            question.save()
+            question.refresh_from_db()
+            
+            return JsonResponse({
+                'success': True,
+                'action': 'added',
+                'new_count': question.upvotes_count
+            })
+            
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+
+@login_required
+@require_POST
+def upvote_answer(request, answer_id):
+    """Handle answer upvoting"""
+    try:
+        answer = get_object_or_404(Answer, id=answer_id)
+        
+        existing_upvote = AnswerUpvote.objects.filter(
+            user=request.user,
+            answer=answer
+        ).first()
+        
+        if existing_upvote:
+            existing_upvote.delete()
+            answer.upvotes_count = F('upvotes_count') - 1
+            answer.save()
+            answer.refresh_from_db()
+            
+            return JsonResponse({
+                'success': True,
+                'action': 'removed',
+                'new_count': answer.upvotes_count
+            })
+        else:
+            AnswerUpvote.objects.create(
+                user=request.user,
+                answer=answer
+            )
+            answer.upvotes_count = F('upvotes_count') + 1
+            answer.save()
+            answer.refresh_from_db()
+            
+            return JsonResponse({
+                'success': True,
+                'action': 'added',
+                'new_count': answer.upvotes_count
+            })
+            
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+
+@login_required
+@require_POST
+def accept_answer(request, answer_id):
+    """Handle accepting an answer as the solution"""
+    try:
+        answer = get_object_or_404(Answer, id=answer_id)
+        question = answer.question
+        
+        if question.user != request.user:
+            return JsonResponse({
+                'success': False,
+                'error': 'Only the question author can accept answers'
+            }, status=403)
+        
+        if question.is_solved:
+            return JsonResponse({
+                'success': False,
+                'error': 'This question already has an accepted answer'
+            })
+        
+        answer.is_accepted = True
+        answer.save()
+        
+        question.is_solved = True
+        question.save()
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Answer accepted successfully!'
+        })
+        
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
