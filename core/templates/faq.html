@@ -54,6 +54,12 @@
           <div class="feature-icon">❓</div>
           <h3 class="feature-title">{{ faq.question }}</h3>
           <p class="feature-description">{{ faq.answer }}</p>
+          {% if request.user.is_superuser %}
+          <a href="{% url 'delete_faq' faq.id %}" 
+             onclick="return confirm('Are you sure you want to delete this FAQ?');" 
+             class="delete-icon">🗑️</a>
+        {% endif %}
+          
         </div>
         {% empty %}
           <p>No FAQs available yet. Please check back later.</p>

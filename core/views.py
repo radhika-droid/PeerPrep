@@ -9,6 +9,10 @@ from django.views.decorators.http import require_POST, require_GET
 from django.db.models import F
 import json
 from django.contrib.auth import authenticate, login
+from .models import FAQ
+from .forms import FAQForm 
+from django.contrib.auth.decorators import user_passes_test
+
 
 def user_login(request):
     if request.method == 'POST':
@@ -524,3 +528,23 @@ def accept_answer(request, answer_id):
         
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)})
+def faq_view(request):
+    faqs = FAQ.objects.all()
+    return render(request, 'faq.html', {'faqs': faqs})
+
+# Only allow superusers
+@user_passes_test(lambda u: u.is_superuser)
+def add_faq(request):
+    if request.method == "POST":
+        form = FAQForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('faq')
+    else:
+        form = FAQForm()
+    return render(request, 'add_faq.html', {'form': form})
+@user_passes_test(lambda u: u.is_superuser)
+def delete_faq(request, faq_id):
+    faq = FAQ.objects.get(id=faq_id)
+    faq.delete()
+    return redirect('faq')
