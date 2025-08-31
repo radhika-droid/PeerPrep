@@ -1,7 +1,5 @@
 from django import forms
-from .models import Contact
-from .models import SuccessStory
-
+from .models import Contact, SuccessStory, Question, Answer
 class ContactForm(forms.ModelForm):
     class Meta:
         model = Contact
@@ -63,9 +61,62 @@ class SuccessStoryForm(forms.ModelForm):
     def clean_tags(self):
         tags = self.cleaned_data.get('tags', '')
         if tags:
-            # Clean up tags: remove extra spaces, limit length
             tag_list = [tag.strip() for tag in tags.split(',') if tag.strip()]
             if len(tag_list) > 10:
                 raise forms.ValidationError("Maximum 10 tags allowed.")
             return ', '.join(tag_list[:10])
         return tags
+    
+class QuestionForm(forms.ModelForm):
+    class Meta:
+        model = Question
+        fields = ['subject', 'title', 'description', 'tags']
+        widgets = {
+            'subject': forms.Select(attrs={
+                'class': 'form-input',
+                'required': True
+            }),
+            'title': forms.TextInput(attrs={
+                'class': 'form-input',
+                'placeholder': 'e.g., How to solve quadratic equations?',
+                'required': True
+            }),
+            'description': forms.Textarea(attrs={
+                'class': 'form-textarea',
+                'placeholder': 'Provide detailed description of your question...',
+                'rows': 5,
+                'required': True
+            }),
+            'tags': forms.TextInput(attrs={
+                'class': 'form-input',
+                'placeholder': 'e.g., algebra, equations, homework (separate with commas)'
+            }),
+        }
+    
+    def clean_tags(self):
+        tags = self.cleaned_data.get('tags', '')
+        if tags:
+            tag_list = [tag.strip() for tag in tags.split(',') if tag.strip()]
+            if len(tag_list) > 15:
+                raise forms.ValidationError("Maximum 15 tags allowed.")
+            return ', '.join(tag_list[:15])
+        return tags
+
+class AnswerForm(forms.ModelForm):
+    class Meta:
+        model = Answer
+        fields = ['content']
+        widgets = {
+            'content': forms.Textarea(attrs={
+                'class': 'form-textarea',
+                'placeholder': 'Share your answer and explanation...',
+                'rows': 4,
+                'required': True
+            }),
+        }
+    
+    def clean_content(self):
+        content = self.cleaned_data.get('content', '')
+        if len(content.strip()) < 10:
+            raise forms.ValidationError("Answer must be at least 10 characters long.")
+        return content
