@@ -28,5 +28,3 @@ Thumbs.db # Windows
 /dist
 /build
 /out
-
-db.sqlite3
