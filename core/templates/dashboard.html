@@ -24,13 +24,13 @@
                 <li><a href="{% url 'dashboard' %}" class="nav-link active">Dashboard</a></li>
                 <li><a href="/" class="nav-link">Home</a></li>
                 <li>
-    <form method="post" action="{% url 'logout' %}" style="display:inline;">
-        {% csrf_token %}
-        <button type="submit" class="nav-link" style="background:none; border:none; color:white; font-size:1rem; cursor:pointer;">
-            Logout
-        </button>
-    </form>
-</li>
+                    <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="nav-link" style="background:none; border:none; color:white; font-size:1rem; cursor:pointer;">
+                            Logout
+                        </button>
+                    </form>
+                </li>
             </ul>
         </div>
     </nav>
@@ -44,12 +44,40 @@
                     Ready to start your collaborative learning journey? Explore the features below.
                 </p>
             </div>
-
             <div class="dashboard-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">❓</div>
+                    <h3 class="feature-title">Questions & Answers</h3>
+                    <p class="feature-description">Ask questions, help others, and learn from the community discussion forum.</p>
+                    <a href="{% url 'questions' %}">
+                        <button class="submit-btn" style="margin-top: 1rem;">Go to Q&A</button>
+                    </a>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🏆</div>
+                    <h3 class="feature-title">Success Stories</h3>
+                    <p class="feature-description">Share your achievements and get inspired by others' journeys. View it</p>
+                    <a href="{% url 'success_stories' %}">
+                        <button class="submit-btn" style="margin-top: 1rem;">View Stories</button>
+                    </a>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🗓️</div>
+                    <h3 class="feature-title">Reminders & Timetable</h3>
+                    <p class="feature-description">
+                        Organize your study schedule, track assignments, and set reminders for exams.
+                    </p>
+                    <a href="{% url 'timetable' %}">
+                        <button class="submit-btn" style="margin-top: 1rem;">Go to Timetable</button>
+                    </a>
+                </div>
+                
                 <div class="feature-card">
                     <div class="feature-icon">👥</div>
                     <h3 class="feature-title">Find Study Partners</h3>
-                    <p class="feature-description">Connect with peers who share your learning goals and interests.</p>
+                    <p class="feature-description">Connect with peers who share your learning goals and interests. Find</p>
                     <button class="submit-btn" style="margin-top: 1rem;">Coming Soon</button>
                 </div>
                 
@@ -73,17 +101,6 @@
                     <p class="feature-description">Get instant support from peers and mentors.</p>
                     <button class="submit-btn" style="margin-top: 1rem;">Coming Soon</button>
                 </div>
-                <div class="feature-card">
-    <div class="feature-icon">🗓️</div>
-    <h3 class="feature-title">Reminders & Timetable</h3>
-    <p class="feature-description">
-        Organize your study schedule, track assignments, and set reminders for exams.
-    </p>
-    <a href="{% url 'timetable' %}">
-        <button class="submit-btn" style="margin-top: 1rem;">Go to Timetable</button>
-    </a>
-</div>
-
             </div>
         </div>
     </main>
