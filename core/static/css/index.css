@@ -1325,3 +1325,14 @@ body.light-mode .forgot-link {
 body.light-mode .forgot-link:hover {
     color: #5B7D4B;
 }
+.delete-icon {
+    float: right;
+    color: red;
+    font-size: 1.2rem;
+    text-decoration: none;
+    margin-left: 10px;
+  }
+  .delete-icon:hover {
+    color: darkred;
+  }
+  

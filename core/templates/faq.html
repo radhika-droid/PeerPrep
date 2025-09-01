@@ -1,0 +1,123 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FAQ - Peer Prep</title>
+  <link rel="stylesheet" href="{% static 'css/index.css' %}">
+</head>
+<body>
+  <!-- Background Orbs -->
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+  <div class="bg-orb bg-orb-3"></div>
+  <div class="bg-orb bg-orb-4"></div>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="logo">
+        <img src="/static/PeerPrep.png" alt="PeerPrep Logo">
+      </div>
+      <ul class="nav-menu">
+        <li><a href="{% url 'dashboard' %}" class="nav-link">Dashboard</a></li>
+        <li><a href="/" class="nav-link">Home</a></li>
+        <li><a href="{% url 'faq' %}" class="nav-link active">FAQ</a></li>
+        <li>
+          <form method="post" action="{% url 'logout' %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="nav-link" style="background:none; border:none; color:white; font-size:1rem; cursor:pointer;">
+              Logout
+            </button>
+          </form>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- FAQ Section -->
+  <main class="main-content">
+    <div class="container" style="grid-template-columns: 1fr;">
+      <div class="dashboard-header">
+        <h1 class="main-title">Frequently Asked Questions</h1>
+        <p class="subtitle">Here are some common questions and answers for Peer Prep users.</p>
+
+        {% if request.user.is_superuser %}
+          <button class="submit-btn" onclick="openFaqModal()">➕ Add FAQ</button>
+        {% endif %}
+      </div>
+
+      <div class="features-grid">
+        {% for faq in faqs %}
+        <div class="feature-card">
+          <div class="feature-icon">❓</div>
+          <h3 class="feature-title">{{ faq.question }}</h3>
+          <p class="feature-description">{{ faq.answer }}</p>
+          {% if request.user.is_superuser %}
+          <a href="{% url 'delete_faq' faq.id %}" 
+             onclick="return confirm('Are you sure you want to delete this FAQ?');" 
+             class="delete-icon">🗑️</a>
+        {% endif %}
+          
+        </div>
+        {% empty %}
+          <p>No FAQs available yet. Please check back later.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </main>
+
+  <!-- Modal -->
+  <div id="faqModal" class="modal" style="display:none;">
+    <div class="modal-content right-section" style="max-width:500px;">
+      <span class="close" onclick="closeFaqModal()" style="cursor:pointer; font-size:1.5rem; float:right;">&times;</span>
+      <h2 class="form-title">Add FAQ</h2>
+      <form id="faqForm" method="post" action="{% url 'add_faq' %}">
+        {% csrf_token %}
+        <div class="form-group full-width">
+          <label class="form-label" for="question">Question</label>
+          <input type="text" name="question" id="question" class="form-input" required>
+        </div>
+        <div class="form-group full-width">
+          <label class="form-label" for="answer">Answer</label>
+          <textarea name="answer" id="answer" class="form-input form-textarea" required></textarea>
+        </div>
+        <button type="submit" class="submit-btn">Submit FAQ</button>
+      </form>
+    </div>
+  </div>
+
+  <style>
+    /* Reuse modal styling inside index.css theme */
+    .modal {
+      position: fixed;
+      z-index: 2000;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
+
+  <script>
+    function openFaqModal() {
+      document.getElementById("faqModal").style.display = "flex";
+    }
+    function closeFaqModal() {
+      document.getElementById("faqModal").style.display = "none";
+    }
+    window.onclick = function(event) {
+      const modal = document.getElementById("faqModal");
+      if (event.target === modal) {
+        modal.style.display = "none";
+      }
+    }
+  </script>
+
+  {% include "footer.html" %}
+  <script src="{% static 'js/index.js' %}"></script>
+</body>
+</html>
