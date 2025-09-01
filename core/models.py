@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from datetime import timedelta
 
 class Contact(models.Model):
     first_name = models.CharField(max_length=50)
@@ -205,9 +206,3 @@ class AnswerUpvote(models.Model):
         
     def __str__(self):
         return f"{self.user.username} upvoted answer by {self.answer.user.username}"
-class FAQ(models.Model):
-    question = models.CharField(max_length=255)
-    answer = models.TextField()
-
-    def __str__(self):
-        return self.question

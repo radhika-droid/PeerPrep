@@ -30,8 +30,4 @@ urlpatterns = [
     path('api/upvote-question/<int:question_id>/', views.upvote_question, name='api_upvote_question'),
     path('api/upvote-answer/<int:answer_id>/', views.upvote_answer, name='api_upvote_answer'),
     path('api/accept-answer/<int:answer_id>/', views.accept_answer, name='api_accept_answer'),
-
-     path('faq/', views.faq_view, name='faq'),
-       path('faq/add/', views.add_faq, name='add_faq'),
-          path('faq/delete/<int:faq_id>/', views.delete_faq, name='delete_faq'),
 ]

@@ -1,7 +1,5 @@
 from django import forms
 from .models import Contact, SuccessStory, Question, Answer
-from .models import FAQ
-
 class ContactForm(forms.ModelForm):
     class Meta:
         model = Contact
@@ -122,7 +120,3 @@ class AnswerForm(forms.ModelForm):
         if len(content.strip()) < 10:
             raise forms.ValidationError("Answer must be at least 10 characters long.")
         return content
-class FAQForm(forms.ModelForm):
-    class Meta:
-        model = FAQ
-        fields = ['question', 'answer']

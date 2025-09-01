@@ -1,0 +1,367 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progress Tracking - PeerPrep</title>
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+    <link rel="stylesheet" href="{% static 'css/progress.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+    <div class="bg-orb bg-orb-3"></div>
+    <div class="bg-orb bg-orb-4"></div>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <img src="/static/PeerPrep.png" alt="PeerPrep Logo">
+            </div>
+            <ul class="nav-menu">
+                <button class="mode-toggle" id="modeToggle" title="Toggle Mode" onclick="toggleMode()">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <li><a href="{% url 'dashboard' %}" class="nav-link">Dashboard</a></li>
+                <li><a href="{% url 'progress_tracking' %}" class="nav-link active">Progress</a></li>
+                <li><a href="{% url 'questions' %}" class="nav-link">Q&A</a></li>
+                <li><a href="{% url 'success_stories' %}" class="nav-link">Stories</a></li>
+                <li>
+                    <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="nav-link" style="background:none; border:none; color:white; font-size:1rem; cursor:pointer;">
+                            Logout
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="progress-container">
+            <div class="progress-header">
+                <h1 class="main-title">Progress Tracking</h1>
+                <p class="subtitle">Monitor your learning journey and achieve your goals</p>
+                
+                <div class="quick-actions">
+                    <button class="action-btn" onclick="openModal('goalModal')">
+                        <i class="fas fa-target"></i>
+                        New Goal
+                    </button>
+                    <button class="action-btn" onclick="openModal('sessionModal')">
+                        <i class="fas fa-book"></i>
+                        Log Session
+                    </button>
+                    <button class="action-btn" onclick="openModal('weeklyModal')">
+                        <i class="fas fa-calendar-week"></i>
+                        Weekly Goals
+                    </button>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="totalHours">0</h3>
+                        <p>Study Hours</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-target"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="completedGoals">0</h3>
+                        <p>Goals Completed</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-fire"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="currentStreak">0</h3>
+                        <p>Day Streak</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="achievementPoints">0</h3>
+                        <p>Points Earned</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-grid">
+                <div class="left-column">
+                    <div class="progress-card">
+                        <div class="card-header">
+                            <h3>This Week's Progress</h3>
+                            <button class="header-btn" onclick="openModal('weeklyModal')">
+                                <i class="fas fa-cog"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="weekly-stats">
+                            <div class="weekly-stat">
+                                <span class="stat-label">Study Hours</span>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="weeklyHoursProgress"></div>
+                                </div>
+                                <span class="stat-value" id="weeklyHoursText">0 / 10 hrs</span>
+                            </div>
+                            
+                            <div class="weekly-stat">
+                                <span class="stat-label">Study Sessions</span>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="weeklySessionsProgress"></div>
+                                </div>
+                                <span class="stat-value" id="weeklySessionsText">0 / 5 sessions</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="progress-card">
+                        <div class="card-header">
+                            <h3>Daily Study Time</h3>
+                            <span class="time-period">Last 7 days</span>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="dailyChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="progress-card">
+                        <div class="card-header">
+                            <h3>Subject Distribution</h3>
+                            <span class="time-period">Last 30 days</span>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="subjectChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="right-column">
+                    <div class="progress-card">
+                        <div class="card-header">
+                            <h3>My Goals</h3>
+                            <button class="header-btn" onclick="openModal('goalModal')">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="goals-container" id="goalsContainer">
+                        </div>
+                        
+                        <div class="view-all">
+                            <button onclick="showAllGoals()">View All Goals</button>
+                        </div>
+                    </div>
+
+                    <div class="progress-card">
+                        <div class="card-header">
+                            <h3>Recent Activity</h3>
+                        </div>
+                        <div class="activity-feed" id="activityFeed">
+                        </div>
+                    </div>
+
+                    <div class="progress-card">
+                        <div class="card-header">
+                            <h3>Recent Achievements</h3>
+                        </div>
+                        <div class="achievements-container" id="achievementsContainer">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="goalModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create New Goal</h2>
+                <span class="close" onclick="closeModal('goalModal')">&times;</span>
+            </div>
+            <form id="goalForm">
+                {% csrf_token %}
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label class="form-label">Goal Title <span class="required">*</span></label>
+                        <input type="text" name="title" class="form-input" placeholder="e.g., Master Python Programming" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Category <span class="required">*</span></label>
+                        <select name="category" class="form-input" required>
+                            <option value="">Select Category</option>
+                            <option value="academic">Academic</option>
+                            <option value="skill">Skill Development</option>
+                            <option value="career">Career</option>
+                            <option value="personal">Personal Growth</option>
+                            <option value="health">Health & Fitness</option>
+                            <option value="creative">Creative</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Priority <span class="required">*</span></label>
+                        <select name="priority" class="form-input" required>
+                            <option value="low">Low</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="high">High</option>
+                            <option value="urgent">Urgent</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label class="form-label">Target Date</label>
+                        <input type="date" name="target_date" class="form-input">
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label class="form-label">Description</label>
+                        <textarea name="description" class="form-textarea" placeholder="Describe your goal in detail..." rows="3"></textarea>
+                    </div>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" onclick="closeModal('goalModal')" class="btn-secondary">Cancel</button>
+                    <button type="submit" class="submit-btn">Create Goal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="sessionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Log Study Session</h2>
+                <span class="close" onclick="closeModal('sessionModal')">&times;</span>
+            </div>
+            <form id="sessionForm">
+                {% csrf_token %}
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Subject <span class="required">*</span></label>
+                        <select name="subject" class="form-input" required>
+                            <option value="">Select Subject</option>
+                            <option value="math">Mathematics</option>
+                            <option value="science">Science</option>
+                            <option value="physics">Physics</option>
+                            <option value="chemistry">Chemistry</option>
+                            <option value="biology">Biology</option>
+                            <option value="computer_science">Computer Science</option>
+                            <option value="programming">Programming</option>
+                            <option value="english">English</option>
+                            <option value="history">History</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Duration (minutes) <span class="required">*</span></label>
+                        <input type="number" name="duration_minutes" class="form-input" min="1" max="480" placeholder="60" required>
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label class="form-label">Session Title <span class="required">*</span></label>
+                        <input type="text" name="title" class="form-input" placeholder="e.g., Algebra Practice Session" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Date <span class="required">*</span></label>
+                        <input type="date" name="date" class="form-input" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Productivity (1-10) <span class="required">*</span></label>
+                        <input type="number" name="productivity_rating" class="form-input" min="1" max="10" value="5" required>
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label class="form-label">Description</label>
+                        <textarea name="description" class="form-textarea" placeholder="What did you study?" rows="2"></textarea>
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label class="form-label">Notes</label>
+                        <textarea name="notes" class="form-textarea" placeholder="Any notes or reflections..." rows="3"></textarea>
+                    </div>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" onclick="closeModal('sessionModal')" class="btn-secondary">Cancel</button>
+                    <button type="submit" class="submit-btn">Log Session</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="weeklyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Set Weekly Goals</h2>
+                <span class="close" onclick="closeModal('weeklyModal')">&times;</span>
+            </div>
+            <form id="weeklyForm">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label class="form-label">Target Study Hours <span class="required">*</span></label>
+                    <input type="number" id="targetHours" name="target_hours" class="form-input" step="0.5" min="0.5" max="60" value="10" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Target Study Sessions <span class="required">*</span></label>
+                    <input type="number" id="targetSessions" name="target_sessions" class="form-input" min="1" max="20" value="5" required>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" onclick="closeModal('weeklyModal')" class="btn-secondary">Cancel</button>
+                    <button type="submit" class="submit-btn">Set Goals</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="goalDetailModal" class="modal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h2 id="goalDetailTitle">Goal Details</h2>
+                <span class="close" onclick="closeModal('goalDetailModal')">&times;</span>
+            </div>
+            
+            <div id="goalDetailContent">
+            </div>
+        </div>
+    </div>
+
+    {% include "footer.html" %}
+    
+    <script src="{% static 'js/index.js' %}"></script>
+    <script src="{% static 'js/progress.js' %}"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            document.querySelector('input[name="date"]').value = today;
+        });
+    </script>
+</body>
+</html>

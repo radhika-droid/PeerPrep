@@ -1,5 +1,4 @@
 from django.contrib import admin
-from .models import FAQ
 from .models import Contact, SuccessStory, StoryReaction, Question, Answer, QuestionUpvote, AnswerUpvote
 
 @admin.register(Contact)
@@ -137,7 +136,3 @@ class AnswerUpvoteAdmin(admin.ModelAdmin):
     def answer_author(self, obj):
         return obj.answer.user.username
     answer_author.short_description = 'Answer Author'
-
-@admin.register(FAQ)
-class FAQAdmin(admin.ModelAdmin):
-    list_display = ('question', 'answer')
