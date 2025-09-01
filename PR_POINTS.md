@@ -2,12 +2,12 @@
 
 - **Lakshmihollat**: 70 points
 - **InderjotSingh17**: 40 points
+- **rushika1256**: 20 points
 - **Soumyosish**: 20 points
 - **khushi-verma1504**: 20 points
 - **Rabia-Parveen**: 10 points
 - **sarthakbhatele**: 10 points
 - **Sejal-collection**: 10 points
-- **rushika1256**: 10 points
 - **anshika-ux**: 10 points
 - **vanshaggarwal27**: 10 points
 - **shrutiiii007**: 10 points
