@@ -1,52 +1,10 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Peer Prep - Collaborative Learning Platform</title>
-    <link rel="stylesheet" href="{% static 'css/index.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-</head>
-<body onload="applyThemeFromStorage()">
-    <!-- Background Orbs -->
-    <div class="bg-orb bg-orb-1"></div>
-    <div class="bg-orb bg-orb-2"></div>
-    <div class="bg-orb bg-orb-3"></div>
-    <div class="bg-orb bg-orb-4"></div>
-
-    <!-- Navbar -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="logo">
-                <img src="/static/PeerPrep.png" alt="PeerPrep Logo">
-            </div>
-            <ul class="nav-menu">
-    <button class="mode-toggle" id="modeToggle" title="Toggle Mode" onclick="toggleMode()">
-        <i class="fas fa-moon"></i>
-    </button>
-    <li><a href="{% url 'index' %}" class="nav-link active">Home</a></li>
-    <li><a href="{% url 'feature' %}" class="nav-link">Features</a></li>
-    <li><a href="{% url 'about' %}" class="nav-link">About</a></li>
-    <li><a href="{% url 'contact' %}" class="nav-link">Contact</a></li>
-
-    {% if user.is_authenticated %}
-        <li><a href="{% url 'dashboard' %}" class="nav-link">Dashboard</a></li>
-        <li><a href="{% url 'logout' %}" class="nav-link">Logout</a></li>
-    {% else %}
-        <li><a href="{% url 'login' %}" class="nav-link">Login</a></li>
-        <li><a href="{% url 'register' %}" class="nav-link">Register</a></li>
-    {% endif %}
-</ul>
-
-        </div>
-    </nav>
-
+{% extends "base.html" %}
+{% block content %}
     <!-- Main Content -->
     <main class="main-content">
         <!-- Features Section -->
         <section class="features-section">
-            <div class="container" style="grid-template-columns: 1fr;">
+        <div class="container" style="grid-template-columns: 1fr;">
                 <h2 class="form-title">Why Choose Peer Prep?</h2>
                 <p class="form-subtitle">
                     Discover the benefits of collaborative learning with our innovative peer preparation platform.
@@ -71,8 +29,4 @@
             </div>
         </section>
     </main>
-
-    <script src="{% static 'js/index.js' %}"></script>
-    {% include "footer.html" %}
-</body>
-</html>
+{% endblock content %}
