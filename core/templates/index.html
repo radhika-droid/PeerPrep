@@ -1,14 +1,7 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PeerPrep - Collaborative Learning Platform</title>
-    <link rel="stylesheet" href="{% static 'css/index.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
-        /* General */
+{% extends "base.html" %}
+{% block content %}
+<style>
+    /* General */
         section {
             padding: 4rem 2rem;
             text-align: center;
@@ -129,48 +122,7 @@
             padding: 3rem 2rem;
             border-radius: 16px;
         }
-    </style>
-</head>
-<body>
-    
-    <!-- Background Orbs -->
-    <div class="bg-orb bg-orb-1"></div>
-    <div class="bg-orb bg-orb-2"></div>
-    <div class="bg-orb bg-orb-3"></div>
-    <div class="bg-orb bg-orb-4"></div>
-
-    <!-- Navbar -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="logo">
-                <img src="/static/PeerPrep.png" alt="PeerPrep Logo">
-            </div>
-            <ul class="nav-menu">
-                <button class="mode-toggle" id="modeToggle" title="Toggle Mode" onclick="toggleMode()">
-                    <i class="fas fa-moon"></i>
-                </button>
-                <li><a href="{% url 'index' %}" class="nav-link active">Home</a></li>
-                <li><a href="{% url 'feature' %}" class="nav-link">Features</a></li>
-                <li><a href="{% url 'about' %}" class="nav-link">About</a></li>
-                <li><a href="{% url 'contact' %}" class="nav-link">Contact</a></li>
-                {% if user.is_authenticated %}
-                    <li><a href="{% url 'dashboard' %}" class="nav-link">Dashboard</a></li>
-                    <li>
-                        <form method="post" action="{% url 'logout' %}" style="display:inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="nav-link" style="background:none; border:none; color:white; font-size:1rem; cursor:pointer;">
-                                Logout
-                            </button>
-                        </form>
-                    </li>
-                {% else %}
-                    <li><a href="{% url 'login' %}" class="nav-link">Login</a></li>
-                    <li><a href="{% url 'register' %}" class="nav-link">Register</a></li>
-                {% endif %}
-            </ul>
-        </div>
-    </nav>
-
+</style>
     <!-- Hero Section -->
     <section class="hero">
         <h1>Welcome to PeerPrep</h1>
@@ -270,10 +222,4 @@
         <p>Join PeerPrep and become part of a global collaborative learning community.</p>
         <a href="{% url 'register' %}" class="btn btn-primary">Sign Up Now</a>
     </section>
-
-    <!-- Footer -->
-    {% include "footer.html" %}
-
-    <script src="{% static 'js/index.js' %}"></script>
-</body>
-</html>
+{% endblock %}

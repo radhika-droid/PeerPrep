@@ -1,9 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Success Stories - Peer Prep</title>
+{% extends "base.html" %}
+{% block content %}
     <style>
         * {
             margin: 0;
@@ -577,33 +573,6 @@
             }
         }
     </style>
-</head>
-<body>
-    <!-- Background orbs -->
-    <div class="bg-orb bg-orb-1"></div>
-    <div class="bg-orb bg-orb-2"></div>
-    <div class="bg-orb bg-orb-3"></div>
-
-    <!-- Navbar -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="logo">
-                <div class="logo-icon">P</div>
-                Peer Prep
-            </div>
-            <ul class="nav-menu">
-                <li><a href="/" class="nav-link">Home</a></li>
-                <li><a href="/feature/" class="nav-link">Features</a></li>
-                <li><a href="/about/" class="nav-link">About</a></li>
-                <li><a href="/contact/" class="nav-link">Contact</a></li>
-                <li><a href="/success-stories/" class="nav-link active">Success Stories</a></li>
-                <li><a href="/dashboard/" class="nav-link">Dashboard</a></li>
-                <li><a href="/logout/" class="nav-link">Logout</a></li>
-            </ul>
-            <div id="authStatus" class="auth-status">Checking...</div>
-        </div>
-    </nav>
-
     <!-- Main Content -->
     <main class="main-content">
         <div class="container">
@@ -1088,5 +1057,4 @@
             console.log('Session ID from cookie:', getCookie('sessionid'));
         });
     </script>
-</body>
-</html>
+{% endblock content %}

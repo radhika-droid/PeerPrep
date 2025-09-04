@@ -1,34 +1,5 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - Peer Prep</title>
-    <link rel="stylesheet" href="{% static 'css/index.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-</head>
-<body>
-    <div class="bg-orb bg-orb-1"></div>
-    <div class="bg-orb bg-orb-2"></div>
-    <div class="bg-orb bg-orb-3"></div>
-    <div class="bg-orb bg-orb-4"></div>
-
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="logo">
-                <img src="/static/PeerPrep.png" alt="PeerPrep Logo">
-            </div>
-            <ul class="nav-menu">
-                <button class="mode-toggle" id="modeToggle" title="Toggle Mode" onclick="toggleMode()">
-                    <i class="fas fa-moon"></i>
-                    </button>
-                <li><a href="/" class="nav-link">Home</a></li>
-                <li><a href="{% url 'login' %}" class="nav-link">Login</a></li>
-            </ul>
-        </div>
-    </nav>
-
+{% extends "base.html" %}
+{% block content %}
     <main class="main-content">
         <div class="container" style="grid-template-columns: 1fr; max-width: 500px;">
             <div class="right-section">
@@ -67,6 +38,4 @@
             </div>
         </div>
     </main>
-    <script src="{% static 'js/index.js' %}"></script>
-</body>
-</html>
+{% endblock content %}

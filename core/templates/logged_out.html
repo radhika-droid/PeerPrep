@@ -1,33 +1,5 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Logged Out - Peer Prep</title>
-    <link rel="stylesheet" href="{% static 'css/index.css' %}">
-</head>
-<body>
-    <!-- Background Orbs -->
-    <div class="bg-orb bg-orb-1"></div>
-    <div class="bg-orb bg-orb-2"></div>
-    <div class="bg-orb bg-orb-3"></div>
-    <div class="bg-orb bg-orb-4"></div>
-
-    <!-- Navbar -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="logo">
-                <img src="/static/PeerPrep.png" alt="PeerPrep Logo">
-            </div>
-            <ul class="nav-menu">
-                <li><a href="/" class="nav-link">Home</a></li>
-                <li><a href="{% url 'login' %}" class="nav-link">Login</a></li>
-                <li><a href="{% url 'register' %}" class="nav-link">Register</a></li>
-            </ul>
-        </div>
-    </nav>
-
+{% extends "base.html" %}
+{% block content %}
     <!-- Logout Message -->
     <main class="main-content">
         <div class="container" style="grid-template-columns: 1fr; text-align: center; align-items: center;">
@@ -75,5 +47,4 @@
             margin: 0 auto;
         }
     </style>
-</body>
-</html>
+{% endblock content %}
