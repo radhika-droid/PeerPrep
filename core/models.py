@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from datetime import timedelta
 
 class Contact(models.Model):
     first_name = models.CharField(max_length=50)
@@ -211,3 +212,223 @@ class FAQ(models.Model):
 
     def __str__(self):
         return self.question
+    
+class Goal(models.Model):
+    CATEGORY_CHOICES = [
+        ('academic', 'Academic'),
+        ('skill', 'Skill Development'),
+        ('career', 'Career'),
+        ('personal', 'Personal Growth'),
+        ('health', 'Health & Fitness'),
+        ('creative', 'Creative'),
+        ('other', 'Other'),
+    ]
+    
+    PRIORITY_CHOICES = [
+        ('low', 'Low'),
+        ('medium', 'Medium'),
+        ('high', 'High'),
+        ('urgent', 'Urgent'),
+    ]
+    
+    STATUS_CHOICES = [
+        ('not_started', 'Not Started'),
+        ('in_progress', 'In Progress'),
+        ('completed', 'Completed'),
+        ('paused', 'Paused'),
+        ('cancelled', 'Cancelled'),
+    ]
+    
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='goals')
+    title = models.CharField(max_length=200)
+    description = models.TextField(blank=True)
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES)
+    priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default='medium')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='not_started')
+    target_date = models.DateField(null=True, blank=True)
+    progress_percentage = models.PositiveIntegerField(default=0, help_text="0-100")
+    is_completed = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    completed_at = models.DateTimeField(null=True, blank=True)
+    
+    class Meta:
+        ordering = ['-priority', '-created_at']
+        
+    def __str__(self):
+        return self.title
+    
+    def is_overdue(self):
+        if self.target_date and not self.is_completed:
+            return timezone.now().date() > self.target_date
+        return False
+    
+    def days_remaining(self):
+        if self.target_date and not self.is_completed:
+            delta = self.target_date - timezone.now().date()
+            return delta.days
+        return None
+    
+    def save(self, *args, **kwargs):
+        if self.progress_percentage >= 100 and not self.is_completed:
+            self.is_completed = True
+            self.status = 'completed'
+            self.completed_at = timezone.now()
+        elif self.progress_percentage < 100 and self.is_completed:
+            self.is_completed = False
+            self.status = 'in_progress'
+            self.completed_at = None
+        super().save(*args, **kwargs)
+
+class Milestone(models.Model):
+    goal = models.ForeignKey(Goal, on_delete=models.CASCADE, related_name='milestones')
+    title = models.CharField(max_length=200)
+    description = models.TextField(blank=True)
+    is_completed = models.BooleanField(default=False)
+    due_date = models.DateField(null=True, blank=True)
+    completed_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['due_date', 'created_at']
+        
+    def __str__(self):
+        return f"{self.goal.title} - {self.title}"
+
+class StudySession(models.Model):
+    SUBJECT_CHOICES = [
+        ('math', 'Mathematics'),
+        ('science', 'Science'),
+        ('physics', 'Physics'),
+        ('chemistry', 'Chemistry'),
+        ('biology', 'Biology'),
+        ('computer_science', 'Computer Science'),
+        ('programming', 'Programming'),
+        ('english', 'English'),
+        ('history', 'History'),
+        ('geography', 'Geography'),
+        ('economics', 'Economics'),
+        ('psychology', 'Psychology'),
+        ('philosophy', 'Philosophy'),
+        ('engineering', 'Engineering'),
+        ('other', 'Other'),
+    ]
+    
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='study_sessions')
+    subject = models.CharField(max_length=50, choices=SUBJECT_CHOICES)
+    title = models.CharField(max_length=200)
+    description = models.TextField(blank=True)
+    duration_minutes = models.PositiveIntegerField(help_text="Duration in minutes")
+    productivity_rating = models.PositiveIntegerField(
+        default=5, 
+        help_text="1-10 scale"
+    )
+    goals_related = models.ManyToManyField(Goal, blank=True, related_name='study_sessions')
+    notes = models.TextField(blank=True)
+    date = models.DateField(default=timezone.now)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-date', '-created_at']
+        
+    def __str__(self):
+        return f"{self.subject} - {self.title} ({self.duration_minutes}min)"
+
+class Achievement(models.Model):
+    ACHIEVEMENT_TYPES = [
+        ('goal_completed', 'Goal Completed'),
+        ('streak', 'Study Streak'),
+        ('milestone', 'Milestone Reached'),
+        ('participation', 'Community Participation'),
+        ('helping_others', 'Helping Others'),
+        ('consistency', 'Consistency'),
+        ('improvement', 'Improvement'),
+        ('special', 'Special Achievement'),
+    ]
+    
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='achievements')
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+    achievement_type = models.CharField(max_length=20, choices=ACHIEVEMENT_TYPES)
+    icon = models.CharField(max_length=10, default='🏆')
+    points = models.PositiveIntegerField(default=10)
+    is_earned = models.BooleanField(default=True)
+    earned_at = models.DateTimeField(auto_now_add=True)
+    related_goal = models.ForeignKey(Goal, on_delete=models.SET_NULL, null=True, blank=True)
+    
+    class Meta:
+        ordering = ['-earned_at']
+        unique_together = ('user', 'title', 'achievement_type')
+        
+    def __str__(self):
+        return f"{self.user.username} - {self.title}"
+
+class UserStats(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='stats')
+    total_study_hours = models.FloatField(default=0.0)
+    total_goals_completed = models.PositiveIntegerField(default=0)
+    current_streak_days = models.PositiveIntegerField(default=0)
+    longest_streak_days = models.PositiveIntegerField(default=0)
+    total_questions_asked = models.PositiveIntegerField(default=0)
+    total_answers_given = models.PositiveIntegerField(default=0)
+    total_success_stories = models.PositiveIntegerField(default=0)
+    achievement_points = models.PositiveIntegerField(default=0)
+    last_activity_date = models.DateField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        verbose_name = 'User Statistics'
+        verbose_name_plural = 'User Statistics'
+        
+    def __str__(self):
+        return f"{self.user.username} - Stats"
+    
+    def update_streak(self):
+        """Update study streak based on recent activity"""
+        today = timezone.now().date()
+        yesterday = today - timedelta(days=1)
+        
+        # Check if user has activity today or yesterday
+        recent_sessions = StudySession.objects.filter(
+            user=self.user,
+            date__in=[today, yesterday]
+        ).exists()
+        
+        if recent_sessions:
+            if self.last_activity_date == yesterday:
+                self.current_streak_days += 1
+            elif self.last_activity_date != today:
+                self.current_streak_days = 1
+                
+            self.last_activity_date = today
+            
+            if self.current_streak_days > self.longest_streak_days:
+                self.longest_streak_days = self.current_streak_days
+        else:
+            # Reset streak if no recent activity
+            self.current_streak_days = 0
+            
+        self.save()
+
+class WeeklyGoal(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='weekly_goals')
+    week_start = models.DateField()
+    target_study_hours = models.FloatField(default=10.0)
+    target_sessions = models.PositiveIntegerField(default=5)
+    actual_study_hours = models.FloatField(default=0.0)
+    actual_sessions = models.PositiveIntegerField(default=0)
+    is_completed = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ('user', 'week_start')
+        ordering = ['-week_start']
+        
+    def __str__(self):
+        return f"{self.user.username} - Week of {self.week_start}"
+    
+    def progress_percentage(self):
+        hours_progress = min((self.actual_study_hours / self.target_study_hours) * 100, 100) if self.target_study_hours > 0 else 100
+        sessions_progress = min((self.actual_sessions / self.target_sessions) * 100, 100) if self.target_sessions > 0 else 100
+        return (hours_progress + sessions_progress) / 2

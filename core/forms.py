@@ -1,6 +1,8 @@
 from django import forms
-from .models import Contact, SuccessStory, Question, Answer
+from .models import Contact, SuccessStory, Question, Answer,Goal, Milestone, StudySession, WeeklyGoal
 from .models import FAQ
+from django.utils import timezone
+from datetime import datetime, timedelta
 
 class ContactForm(forms.ModelForm):
     class Meta:
@@ -126,3 +128,173 @@ class FAQForm(forms.ModelForm):
     class Meta:
         model = FAQ
         fields = ['question', 'answer']
+
+class GoalForm(forms.ModelForm):
+    class Meta:
+        model = Goal
+        fields = ['title', 'description', 'category', 'priority', 'target_date']
+        widgets = {
+            'title': forms.TextInput(attrs={
+                'class': 'form-input',
+                'placeholder': 'e.g., Master Python Programming',
+                'required': True
+            }),
+            'description': forms.Textarea(attrs={
+                'class': 'form-textarea',
+                'placeholder': 'Describe your goal in detail...',
+                'rows': 3
+            }),
+            'category': forms.Select(attrs={
+                'class': 'form-input',
+                'required': True
+            }),
+            'priority': forms.Select(attrs={
+                'class': 'form-input',
+                'required': True
+            }),
+            'target_date': forms.DateInput(attrs={
+                'class': 'form-input',
+                'type': 'date'
+            }),
+        }
+    
+    def clean_target_date(self):
+        target_date = self.cleaned_data.get('target_date')
+        if target_date and target_date <= timezone.now().date():
+            raise forms.ValidationError("Target date must be in the future.")
+        return target_date
+
+class MilestoneForm(forms.ModelForm):
+    class Meta:
+        model = Milestone
+        fields = ['title', 'description', 'due_date']
+        widgets = {
+            'title': forms.TextInput(attrs={
+                'class': 'form-input',
+                'placeholder': 'e.g., Complete Chapter 1',
+                'required': True
+            }),
+            'description': forms.Textarea(attrs={
+                'class': 'form-textarea',
+                'placeholder': 'Describe this milestone...',
+                'rows': 2
+            }),
+            'due_date': forms.DateInput(attrs={
+                'class': 'form-input',
+                'type': 'date'
+            }),
+        }
+
+class StudySessionForm(forms.ModelForm):
+    class Meta:
+        model = StudySession
+        fields = ['subject', 'title', 'description', 'duration_minutes', 'productivity_rating', 'notes', 'date']
+        widgets = {
+            'subject': forms.Select(attrs={
+                'class': 'form-input',
+                'required': True
+            }),
+            'title': forms.TextInput(attrs={
+                'class': 'form-input',
+                'placeholder': 'e.g., Algebra Practice Session',
+                'required': True
+            }),
+            'description': forms.Textarea(attrs={
+                'class': 'form-textarea',
+                'placeholder': 'What did you study?',
+                'rows': 2
+            }),
+            'duration_minutes': forms.NumberInput(attrs={
+                'class': 'form-input',
+                'placeholder': '60',
+                'min': '1',
+                'max': '480',
+                'required': True
+            }),
+            'productivity_rating': forms.NumberInput(attrs={
+                'class': 'form-input',
+                'min': '1',
+                'max': '10',
+                'value': '5',
+                'required': True
+            }),
+            'notes': forms.Textarea(attrs={
+                'class': 'form-textarea',
+                'placeholder': 'Any notes or reflections...',
+                'rows': 3
+            }),
+            'date': forms.DateInput(attrs={
+                'class': 'form-input',
+                'type': 'date',
+                'value': timezone.now().date()
+            }),
+        }
+    
+    def clean_duration_minutes(self):
+        duration = self.cleaned_data.get('duration_minutes')
+        if duration and (duration < 1 or duration > 480):
+            raise forms.ValidationError("Duration must be between 1 and 480 minutes (8 hours).")
+        return duration
+    
+    def clean_productivity_rating(self):
+        rating = self.cleaned_data.get('productivity_rating')
+        if rating and (rating < 1 or rating > 10):
+            raise forms.ValidationError("Productivity rating must be between 1 and 10.")
+        return rating
+    
+    def clean_date(self):
+        date = self.cleaned_data.get('date')
+        if date and date > timezone.now().date():
+            raise forms.ValidationError("Study session date cannot be in the future.")
+        return date
+
+class WeeklyGoalForm(forms.ModelForm):
+    class Meta:
+        model = WeeklyGoal
+        fields = ['target_study_hours', 'target_sessions']
+        widgets = {
+            'target_study_hours': forms.NumberInput(attrs={
+                'class': 'form-input',
+                'placeholder': '10.0',
+                'step': '0.5',
+                'min': '0.5',
+                'max': '60',
+                'required': True
+            }),
+            'target_sessions': forms.NumberInput(attrs={
+                'class': 'form-input',
+                'placeholder': '5',
+                'min': '1',
+                'max': '20',
+                'required': True
+            }),
+        }
+    
+    def clean_target_study_hours(self):
+        hours = self.cleaned_data.get('target_study_hours')
+        if hours and (hours < 0.5 or hours > 60):
+            raise forms.ValidationError("Target study hours must be between 0.5 and 60 hours per week.")
+        return hours
+    
+    def clean_target_sessions(self):
+        sessions = self.cleaned_data.get('target_sessions')
+        if sessions and (sessions < 1 or sessions > 20):
+            raise forms.ValidationError("Target sessions must be between 1 and 20 sessions per week.")
+        return sessions
+
+class GoalUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Goal
+        fields = ['progress_percentage', 'status']
+        widgets = {
+            'progress_percentage': forms.NumberInput(attrs={
+                'class': 'form-input',
+                'min': '0',
+                'max': '100',
+                'required': True
+            }),
+            'status': forms.Select(attrs={
+                'class': 'form-input',
+                'required': True
+            }),
+        }
