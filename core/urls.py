@@ -34,4 +34,17 @@ urlpatterns = [
      path('faq/', views.faq_view, name='faq'),
        path('faq/add/', views.add_faq, name='add_faq'),
           path('faq/delete/<int:faq_id>/', views.delete_faq, name='delete_faq'),
+    # Progress Tracking URLs
+    path('progress/', views.progress_tracking, name='progress_tracking'),
+    path('api/progress-dashboard/', views.get_progress_dashboard_data, name='api_progress_dashboard'),
+    path('api/goals/', views.get_goals, name='api_goals'),
+    path('api/create-goal/', views.create_goal, name='api_create_goal'),
+    path('api/goal/<int:goal_id>/', views.get_goal_detail, name='api_goal_detail'),
+    path('api/update-goal-progress/<int:goal_id>/', views.update_goal_progress, name='api_update_goal_progress'),
+    path('api/delete-goal/<int:goal_id>/', views.delete_goal, name='api_delete_goal'),
+    path('api/log-study-session/', views.log_study_session, name='api_log_study_session'),
+    path('api/set-weekly-goals/', views.set_weekly_goal, name='api_set_weekly_goals'),
+    path('api/create-milestone/<int:goal_id>/', views.create_milestone, name='api_create_milestone'),
+    path('api/toggle-milestone/<int:milestone_id>/', views.toggle_milestone, name='api_toggle_milestone'),
+    path('api/recent-activity/', views.get_recent_activity, name='api_recent_activity'),
 ]
