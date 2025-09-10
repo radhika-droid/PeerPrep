@@ -1,7 +1,7 @@
 # 🏆 PR Points Tracker
 
 - **Lakshmihollat**: 70 points
-- **InderjotSingh17**: 40 points
+- **InderjotSingh17**: 50 points
 - **rushika1256**: 20 points
 - **Soumyosish**: 20 points
 - **khushi-verma1504**: 20 points
