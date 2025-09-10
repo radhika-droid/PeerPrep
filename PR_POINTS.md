@@ -5,6 +5,7 @@
 - **rushika1256**: 20 points
 - **Soumyosish**: 20 points
 - **khushi-verma1504**: 20 points
+- **mbabaj**: 10 points
 - **Rabia-Parveen**: 10 points
 - **sarthakbhatele**: 10 points
 - **Sejal-collection**: 10 points
