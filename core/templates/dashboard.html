@@ -79,8 +79,28 @@
                 <div class="feature-card">
                     <div class="feature-icon">👥</div>
                     <h3 class="feature-title">Find Study Partners</h3>
-                    <p class="feature-description">Connect with peers who share your learning goals and interests. Find</p>
-                    <button class="submit-btn" style="margin-top: 1rem;">Coming Soon</button>
+                    <p class="feature-description">Connect with peers who share your learning goals and interests.</p>
+                    <a href="{% url 'find_study_partners' %}">
+                        <button class="submit-btn" style="margin-top: 1rem;">Find Partners</button>
+                    </a>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🤝</div>
+                    <h3 class="feature-title">My Study Partners</h3>
+                    <p class="feature-description">Manage your study partnerships and schedule collaborative sessions.</p>
+                    <a href="{% url 'my_study_partners' %}">
+                        <button class="submit-btn" style="margin-top: 1rem;">My Partners</button>
+                    </a>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📧</div>
+                    <h3 class="feature-title">Partner Requests</h3>
+                    <p class="feature-description">View and respond to study partner requests from other students.</p>
+                    <a href="{% url 'my_partner_requests' %}">
+                        <button class="submit-btn" style="margin-top: 1rem;">View Requests</button>
+                    </a>
                 </div>
                 
                 <div class="feature-card">

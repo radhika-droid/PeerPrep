@@ -59,7 +59,17 @@ urlpatterns = [
     path('api/create-milestone/<int:goal_id>/', views.create_milestone, name='api_create_milestone'),
     path('api/toggle-milestone/<int:milestone_id>/', views.toggle_milestone, name='api_toggle_milestone'),
     path('api/recent-activity/', views.get_recent_activity, name='api_recent_activity'),
-
+    path('find-study-partners/', views.find_study_partners, name='find_study_partners'),
+    path('study-profile/', views.study_profile, name='study_profile'),
+    path('api/search-study-partners/', views.search_study_partners, name='api_search_study_partners'),
+    path('api/send-partner-request/', views.send_partner_request, name='api_send_partner_request'),
+    path('my-partner-requests/', views.my_partner_requests, name='my_partner_requests'),
+    path('api/respond-to-request/<int:request_id>/', views.respond_to_request, name='api_respond_to_request'),
+    path('my-study-partners/', views.my_study_partners, name='my_study_partners'),
+    path('api/schedule-session/', views.schedule_session, name='api_schedule_session'),
+    path('api/partnership-sessions/<int:partnership_id>/', views.get_partnership_sessions, name='api_partnership_sessions'),
+    path('api/complete-session/<int:session_id>/', views.complete_session, name='api_complete_session'),
+    path('api/end-partnership/<int:partnership_id>/', views.end_partnership, name='api_end_partnership'),
 ]
 
 if settings.DEBUG:
