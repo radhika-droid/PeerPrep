@@ -1,0 +1,907 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Study Partners - PeerPrep</title>
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        .search-section {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .search-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .partners-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .partner-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .partner-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(59, 130, 246, 0.4);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.1);
+        }
+        
+        .partner-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .partner-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-right: 1rem;
+        }
+        
+        .partner-info h3 {
+            color: white;
+            margin: 0 0 0.25rem 0;
+            font-size: 1.2rem;
+        }
+        
+        .partner-level {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            text-transform: capitalize;
+        }
+        
+        .compatibility-score {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .partner-bio {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 1rem;
+            line-height: 1.4;
+            max-height: 3.6em;
+            overflow: hidden;
+        }
+        
+        .partner-subjects {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .subject-tag {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+        
+        .partner-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+        }
+        
+        .detail-item {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .detail-item i {
+            color: #3b82f6;
+            width: 16px;
+            margin-right: 0.5rem;
+        }
+        
+        .partner-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn-connect {
+            flex: 1;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            border: none;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-connect:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+        }
+        
+        .btn-connect:disabled {
+            background: rgba(255, 255, 255, 0.2);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .btn-view-profile {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-view-profile:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+        }
+        
+        .pagination button {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .pagination button:hover:not(:disabled) {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: rgba(59, 130, 246, 0.5);
+        }
+        
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .pagination .current-page {
+            color: #3b82f6;
+            font-weight: bold;
+        }
+        
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(15px);
+            margin: 5% auto;
+            padding: 2rem;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 16px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-title {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .close {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        
+        .close:hover {
+            color: white;
+        }
+        
+        .profile-setup-notice {
+            background: rgba(255, 152, 0, 0.1);
+            border: 1px solid rgba(255, 152, 0, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            color: #ffa500;
+            text-align: center;
+        }
+        
+        .profile-setup-notice i {
+            margin-right: 0.5rem;
+        }
+        
+        /* Light mode styles */
+        body.light-mode .search-section,
+        body.light-mode .partner-card,
+        body.light-mode .modal-content {
+            background: var(--feature-card-bg);
+            border-color: var(--feature-card-border);
+        }
+        
+        body.light-mode .partner-card:hover {
+            border-color: var(--feature-card-border-hover);
+        }
+        
+        body.light-mode .partner-info h3,
+        body.light-mode .modal-title,
+        body.light-mode .close:hover {
+            color: var(--feature-title-color);
+        }
+        
+        body.light-mode .partner-level,
+        body.light-mode .partner-bio,
+        body.light-mode .detail-item,
+        body.light-mode .loading-spinner,
+        body.light-mode .no-results,
+        body.light-mode .close {
+            color: var(--feature-description-color);
+        }
+        
+        body.light-mode .subject-tag {
+            background: rgba(31, 95, 74, 0.2);
+            color: var(--feature-icon-gradient-start);
+            border-color: rgba(31, 95, 74, 0.3);
+        }
+        
+        body.light-mode .detail-item i {
+            color: var(--feature-icon-gradient-end);
+        }
+    </style>
+</head>
+<body onload="applyThemeFromStorage()">
+    <!-- Background Orbs -->
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+    <div class="bg-orb bg-orb-3"></div>
+    <div class="bg-orb bg-orb-4"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <img src="/static/PeerPrep.png" alt="PeerPrep Logo">
+            </div>
+            <ul class="nav-menu">
+                <button class="mode-toggle" id="modeToggle" title="Toggle Mode" onclick="toggleMode()">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <li><a href="{% url 'index' %}" class="nav-link">Home</a></li>
+                <li><a href="{% url 'dashboard' %}" class="nav-link">Dashboard</a></li>
+                <li><a href="{% url 'find_study_partners' %}" class="nav-link active">Find Partners</a></li>
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'my_partner_requests' %}" class="nav-link">Requests</a></li>
+                    <li><a href="{% url 'my_study_partners' %}" class="nav-link">My Partners</a></li>
+                    <li><a href="{% url 'study_profile' %}" class="nav-link">Profile</a></li>
+                    <li>
+                        <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="nav-link" style="background:none; border:none; color:white; font-size:1rem; cursor:pointer;">
+                                Logout
+                            </button>
+                        </form>
+                    </li>
+                {% else %}
+                    <li><a href="{% url 'login' %}" class="nav-link">Login</a></li>
+                    <li><a href="{% url 'register' %}" class="nav-link">Register</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container" style="grid-template-columns: 1fr; max-width: 1400px;">
+            <div class="page-header" style="text-align: center; margin-bottom: 2rem;">
+                <h1 class="main-title" style="font-size: 2.5rem;">Find Study Partners</h1>
+                <p class="subtitle">
+                    Connect with like-minded learners and accelerate your educational journey through collaboration.
+                </p>
+            </div>
+
+            {% if not user.is_authenticated %}
+                <div class="profile-setup-notice">
+                    <i class="fas fa-info-circle"></i>
+                    <strong>Please log in to find and connect with study partners.</strong>
+                    <div style="margin-top: 0.5rem;">
+                        <a href="{% url 'login' %}" class="btn btn-primary" style="text-decoration: none;">Login</a>
+                        <a href="{% url 'register' %}" class="btn btn-outline" style="text-decoration: none;">Register</a>
+                    </div>
+                </div>
+            {% elif not user_profile or not user_profile.subjects %}
+                <div class="profile-setup-notice">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>Complete your study profile to get better partner matches!</strong>
+                    <div style="margin-top: 0.5rem;">
+                        <a href="{% url 'study_profile' %}" class="btn btn-primary" style="text-decoration: none;">Setup Profile</a>
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if user.is_authenticated %}
+                <!-- Search Section -->
+                <div class="search-section">
+                    <h3 style="color: white; margin-bottom: 1rem;">
+                        <i class="fas fa-search" style="margin-right: 0.5rem; color: #3b82f6;"></i>
+                        Search Filters
+                    </h3>
+                    <form class="search-form" id="searchForm">
+                        <div class="form-group">
+                            <label class="form-label">Subject</label>
+                            <select name="subject" class="form-input" id="subjectFilter">
+                                <option value="">All Subjects</option>
+                                <option value="math">Mathematics</option>
+                                <option value="science">Science</option>
+                                <option value="physics">Physics</option>
+                                <option value="chemistry">Chemistry</option>
+                                <option value="biology">Biology</option>
+                                <option value="computer_science">Computer Science</option>
+                                <option value="programming">Programming</option>
+                                <option value="english">English</option>
+                                <option value="history">History</option>
+                                <option value="geography">Geography</option>
+                                <option value="economics">Economics</option>
+                                <option value="psychology">Psychology</option>
+                                <option value="philosophy">Philosophy</option>
+                                <option value="engineering">Engineering</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Study Level</label>
+                            <select name="study_level" class="form-input" id="levelFilter">
+                                <option value="">All Levels</option>
+                                <option value="beginner">Beginner</option>
+                                <option value="intermediate">Intermediate</option>
+                                <option value="advanced">Advanced</option>
+                                <option value="expert">Expert</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Timezone</label>
+                            <select name="timezone" class="form-input" id="timezoneFilter">
+                                <option value="">All Timezones</option>
+                                <option value="UTC-12">UTC-12 (Baker Island)</option>
+                                <option value="UTC-11">UTC-11 (American Samoa)</option>
+                                <option value="UTC-10">UTC-10 (Hawaii)</option>
+                                <option value="UTC-9">UTC-9 (Alaska)</option>
+                                <option value="UTC-8">UTC-8 (PST)</option>
+                                <option value="UTC-7">UTC-7 (MST)</option>
+                                <option value="UTC-6">UTC-6 (CST)</option>
+                                <option value="UTC-5">UTC-5 (EST)</option>
+                                <option value="UTC-4">UTC-4 (AST)</option>
+                                <option value="UTC-3">UTC-3 (Brazil)</option>
+                                <option value="UTC-2">UTC-2 (Mid-Atlantic)</option>
+                                <option value="UTC-1">UTC-1 (Azores)</option>
+                                <option value="UTC+0">UTC+0 (GMT/London)</option>
+                                <option value="UTC+1">UTC+1 (CET/Paris)</option>
+                                <option value="UTC+2">UTC+2 (EET/Cairo)</option>
+                                <option value="UTC+3">UTC+3 (Moscow)</option>
+                                <option value="UTC+4">UTC+4 (Dubai)</option>
+                                <option value="UTC+5">UTC+5 (Pakistan)</option>
+                                <option value="UTC+5:30">UTC+5:30 (India)</option>
+                                <option value="UTC+6">UTC+6 (Bangladesh)</option>
+                                <option value="UTC+7">UTC+7 (Thailand)</option>
+                                <option value="UTC+8">UTC+8 (China/Singapore)</option>
+                                <option value="UTC+9">UTC+9 (Japan/Korea)</option>
+                                <option value="UTC+10">UTC+10 (Australia East)</option>
+                                <option value="UTC+11">UTC+11 (Solomon Islands)</option>
+                                <option value="UTC+12">UTC+12 (New Zealand)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Search</label>
+                            <input type="text" name="search_query" class="form-input" id="searchQuery" 
+                                   placeholder="Search by name, bio, subjects...">
+                        </div>
+                    </form>
+                    
+                    <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                        <button type="button" class="submit-btn" onclick="searchPartners()" style="flex: none; width: auto; padding: 0.75rem 2rem;">
+                            <i class="fas fa-search" style="margin-right: 0.5rem;"></i>
+                            Search Partners
+                        </button>
+                        <button type="button" class="btn-view-profile" onclick="resetFilters()" style="flex: none; width: auto; padding: 0.75rem 1.5rem;">
+                            <i class="fas fa-undo" style="margin-right: 0.5rem;"></i>
+                            Reset Filters
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Results Section -->
+                <div class="results-section">
+                    <div class="results-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h3 style="color: white; margin: 0;">
+                            <i class="fas fa-users" style="margin-right: 0.5rem; color: #3b82f6;"></i>
+                            Study Partners
+                        </h3>
+                        <span id="resultsCount" style="color: rgba(255, 255, 255, 0.7); font-size: 0.9rem;"></span>
+                    </div>
+                    
+                    <div class="loading-spinner" id="loadingSpinner">
+                        <i class="fas fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                        <div>Searching for study partners...</div>
+                    </div>
+                    
+                    <div class="partners-grid" id="partnersGrid"></div>
+                    
+                    <div class="no-results" id="noResults" style="display: none;">
+                        <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                        <h3 style="margin-bottom: 0.5rem;">No study partners found</h3>
+                        <p>Try adjusting your search filters or check back later for new members.</p>
+                    </div>
+                    
+                    <div class="pagination" id="pagination" style="display: none;"></div>
+                </div>
+            {% endif %}
+        </div>
+    </main>
+
+    <!-- Connect Modal -->
+    <div id="connectModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Send Study Partner Request</h2>
+                <span class="close" onclick="closeConnectModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="partnerPreview" style="margin-bottom: 1.5rem;"></div>
+                <form id="connectForm">
+                    <div class="form-group">
+                        <label class="form-label">Introduce yourself and explain why you'd like to study together:</label>
+                        <textarea name="message" class="form-textarea" rows="4" 
+                                  placeholder="Hi! I'm also studying [subject] and would love to collaborate. I think we could help each other with [specific topics]. What do you think?" 
+                                  required></textarea>
+                    </div>
+                    <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem;">
+                        <button type="button" class="btn-view-profile" onclick="closeConnectModal()">Cancel</button>
+                        <button type="submit" class="submit-btn" style="flex: none; width: auto; padding: 0.75rem 2rem;">
+                            <i class="fas fa-paper-plane" style="margin-right: 0.5rem;"></i>
+                            Send Request
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Study Partners Search functionality
+        let currentPage = 1;
+        let currentFilters = {};
+        let selectedPartner = null;
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            if (document.getElementById('partnersGrid')) {
+                searchPartners();
+            }
+            
+            // Add event listeners for real-time search
+            const searchInput = document.getElementById('searchQuery');
+            if (searchInput) {
+                searchInput.addEventListener('input', debounce(searchPartners, 500));
+            }
+            
+            document.querySelectorAll('#searchForm select').forEach(select => {
+                select.addEventListener('change', searchPartners);
+            });
+            
+            // Initialize connect form
+            const connectForm = document.getElementById('connectForm');
+            if (connectForm) {
+                connectForm.addEventListener('submit', handleConnectFormSubmit);
+            }
+        });
+
+        // Debounce function for search input
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Search for study partners
+        async function searchPartners(page = 1) {
+            if (!document.getElementById('partnersGrid')) return;
+            
+            currentPage = page;
+            const formData = new FormData(document.getElementById('searchForm'));
+            
+            // Build query string
+            const params = new URLSearchParams();
+            params.append('page', page);
+            
+            for (let [key, value] of formData.entries()) {
+                if (value.trim()) {
+                    params.append(key, value);
+                }
+            }
+            
+            // Show loading
+            document.getElementById('loadingSpinner').style.display = 'block';
+            document.getElementById('partnersGrid').innerHTML = '';
+            document.getElementById('noResults').style.display = 'none';
+            document.getElementById('pagination').style.display = 'none';
+            
+            try {
+                const response = await fetch(`/api/search-study-partners/?${params.toString()}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayPartners(data.partners);
+                    updateResultsCount(data.total_count);
+                    updatePagination(data.current_page, data.total_pages, data.has_previous, data.has_next);
+                } else {
+                    showNotification('Error searching partners: ' + data.error, 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Failed to search partners', 'error');
+            } finally {
+                document.getElementById('loadingSpinner').style.display = 'none';
+            }
+        }
+
+        // Display partners in grid
+        function displayPartners(partners) {
+            const grid = document.getElementById('partnersGrid');
+            
+            if (partners.length === 0) {
+                document.getElementById('noResults').style.display = 'block';
+                return;
+            }
+            
+            grid.innerHTML = partners.map(partner => createPartnerCard(partner)).join('');
+        }
+
+        // Create partner card HTML
+        function createPartnerCard(partner) {
+            const subjects = partner.subjects.slice(0, 3);
+            const hasMoreSubjects = partner.subjects.length > 3;
+            
+            // Escape HTML entities in the data
+            const escapedName = partner.name.replace(/'/g, '&apos;').replace(/"/g, '&quot;');
+            const escapedInitials = partner.initials.replace(/'/g, '&apos;').replace(/"/g, '&quot;');
+            
+            let connectButton = '';
+            if (partner.is_partner) {
+                connectButton = `<button class="btn-connect" disabled>
+                    <i class="fas fa-check" style="margin-right: 0.5rem;"></i>Study Partner
+                </button>`;
+            } else if (partner.request_sent) {
+                connectButton = `<button class="btn-connect" disabled>
+                    <i class="fas fa-clock" style="margin-right: 0.5rem;"></i>Request Sent
+                </button>`;
+            } else {
+                connectButton = `<button class="btn-connect" data-partner-id="${partner.id}" data-partner-name="${escapedName}" data-partner-initials="${escapedInitials}" onclick="openConnectModalFromCard(this)">
+                    <i class="fas fa-user-plus" style="margin-right: 0.5rem;"></i>Connect
+                </button>`;
+            }
+            
+            return `
+                <div class="partner-card">
+                    <div class="compatibility-score">${partner.compatibility_score}% match</div>
+                    
+                    <div class="partner-header">
+                        <div class="partner-avatar">${partner.initials}</div>
+                        <div class="partner-info">
+                            <h3>${partner.name}</h3>
+                            <div class="partner-level">${partner.study_level}</div>
+                        </div>
+                    </div>
+                    
+                    ${partner.bio ? `<div class="partner-bio">${partner.bio}</div>` : ''}
+                    
+                    <div class="partner-subjects">
+                        ${subjects.map(subject => `<span class="subject-tag">${subject}</span>`).join('')}
+                        ${hasMoreSubjects ? `<span class="subject-tag">+${partner.subjects.length - 3} more</span>` : ''}
+                    </div>
+                    
+                    <div class="partner-details">
+                        <div class="detail-item">
+                            <i class="fas fa-globe"></i>
+                            ${partner.timezone}
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-language"></i>
+                            ${partner.languages.slice(0, 2).join(', ')}
+                        </div>
+                        ${partner.preferred_study_times.length > 0 ? `
+                        <div class="detail-item" style="grid-column: 1 / -1;">
+                            <i class="fas fa-clock"></i>
+                            ${partner.preferred_study_times.slice(0, 2).join(', ')}
+                        </div>` : ''}
+                    </div>
+                    
+                    ${partner.study_goals ? `
+                    <div style="margin-bottom: 1rem; padding-top: 0.5rem; border-top: 1px solid rgba(255,255,255,0.1);">
+                        <div style="color: rgba(255,255,255,0.7); font-size: 0.85rem;">
+                            <i class="fas fa-target" style="color: #3b82f6; margin-right: 0.5rem;"></i>
+                            ${partner.study_goals.substring(0, 100)}${partner.study_goals.length > 100 ? '...' : ''}
+                        </div>
+                    </div>` : ''}
+                    
+                    <div class="partner-actions">
+                        ${connectButton}
+                        <button class="btn-view-profile" data-partner-id="${partner.id}" onclick="viewPartnerProfileFromCard(this)">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Update results count
+        function updateResultsCount(count) {
+            const countElement = document.getElementById('resultsCount');
+            if (countElement) {
+                countElement.textContent = `${count} partner${count !== 1 ? 's' : ''} found`;
+            }
+        }
+
+        // Update pagination
+        function updatePagination(current, total, hasPrevious, hasNext) {
+            const pagination = document.getElementById('pagination');
+            
+            if (total <= 1) {
+                pagination.style.display = 'none';
+                return;
+            }
+            
+            let paginationHTML = '';
+            
+            // Previous button
+            paginationHTML += `<button onclick="searchPartners(${current - 1})" ${!hasPrevious ? 'disabled' : ''}>
+                <i class="fas fa-chevron-left"></i>
+            </button>`;
+            
+            // Page numbers
+            const startPage = Math.max(1, current - 2);
+            const endPage = Math.min(total, current + 2);
+            
+            if (startPage > 1) {
+                paginationHTML += `<button onclick="searchPartners(1)">1</button>`;
+                if (startPage > 2) {
+                    paginationHTML += `<span>...</span>`;
+                }
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                paginationHTML += `<button onclick="searchPartners(${i})" ${i === current ? 'class="current-page"' : ''}>${i}</button>`;
+            }
+            
+            if (endPage < total) {
+                if (endPage < total - 1) {
+                    paginationHTML += `<span>...</span>`;
+                }
+                paginationHTML += `<button onclick="searchPartners(${total})">${total}</button>`;
+            }
+            
+            // Next button
+            paginationHTML += `<button onclick="searchPartners(${current + 1})" ${!hasNext ? 'disabled' : ''}>
+                <i class="fas fa-chevron-right"></i>
+            </button>`;
+            
+            pagination.innerHTML = paginationHTML;
+            pagination.style.display = 'flex';
+        }
+
+        // Reset filters
+        function resetFilters() {
+            document.getElementById('searchForm').reset();
+            searchPartners(1);
+        }
+
+        // Open connect modal using data attributes (safer method)
+        function openConnectModalFromCard(button) {
+            const userId = button.getAttribute('data-partner-id');
+            const userName = button.getAttribute('data-partner-name');
+            const userInitials = button.getAttribute('data-partner-initials');
+            openConnectModal(parseInt(userId), userName, userInitials);
+        }
+
+        // Open connect modal
+        function openConnectModal(userId, userName, userInitials) {
+            selectedPartner = { id: userId, name: userName, initials: userInitials };
+            
+            // Update partner preview
+            document.getElementById('partnerPreview').innerHTML = `
+                <div style="display: flex; align-items: center; padding: 1rem; background: rgba(0,0,0,0.2); border-radius: 8px;">
+                    <div class="partner-avatar" style="margin-right: 1rem;">${userInitials}</div>
+                    <div>
+                        <div style="color: white; font-weight: 600;">${userName}</div>
+                        <div style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">Study Partner Request</div>
+                    </div>
+                </div>
+            `;
+            
+            // Clear form
+            document.getElementById('connectForm').reset();
+            
+            // Show modal
+            document.getElementById('connectModal').style.display = 'block';
+        }
+
+        // Close connect modal
+        function closeConnectModal() {
+            document.getElementById('connectModal').style.display = 'none';
+            selectedPartner = null;
+        }
+
+        // Handle connect form submission
+        function handleConnectFormSubmit(e) {
+            e.preventDefault();
+            
+            if (!selectedPartner) return;
+            
+            const formData = new FormData(e.target);
+            const message = formData.get('message');
+            
+            if (message.length < 20) {
+                showNotification('Please provide a more detailed message (at least 20 characters)', 'error');
+                return;
+            }
+            
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right: 0.5rem;"></i>Sending...';
+            submitBtn.disabled = true;
+            
+            fetch('/api/send-partner-request/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({
+                    user_id: selectedPartner.id,
+                    message: message
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('Study partner request sent successfully!', 'success');
+                    closeConnectModal();
+                    searchPartners(currentPage); // Refresh to update button states
+                } else {
+                    showNotification('Error: ' + data.error, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Failed to send request', 'error');
+            })
+            .finally(() => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            });
+        }
+
+        // View partner profile using data attributes (safer method)
+        function viewPartnerProfileFromCard(button) {
+            const userId = button.getAttribute('data-partner-id');
+            viewPartnerProfile(parseInt(userId));
+        }
+
+        // View partner profile (placeholder)
+        function viewPartnerProfile(userId) {
+            showNotification('Profile view feature coming soon!', 'info');
+        }
+
+        // Get CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('connectModal');
+            if (event.target === modal) {
+                closeConnectModal();
+            }
+        }
+    </script>
+
+    {% include "footer.html" %}
+    <script src="{% static 'js/index.js' %}"></script>
+</body>
+</html>

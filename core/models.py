@@ -432,3 +432,170 @@ class WeeklyGoal(models.Model):
         hours_progress = min((self.actual_study_hours / self.target_study_hours) * 100, 100) if self.target_study_hours > 0 else 100
         sessions_progress = min((self.actual_sessions / self.target_sessions) * 100, 100) if self.target_sessions > 0 else 100
         return (hours_progress + sessions_progress) / 2
+    
+class StudyProfile(models.Model):
+    STUDY_LEVEL_CHOICES = [
+        ('beginner', 'Beginner'),
+        ('intermediate', 'Intermediate'),
+        ('advanced', 'Advanced'),
+        ('expert', 'Expert'),
+    ]
+    
+    AVAILABILITY_CHOICES = [
+        ('morning', 'Morning (6 AM - 12 PM)'),
+        ('afternoon', 'Afternoon (12 PM - 6 PM)'),
+        ('evening', 'Evening (6 PM - 10 PM)'),
+        ('night', 'Night (10 PM - 2 AM)'),
+    ]
+    
+    TIMEZONE_CHOICES = [
+        ('UTC-12', 'UTC-12 (Baker Island)'),
+        ('UTC-11', 'UTC-11 (American Samoa)'),
+        ('UTC-10', 'UTC-10 (Hawaii)'),
+        ('UTC-9', 'UTC-9 (Alaska)'),
+        ('UTC-8', 'UTC-8 (PST)'),
+        ('UTC-7', 'UTC-7 (MST)'),
+        ('UTC-6', 'UTC-6 (CST)'),
+        ('UTC-5', 'UTC-5 (EST)'),
+        ('UTC-4', 'UTC-4 (AST)'),
+        ('UTC-3', 'UTC-3 (Brazil)'),
+        ('UTC-2', 'UTC-2 (Mid-Atlantic)'),
+        ('UTC-1', 'UTC-1 (Azores)'),
+        ('UTC+0', 'UTC+0 (GMT/London)'),
+        ('UTC+1', 'UTC+1 (CET/Paris)'),
+        ('UTC+2', 'UTC+2 (EET/Cairo)'),
+        ('UTC+3', 'UTC+3 (Moscow)'),
+        ('UTC+4', 'UTC+4 (Dubai)'),
+        ('UTC+5', 'UTC+5 (Pakistan)'),
+        ('UTC+5:30', 'UTC+5:30 (India)'),
+        ('UTC+6', 'UTC+6 (Bangladesh)'),
+        ('UTC+7', 'UTC+7 (Thailand)'),
+        ('UTC+8', 'UTC+8 (China/Singapore)'),
+        ('UTC+9', 'UTC+9 (Japan/Korea)'),
+        ('UTC+10', 'UTC+10 (Australia East)'),
+        ('UTC+11', 'UTC+11 (Solomon Islands)'),
+        ('UTC+12', 'UTC+12 (New Zealand)'),
+    ]
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='study_profile')
+    bio = models.TextField(max_length=500, blank=True, help_text="Tell others about your study goals and interests")
+    subjects = models.CharField(max_length=500, help_text="Comma-separated subjects you're studying")
+    study_level = models.CharField(max_length=20, choices=STUDY_LEVEL_CHOICES, default='intermediate')
+    preferred_study_times = models.CharField(max_length=100, help_text="Comma-separated preferred times")
+    timezone = models.CharField(max_length=10, choices=TIMEZONE_CHOICES, default='UTC+0')
+    languages = models.CharField(max_length=200, default='English', help_text="Languages you can communicate in")
+    study_goals = models.TextField(max_length=300, blank=True, help_text="What are you trying to achieve?")
+    contact_preference = models.CharField(
+        max_length=50, 
+        choices=[
+            ('platform', 'Through Platform Only'),
+            ('email', 'Email'),
+            ('discord', 'Discord'),
+            ('zoom', 'Zoom'),
+        ],
+        default='platform'
+    )
+    contact_info = models.CharField(max_length=100, blank=True, help_text="Your contact information (optional)")
+    is_available = models.BooleanField(default=True, help_text="Are you currently looking for study partners?")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.user.username}'s Study Profile"
+    
+    def get_subjects_list(self):
+        """Return subjects as a list"""
+        if self.subjects:
+            return [subject.strip() for subject in self.subjects.split(',') if subject.strip()]
+        return []
+    
+    def get_study_times_list(self):
+        """Return preferred study times as a list"""
+        if self.preferred_study_times:
+            return [time.strip() for time in self.preferred_study_times.split(',') if time.strip()]
+        return []
+    
+    def get_languages_list(self):
+        """Return languages as a list"""
+        if self.languages:
+            return [lang.strip() for lang in self.languages.split(',') if lang.strip()]
+        return []
+
+    def get_user_initials(self):
+        """Get user initials for avatar"""
+        if self.user.first_name and self.user.last_name:
+            return f"{self.user.first_name[0]}{self.user.last_name[0]}".upper()
+        elif self.user.first_name:
+            return self.user.first_name[0].upper()
+        return self.user.username[0].upper() if self.user.username else "U"
+    
+    def get_display_name(self):
+        """Get display name for user"""
+        if self.user.first_name and self.user.last_name:
+            return f"{self.user.first_name} {self.user.last_name}"
+        elif self.user.first_name:
+            return self.user.first_name
+        return self.user.username
+
+
+class StudyPartnerRequest(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('accepted', 'Accepted'),
+        ('declined', 'Declined'),
+    ]
+
+    from_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_requests')
+    to_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_requests')
+    message = models.TextField(max_length=300, help_text="Introduce yourself and explain why you'd like to study together")
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+    responded_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        unique_together = ('from_user', 'to_user')
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.from_user.username} -> {self.to_user.username} ({self.status})"
+
+
+class StudyPartnership(models.Model):
+    user1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='partnerships_as_user1')
+    user2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='partnerships_as_user2')
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+    
+    # Study session tracking
+    total_sessions = models.PositiveIntegerField(default=0)
+    last_session = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        unique_together = ('user1', 'user2')
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.user1.username} <-> {self.user2.username}"
+    
+    def get_partner(self, current_user):
+        """Get the other user in the partnership"""
+        return self.user2 if self.user1 == current_user else self.user1
+
+
+class PartnerStudySession(models.Model):
+    partnership = models.ForeignKey(StudyPartnership, on_delete=models.CASCADE, related_name='sessions')
+    title = models.CharField(max_length=200)
+    description = models.TextField(blank=True)
+    subject = models.CharField(max_length=100)
+    scheduled_time = models.DateTimeField()
+    duration_hours = models.DecimalField(max_digits=3, decimal_places=1, default=1.0)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    is_completed = models.BooleanField(default=False)
+    notes = models.TextField(blank=True, help_text="Session notes and outcomes")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-scheduled_time']
+
+    def __str__(self):
+        return f"{self.title} - {self.scheduled_time.strftime('%Y-%m-%d %H:%M')}"

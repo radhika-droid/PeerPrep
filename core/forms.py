@@ -1,5 +1,5 @@
 from django import forms
-from .models import Contact, SuccessStory, Question, Answer,Goal, Milestone, StudySession, WeeklyGoal
+from .models import Contact, SuccessStory, Question, Answer,Goal, Milestone, StudySession, WeeklyGoal,StudyProfile, StudyPartnerRequest,PartnerStudySession
 from .models import FAQ
 from django.utils import timezone
 from datetime import datetime, timedelta
@@ -298,3 +298,232 @@ class GoalUpdateForm(forms.ModelForm):
                 'required': True
             }),
         }
+
+class StudyProfileForm(forms.ModelForm):
+    class Meta:
+        model = StudyProfile
+        fields = [
+            'bio', 'subjects', 'study_level', 'preferred_study_times', 
+            'timezone', 'languages', 'study_goals', 'contact_preference', 
+            'contact_info', 'is_available'
+        ]
+        widgets = {
+            'bio': forms.Textarea(attrs={
+                'class': 'form-textarea',
+                'placeholder': 'Tell others about your study goals, interests, and what you hope to achieve through collaboration...',
+                'rows': 4
+            }),
+            'subjects': forms.TextInput(attrs={
+                'class': 'form-input',
+                'placeholder': 'e.g., Mathematics, Physics, Computer Science, Biology'
+            }),
+            'study_level': forms.Select(attrs={
+                'class': 'form-input'
+            }),
+            'preferred_study_times': forms.TextInput(attrs={
+                'class': 'form-input',
+                'placeholder': 'e.g., morning, evening, weekend'
+            }),
+            'timezone': forms.Select(attrs={
+                'class': 'form-input'
+            }),
+            'languages': forms.TextInput(attrs={
+                'class': 'form-input',
+                'placeholder': 'e.g., English, Spanish, French'
+            }),
+            'study_goals': forms.Textarea(attrs={
+                'class': 'form-textarea',
+                'placeholder': 'What are your current study goals? Exams, projects, skill development...',
+                'rows': 3
+            }),
+            'contact_preference': forms.Select(attrs={
+                'class': 'form-input'
+            }),
+            'contact_info': forms.TextInput(attrs={
+                'class': 'form-input',
+                'placeholder': 'Your email, Discord username, etc. (optional)'
+            }),
+            'is_available': forms.CheckboxInput(attrs={
+                'class': 'form-checkbox'
+            })
+        }
+    
+    def clean_subjects(self):
+        subjects = self.cleaned_data.get('subjects', '')
+        if subjects:
+            subject_list = [subject.strip() for subject in subjects.split(',') if subject.strip()]
+            if len(subject_list) > 10:
+                raise forms.ValidationError("Maximum 10 subjects allowed.")
+            return ', '.join(subject_list[:10])
+        return subjects
+    
+    def clean_preferred_study_times(self):
+        times = self.cleaned_data.get('preferred_study_times', '')
+        if times:
+            time_list = [time.strip() for time in times.split(',') if time.strip()]
+            return ', '.join(time_list[:5])  # Max 5 time preferences
+        return times
+    
+    def clean_languages(self):
+        languages = self.cleaned_data.get('languages', '')
+        if languages:
+            lang_list = [lang.strip() for lang in languages.split(',') if lang.strip()]
+            return ', '.join(lang_list[:5])  # Max 5 languages
+        return languages
+
+
+class StudyPartnerRequestForm(forms.ModelForm):
+    class Meta:
+        model = StudyPartnerRequest
+        fields = ['message']
+        widgets = {
+            'message': forms.Textarea(attrs={
+                'class': 'form-textarea',
+                'placeholder': 'Introduce yourself and explain why you\'d like to study together. What subjects are you interested in? What are your goals?',
+                'rows': 4,
+                'required': True
+            })
+        }
+    
+    def clean_message(self):
+        message = self.cleaned_data.get('message', '')
+        if len(message.strip()) < 20:
+            raise forms.ValidationError("Please provide a more detailed message (at least 20 characters).")
+        if len(message) > 300:
+            raise forms.ValidationError("Message is too long (maximum 300 characters).")
+        return message
+
+
+class PartnerStudySessionForm(forms.ModelForm):
+    class Meta:
+        model = PartnerStudySession
+        fields = ['title', 'description', 'subject', 'scheduled_time', 'duration_hours']
+        widgets = {
+            'title': forms.TextInput(attrs={
+                'class': 'form-input',
+                'placeholder': 'e.g., Calculus Study Session, Physics Problem Solving',
+                'required': True
+            }),
+            'description': forms.Textarea(attrs={
+                'class': 'form-textarea',
+                'placeholder': 'What will you focus on during this session?',
+                'rows': 3
+            }),
+            'subject': forms.TextInput(attrs={
+                'class': 'form-input',
+                'placeholder': 'e.g., Mathematics, Physics, Computer Science',
+                'required': True
+            }),
+            'scheduled_time': forms.DateTimeInput(attrs={
+                'class': 'form-input',
+                'type': 'datetime-local',
+                'required': True
+            }),
+            'duration_hours': forms.NumberInput(attrs={
+                'class': 'form-input',
+                'min': '0.5',
+                'max': '8.0',
+                'step': '0.5',
+                'value': '2.0'
+            })
+        }
+    
+    def clean_scheduled_time(self):
+        scheduled_time = self.cleaned_data.get('scheduled_time')
+        if scheduled_time:
+            from django.utils import timezone
+            if scheduled_time <= timezone.now():
+                raise forms.ValidationError("Session must be scheduled for a future date and time.")
+        return scheduled_time
+    
+    def clean_duration_hours(self):
+        duration = self.cleaned_data.get('duration_hours')
+        if duration and (duration < 0.5 or duration > 8.0):
+            raise forms.ValidationError("Session duration must be between 0.5 and 8 hours.")
+        return duration
+
+
+class StudyPartnerSearchForm(forms.Form):
+    SUBJECT_CHOICES = [
+        ('', 'All Subjects'),
+        ('math', 'Mathematics'),
+        ('science', 'Science'),
+        ('physics', 'Physics'),
+        ('chemistry', 'Chemistry'),
+        ('biology', 'Biology'),
+        ('computer_science', 'Computer Science'),
+        ('programming', 'Programming'),
+        ('english', 'English'),
+        ('history', 'History'),
+        ('geography', 'Geography'),
+        ('economics', 'Economics'),
+        ('psychology', 'Psychology'),
+        ('philosophy', 'Philosophy'),
+        ('engineering', 'Engineering'),
+        ('other', 'Other'),
+    ]
+    
+    LEVEL_CHOICES = [
+        ('', 'All Levels'),
+        ('beginner', 'Beginner'),
+        ('intermediate', 'Intermediate'),
+        ('advanced', 'Advanced'),
+        ('expert', 'Expert'),
+    ]
+    
+    TIMEZONE_CHOICES = [
+        ('', 'All Timezones'),
+        ('UTC-12', 'UTC-12 (Baker Island)'),
+        ('UTC-11', 'UTC-11 (American Samoa)'),
+        ('UTC-10', 'UTC-10 (Hawaii)'),
+        ('UTC-9', 'UTC-9 (Alaska)'),
+        ('UTC-8', 'UTC-8 (PST)'),
+        ('UTC-7', 'UTC-7 (MST)'),
+        ('UTC-6', 'UTC-6 (CST)'),
+        ('UTC-5', 'UTC-5 (EST)'),
+        ('UTC-4', 'UTC-4 (AST)'),
+        ('UTC-3', 'UTC-3 (Brazil)'),
+        ('UTC-2', 'UTC-2 (Mid-Atlantic)'),
+        ('UTC-1', 'UTC-1 (Azores)'),
+        ('UTC+0', 'UTC+0 (GMT/London)'),
+        ('UTC+1', 'UTC+1 (CET/Paris)'),
+        ('UTC+2', 'UTC+2 (EET/Cairo)'),
+        ('UTC+3', 'UTC+3 (Moscow)'),
+        ('UTC+4', 'UTC+4 (Dubai)'),
+        ('UTC+5', 'UTC+5 (Pakistan)'),
+        ('UTC+5:30', 'UTC+5:30 (India)'),
+        ('UTC+6', 'UTC+6 (Bangladesh)'),
+        ('UTC+7', 'UTC+7 (Thailand)'),
+        ('UTC+8', 'UTC+8 (China/Singapore)'),
+        ('UTC+9', 'UTC+9 (Japan/Korea)'),
+        ('UTC+10', 'UTC+10 (Australia East)'),
+        ('UTC+11', 'UTC+11 (Solomon Islands)'),
+        ('UTC+12', 'UTC+12 (New Zealand)'),
+    ]
+
+    subject = forms.ChoiceField(
+        choices=SUBJECT_CHOICES,
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-input'})
+    )
+    
+    study_level = forms.ChoiceField(
+        choices=LEVEL_CHOICES,
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-input'})
+    )
+    
+    timezone = forms.ChoiceField(
+        choices=TIMEZONE_CHOICES,
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-input'})
+    )
+    
+    search_query = forms.CharField(
+        max_length=100,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'form-input',
+            'placeholder': 'Search by name, bio, subjects, or goals...'
+        })
+    )
