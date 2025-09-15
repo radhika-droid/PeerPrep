@@ -18,6 +18,9 @@ from datetime import datetime, timedelta
 import json
 from .models import Goal, Milestone, StudySession, Achievement, UserStats, WeeklyGoal
 from .forms import GoalForm, MilestoneForm, StudySessionForm, WeeklyGoalForm, GoalUpdateForm
+from django.core.paginator import Paginator
+from .models import StudyProfile, StudyPartnerRequest, StudyPartnership, StudySession
+from .forms import StudyProfileForm, StudyPartnerRequestForm, StudySessionForm, StudyPartnerSearchForm,PartnerStudySession
 
 def user_login(request):
     if request.method == 'POST':
@@ -1115,6 +1118,508 @@ def get_recent_activity(request):
         return JsonResponse({
             'success': True,
             'activities': activities[:10]  # Return top 10 most recent
+        })
+        
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+    
+# Add these views to your core/views.py file
+
+from django.db.models import Q, Count
+from django.core.paginator import Paginator
+from django.contrib.auth.models import User
+from .models import StudyProfile, StudyPartnerRequest, StudyPartnership, StudySession
+from .forms import StudyProfileForm, StudyPartnerRequestForm, StudySessionForm, StudyPartnerSearchForm,PartnerStudySession
+import json
+from django.utils import timezone
+
+# Study Partners Views
+
+def find_study_partners(request):
+    """Main page for finding study partners"""
+    # Get or create user's study profile
+    user_profile = None
+    if request.user.is_authenticated:
+        user_profile, created = StudyProfile.objects.get_or_create(
+            user=request.user,
+            defaults={
+                'subjects': '',
+                'study_level': 'intermediate',
+                'preferred_study_times': '',
+                'timezone': 'UTC+0',
+                'languages': 'English',
+                'is_available': True
+            }
+        )
+    
+    context = {
+        'user_profile': user_profile,
+        'user_is_authenticated': request.user.is_authenticated,
+    }
+    return render(request, 'study_partners.html', context)
+
+@login_required
+def study_profile(request):
+    """View and edit user's study profile"""
+    profile, created = StudyProfile.objects.get_or_create(
+        user=request.user,
+        defaults={
+            'subjects': '',
+            'study_level': 'intermediate',
+            'preferred_study_times': '',
+            'timezone': 'UTC+0',
+            'languages': 'English',
+            'is_available': True
+        }
+    )
+    
+    if request.method == 'POST':
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            form = StudyProfileForm(request.POST, instance=profile)
+            if form.is_valid():
+                form.save()
+                return JsonResponse({
+                    'success': True,
+                    'message': 'Profile updated successfully!'
+                })
+            return JsonResponse({
+                'success': False,
+                'errors': form.errors
+            })
+        else:
+            form = StudyProfileForm(request.POST, instance=profile)
+            if form.is_valid():
+                form.save()
+                messages.success(request, 'Your study profile has been updated successfully!')
+                return redirect('study_profile')
+    else:
+        form = StudyProfileForm(instance=profile)
+    
+    context = {
+        'form': form,
+        'profile': profile,
+    }
+    return render(request, 'study_profile.html', context)
+
+def search_study_partners(request):
+    """API endpoint to search for study partners"""
+    if not request.user.is_authenticated:
+        return JsonResponse({'partners': [], 'success': False, 'error': 'Authentication required'})
+    
+    # Get search parameters
+    subject = request.GET.get('subject', '')
+    study_level = request.GET.get('study_level', '')
+    timezone = request.GET.get('timezone', '')
+    search_query = request.GET.get('search_query', '')
+    page = int(request.GET.get('page', 1))
+    
+    # Base query: exclude current user and only show available profiles
+    profiles = StudyProfile.objects.filter(
+        is_available=True
+    ).exclude(user=request.user).select_related('user')
+    
+    # Apply filters
+    if subject and subject != '':
+        profiles = profiles.filter(subjects__icontains=subject)
+    
+    if study_level and study_level != '':
+        profiles = profiles.filter(study_level=study_level)
+    
+    if timezone and timezone != '':
+        profiles = profiles.filter(timezone=timezone)
+    
+    if search_query:
+        profiles = profiles.filter(
+            Q(user__first_name__icontains=search_query) |
+            Q(user__last_name__icontains=search_query) |
+            Q(user__username__icontains=search_query) |
+            Q(bio__icontains=search_query) |
+            Q(subjects__icontains=search_query) |
+            Q(study_goals__icontains=search_query)
+        )
+    
+    # Pagination
+    paginator = Paginator(profiles, 12)  # 12 profiles per page
+    profiles_page = paginator.get_page(page)
+    
+    # Get current user's sent requests to avoid duplicate requests
+    sent_requests = StudyPartnerRequest.objects.filter(
+        from_user=request.user,
+        status='pending'
+    ).values_list('to_user_id', flat=True)
+    
+    # Get current user's partnerships
+    partnerships = StudyPartnership.objects.filter(
+        Q(user1=request.user) | Q(user2=request.user),
+        is_active=True
+    )
+    partnered_users = set()
+    for partnership in partnerships:
+        partnered_users.add(partnership.user1.id if partnership.user2 == request.user else partnership.user2.id)
+    
+    partners_data = []
+    for profile in profiles_page:
+        # Calculate compatibility score (simple algorithm)
+        compatibility_score = calculate_compatibility_score(
+            request.user.study_profile if hasattr(request.user, 'study_profile') else None,
+            profile
+        )
+        
+        partners_data.append({
+            'id': profile.user.id,
+            'profile_id': profile.id,
+            'name': profile.get_display_name(),
+            'username': profile.user.username,
+            'initials': profile.get_user_initials(),
+            'bio': profile.bio,
+            'subjects': profile.get_subjects_list(),
+            'study_level': profile.study_level,
+            'study_goals': profile.study_goals,
+            'preferred_study_times': profile.get_study_times_list(),
+            'timezone': profile.timezone,
+            'languages': profile.get_languages_list(),
+            'contact_preference': profile.contact_preference,
+            'created_at': profile.created_at.isoformat(),
+            'compatibility_score': compatibility_score,
+            'request_sent': profile.user.id in sent_requests,
+            'is_partner': profile.user.id in partnered_users,
+        })
+    
+    return JsonResponse({
+        'partners': partners_data,
+        'has_next': profiles_page.has_next(),
+        'has_previous': profiles_page.has_previous(),
+        'current_page': profiles_page.number,
+        'total_pages': paginator.num_pages,
+        'total_count': paginator.count,
+        'success': True
+    })
+
+def calculate_compatibility_score(user_profile, other_profile):
+    """Calculate compatibility score between two study profiles"""
+    if not user_profile:
+        return 50  # Default score if user has no profile
+    
+    score = 0
+    max_score = 100
+    
+    # Subject compatibility (40% weight)
+    user_subjects = set([s.lower().strip() for s in user_profile.get_subjects_list()])
+    other_subjects = set([s.lower().strip() for s in other_profile.get_subjects_list()])
+    
+    if user_subjects and other_subjects:
+        common_subjects = user_subjects.intersection(other_subjects)
+        if common_subjects:
+            subject_score = (len(common_subjects) / max(len(user_subjects), len(other_subjects))) * 40
+            score += subject_score
+    
+    # Study level compatibility (20% weight)
+    level_mapping = {'beginner': 1, 'intermediate': 2, 'advanced': 3, 'expert': 4}
+    user_level = level_mapping.get(user_profile.study_level, 2)
+    other_level = level_mapping.get(other_profile.study_level, 2)
+    level_diff = abs(user_level - other_level)
+    
+    if level_diff == 0:
+        score += 20
+    elif level_diff == 1:
+        score += 15
+    elif level_diff == 2:
+        score += 5
+    
+    # Timezone compatibility (20% weight)
+    user_tz = user_profile.timezone
+    other_tz = other_profile.timezone
+    
+    if user_tz == other_tz:
+        score += 20
+    else:
+        # Calculate timezone difference
+        try:
+            user_offset = float(user_tz.replace('UTC', '').replace('+', ''))
+            other_offset = float(other_tz.replace('UTC', '').replace('+', ''))
+            tz_diff = abs(user_offset - other_offset)
+            
+            if tz_diff <= 2:
+                score += 15
+            elif tz_diff <= 4:
+                score += 10
+            elif tz_diff <= 8:
+                score += 5
+        except:
+            pass
+    
+    # Language compatibility (10% weight)
+    user_languages = set([l.lower().strip() for l in user_profile.get_languages_list()])
+    other_languages = set([l.lower().strip() for l in other_profile.get_languages_list()])
+    
+    common_languages = user_languages.intersection(other_languages)
+    if common_languages:
+        score += 10
+    
+    # Study time compatibility (10% weight)
+    user_times = set([t.lower().strip() for t in user_profile.get_study_times_list()])
+    other_times = set([t.lower().strip() for t in other_profile.get_study_times_list()])
+    
+    if user_times and other_times:
+        common_times = user_times.intersection(other_times)
+        if common_times:
+            score += 10
+    
+    return min(int(score), 100)
+
+@login_required
+@require_POST
+def send_partner_request(request):
+    """Send a study partner request"""
+    try:
+        data = json.loads(request.body)
+        to_user_id = data.get('user_id')
+        message = data.get('message', '')
+        
+        if not to_user_id:
+            return JsonResponse({'success': False, 'error': 'User ID is required'})
+        
+        to_user = get_object_or_404(User, id=to_user_id)
+        
+        # Check if request already exists
+        existing_request = StudyPartnerRequest.objects.filter(
+            from_user=request.user,
+            to_user=to_user
+        ).first()
+        
+        if existing_request:
+            return JsonResponse({'success': False, 'error': 'Request already sent to this user'})
+        
+        # Check if they're already partners
+        existing_partnership = StudyPartnership.objects.filter(
+            Q(user1=request.user, user2=to_user) | Q(user1=to_user, user2=request.user),
+            is_active=True
+        ).first()
+        
+        if existing_partnership:
+            return JsonResponse({'success': False, 'error': 'You are already study partners with this user'})
+        
+        # Create the request
+        partner_request = StudyPartnerRequest.objects.create(
+            from_user=request.user,
+            to_user=to_user,
+            message=message
+        )
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Study partner request sent successfully!'
+        })
+        
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+
+@login_required
+def my_partner_requests(request):
+    """View incoming and outgoing partner requests"""
+    incoming_requests = StudyPartnerRequest.objects.filter(
+        to_user=request.user
+    ).select_related('from_user', 'from_user__study_profile').order_by('-created_at')
+    
+    outgoing_requests = StudyPartnerRequest.objects.filter(
+        from_user=request.user
+    ).select_related('to_user', 'to_user__study_profile').order_by('-created_at')
+    
+    context = {
+        'incoming_requests': incoming_requests,
+        'outgoing_requests': outgoing_requests,
+    }
+    return render(request, 'partner_requests.html', context)
+
+@login_required
+@require_POST
+def respond_to_request(request, request_id):
+    """Respond to a partner request (accept/decline)"""
+    try:
+        partner_request = get_object_or_404(StudyPartnerRequest, id=request_id, to_user=request.user)
+        
+        if partner_request.status != 'pending':
+            return JsonResponse({'success': False, 'error': 'Request has already been responded to'})
+        
+        data = json.loads(request.body)
+        action = data.get('action')  # 'accept' or 'decline'
+        
+        if action not in ['accept', 'decline']:
+            return JsonResponse({'success': False, 'error': 'Invalid action'})
+        
+        partner_request.status = 'accepted' if action == 'accept' else 'declined'
+        partner_request.responded_at = timezone.now()
+        partner_request.save()
+        
+        # Create partnership if accepted
+        if action == 'accept':
+            StudyPartnership.objects.get_or_create(
+                user1=partner_request.from_user,
+                user2=partner_request.to_user,
+                defaults={'is_active': True}
+            )
+        
+        return JsonResponse({
+            'success': True,
+            'message': f'Request {action}ed successfully!'
+        })
+        
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+
+@login_required
+def my_study_partners(request):
+    """View current study partnerships and sessions"""
+    partnerships = StudyPartnership.objects.filter(
+        Q(user1=request.user) | Q(user2=request.user),
+        is_active=True
+    ).select_related('user1', 'user2', 'user1__study_profile', 'user2__study_profile')
+    
+    # Get upcoming sessions
+    upcoming_sessions = PartnerStudySession.objects.filter(
+        partnership__in=partnerships,
+        scheduled_time__gte=timezone.now(),
+        is_completed=False
+    ).select_related('partnership', 'created_by').order_by('scheduled_time')[:5]
+    
+    # Get recent sessions
+    recent_sessions = PartnerStudySession.objects.filter(
+        partnership__in=partnerships
+    ).select_related('partnership', 'created_by').order_by('-created_at')[:5]
+    
+    context = {
+        'partnerships': partnerships,
+        'upcoming_sessions': upcoming_sessions,
+        'recent_sessions': recent_sessions,
+    }
+    return render(request, 'my_partners.html', context)
+
+@login_required
+@require_POST
+def schedule_session(request):
+    """Schedule a study session with a partner"""
+    try:
+        data = json.loads(request.body)
+        partnership_id = data.get('partnership_id')
+        
+        partnership = get_object_or_404(StudyPartnership, id=partnership_id)
+        
+        # Verify user is part of this partnership
+        if request.user not in [partnership.user1, partnership.user2]:
+            return JsonResponse({'success': False, 'error': 'You are not part of this partnership'})
+        
+        # Create session data
+        session_data = {
+            'title': data.get('title'),
+            'description': data.get('description', ''),
+            'subject': data.get('subject'),
+            'scheduled_time': data.get('scheduled_time'),
+            'duration_hours': data.get('duration_hours', 2.0)
+        }
+        
+        form = StudySessionForm(session_data)
+        if form.is_valid():
+            session = form.save(commit=False)
+            session.partnership = partnership
+            session.created_by = request.user
+            session.save()
+            
+            # Update partnership stats
+            partnership.total_sessions += 1
+            partnership.save()
+            
+            return JsonResponse({
+                'success': True,
+                'message': 'Study session scheduled successfully!',
+                'session_id': session.id
+            })
+        
+        return JsonResponse({
+            'success': False,
+            'errors': form.errors
+        })
+        
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+
+@login_required
+def get_partnership_sessions(request, partnership_id):
+    """Get sessions for a specific partnership"""
+    partnership = get_object_or_404(StudyPartnership, id=partnership_id)
+    
+    # Verify user is part of this partnership
+    if request.user not in [partnership.user1, partnership.user2]:
+        return JsonResponse({'success': False, 'error': 'Access denied'})
+    
+    sessions = PartnerStudySession.objects.filter(
+        partnership=partnership
+    ).select_related('created_by').order_by('-scheduled_time')
+    
+    sessions_data = []
+    for session in sessions:
+        sessions_data.append({
+            'id': session.id,
+            'title': session.title,
+            'description': session.description,
+            'subject': session.subject,
+            'scheduled_time': session.scheduled_time.isoformat(),
+            'duration_hours': float(session.duration_hours),
+            'created_by': session.created_by.username,
+            'is_completed': session.is_completed,
+            'notes': session.notes,
+            'created_at': session.created_at.isoformat(),
+        })
+    
+    return JsonResponse({
+        'sessions': sessions_data,
+        'success': True
+    })
+
+@login_required
+@require_POST
+def complete_session(request, session_id):
+    """Mark a study session as completed"""
+    try:
+        session = get_object_or_404(PartnerStudySession, id=session_id)
+        
+        # Verify user is part of this session's partnership
+        if request.user not in [session.partnership.user1, session.partnership.user2]:
+            return JsonResponse({'success': False, 'error': 'Access denied'})
+        
+        data = json.loads(request.body)
+        session.is_completed = True
+        session.notes = data.get('notes', '')
+        session.save()
+        
+        # Update partnership last session
+        session.partnership.last_session = timezone.now()
+        session.partnership.save()
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Session marked as completed!'
+        })
+        
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+
+@login_required
+@require_POST
+def end_partnership(request, partnership_id):
+    """End a study partnership"""
+    try:
+        partnership = get_object_or_404(StudyPartnership, id=partnership_id)
+        
+        # Verify user is part of this partnership
+        if request.user not in [partnership.user1, partnership.user2]:
+            return JsonResponse({'success': False, 'error': 'Access denied'})
+        
+        partnership.is_active = False
+        partnership.save()
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Partnership ended successfully.'
         })
         
     except Exception as e:

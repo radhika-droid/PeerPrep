@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import FAQ
-from .models import Contact, SuccessStory, StoryReaction, Question, Answer, QuestionUpvote, AnswerUpvote,Goal,Milestone,StudySession,Achievement,UserStats,WeeklyGoal
+from .models import Contact, SuccessStory, StoryReaction, Question, Answer, QuestionUpvote, AnswerUpvote,Goal,Milestone,StudySession,Achievement,UserStats,WeeklyGoal,StudyProfile, StudyPartnerRequest, StudyPartnership,PartnerStudySession
 
 @admin.register(Contact)
 class ContactAdmin(admin.ModelAdmin):
@@ -287,6 +287,83 @@ class WeeklyGoalAdmin(admin.ModelAdmin):
             'fields': ('actual_study_hours', 'actual_sessions', 'is_completed')
         }),
         ('Timestamps', {
+            'fields': ('created_at',)
+        }),
+    )
+@admin.register(StudyProfile)
+class StudyProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'study_level', 'timezone', 'is_available', 'created_at')
+    list_filter = ('study_level', 'timezone', 'is_available', 'created_at')
+    search_fields = ('user__username', 'user__first_name', 'user__last_name', 'subjects', 'bio')
+    readonly_fields = ('created_at', 'updated_at')
+    list_editable = ('is_available',)
+    ordering = ('-created_at',)
+    
+    fieldsets = (
+        ('User Information', {
+            'fields': ('user', 'bio', 'is_available')
+        }),
+        ('Study Preferences', {
+            'fields': ('subjects', 'study_level', 'study_goals')
+        }),
+        ('Availability & Contact', {
+            'fields': ('preferred_study_times', 'timezone', 'languages', 'contact_preference', 'contact_info')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+
+@admin.register(StudyPartnerRequest)
+class StudyPartnerRequestAdmin(admin.ModelAdmin):
+    list_display = ('from_user', 'to_user', 'status', 'created_at', 'responded_at')
+    list_filter = ('status', 'created_at')
+    search_fields = ('from_user__username', 'to_user__username', 'message')
+    readonly_fields = ('created_at',)
+    ordering = ('-created_at',)
+    
+    fieldsets = (
+        ('Request Information', {
+            'fields': ('from_user', 'to_user', 'message')
+        }),
+        ('Status', {
+            'fields': ('status', 'responded_at')
+        }),
+        ('Timestamp', {
+            'fields': ('created_at',)
+        }),
+    )
+
+@admin.register(StudyPartnership)
+class StudyPartnershipAdmin(admin.ModelAdmin):
+    list_display = ('user1', 'user2', 'is_active', 'total_sessions', 'last_session', 'created_at')
+    list_filter = ('is_active', 'created_at')
+    search_fields = ('user1__username', 'user2__username')
+    readonly_fields = ('created_at', 'total_sessions', 'last_session')
+    list_editable = ('is_active',)
+    ordering = ('-created_at',)
+
+@admin.register(PartnerStudySession)
+class PartnerStudySessionAdmin(admin.ModelAdmin):
+    list_display = ('title', 'partnership', 'subject', 'scheduled_time', 'duration_hours', 'is_completed', 'created_by')
+    list_filter = ('subject', 'is_completed', 'scheduled_time', 'created_at')
+    search_fields = ('title', 'description', 'subject', 'partnership__user1__username', 'partnership__user2__username')
+    readonly_fields = ('created_at',)
+    list_editable = ('is_completed',)
+    ordering = ('-scheduled_time',)
+    
+    fieldsets = (
+        ('Session Information', {
+            'fields': ('title', 'description', 'subject', 'partnership', 'created_by')
+        }),
+        ('Schedule', {
+            'fields': ('scheduled_time', 'duration_hours')
+        }),
+        ('Status', {
+            'fields': ('is_completed', 'notes')
+        }),
+        ('Timestamp', {
             'fields': ('created_at',)
         }),
     )
