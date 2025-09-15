@@ -1,32 +1,261 @@
-{% extends "base.html" %}
-{% block content %}
-    <!-- Main Content -->
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PeerPrep - Features</title>
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        /* Section Layout */
+        .features-section {
+            padding: 5rem 2rem;
+            text-align: center;
+        }
+    
+        .features-section h2 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(90deg, #00bfff, #ffffff);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+    
+        .features-section p.form-subtitle {
+            font-size: 1.2rem;
+            color: #e0e0e0;
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+    
+        /* Carousel Container */
+        .carousel-container {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+        }
+    
+        .carousel-track {
+            display: flex;
+            gap: 1.5rem;
+        }
+    
+        /* Feature Cards */
+        .feature-card {
+            min-width: 280px;
+            flex: 0 0 auto;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+    
+        body.light-mode .feature-card {
+            background: rgba(0, 0, 0, 0.05);
+        }
+    
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+        }
+    
+        .feature-icon {
+            font-size: 2.5rem;
+            color: #00bfff;
+            margin-bottom: 1rem;
+        }
+    
+        .feature-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+    
+        body.light-mode .feature-title {
+            color: #222;
+        }
+    
+        .feature-description {
+            font-size: 0.95rem;
+            color: #ccc;
+        }
+    
+        body.light-mode .feature-description {
+            color: #555;
+        }
+    
+        .feature-extra {
+            font-size: 0.85rem;
+            margin-top: 10px;
+            display: none;
+            color: #aaa;
+        }
+    
+        .feature-card:hover .feature-extra {
+            display: block;
+        }
+    
+        /* Arrows */
+        .carousel-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2rem;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            border-radius: 50%;
+            padding: 0.5rem;
+            cursor: pointer;
+            z-index: 2;
+        }
+    
+        .carousel-arrow.left {
+            left: 15px;
+        }
+        .carousel-arrow.right {
+            right: 15px;
+        }
+    
+        /* Light mode overrides for heading and subtitle */
+        body.light-mode .features-section h2 {
+            background: none !important;                  
+            -webkit-background-clip: initial !important;  
+            -webkit-text-fill-color: initial !important;  
+            color: darkgreen !important;                
+        }
+    
+        body.light-mode .features-section p.form-subtitle {
+            color: #006400 !important;                 
+        }
+    </style>
+    
+</head>
+<body onload="applyThemeFromStorage()">
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <img src="/static/PeerPrep.png" alt="PeerPrep Logo">
+            </div>
+            <ul class="nav-menu">
+                <button class="mode-toggle" id="modeToggle" title="Toggle Mode" onclick="toggleMode()">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <li><a href="{% url 'index' %}" class="nav-link">Home</a></li>
+                <li><a href="{% url 'feature' %}" class="nav-link active">Features</a></li>
+                <li><a href="{% url 'about' %}" class="nav-link">About</a></li>
+                <li><a href="{% url 'contact' %}" class="nav-link">Contact</a></li>
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'dashboard' %}" class="nav-link">Dashboard</a></li>
+                    <li><a href="{% url 'logout' %}" class="nav-link">Logout</a></li>
+                {% else %}
+                    <li><a href="{% url 'login' %}" class="nav-link">Login</a></li>
+                    <li><a href="{% url 'register' %}" class="nav-link">Register</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Features Section -->
     <main class="main-content">
-        <!-- Features Section -->
         <section class="features-section">
-        <div class="container" style="grid-template-columns: 1fr;">
-                <h2 class="form-title">Why Choose Peer Prep?</h2>
-                <p class="form-subtitle">
-                    Discover the benefits of collaborative learning with our innovative peer preparation platform.
-                </p>
-                <div class="features-grid">
+            <h2>Why Choose Peer Prep?</h2>
+            <p class="form-subtitle">
+                Explore all the powerful features that make Peer Prep the perfect platform for collaborative and goal-oriented learning.
+            </p>
+
+            <div class="carousel-container">
+                <div class="carousel-arrow left" onclick="moveCarousel(-1)">&#10094;</div>
+                <div class="carousel-arrow right" onclick="moveCarousel(1)">&#10095;</div>
+                
+                <div class="carousel-track" id="carouselTrack">
+                    {% for i in "12" %}
                     <div class="feature-card">
-                        <div class="feature-icon">🤝</div>
+                        <div class="feature-icon"><i class="fas fa-people-arrows"></i></div>
                         <h3 class="feature-title">Collaborative Learning</h3>
-                        <p class="feature-description">Connect with peers worldwide for effective study sessions and knowledge sharing.</p>
+                        <p class="feature-description">Work with peers worldwide in interactive study sessions.</p>
+                        <p class="feature-extra">Join rooms, share notes, and practice together in real-time.</p>
                     </div>
                     <div class="feature-card">
-                        <div class="feature-icon">📚</div>
-                        <h3 class="feature-title">Structured Content</h3>
-                        <p class="feature-description">Access curated learning materials and practice problems tailored to your needs.</p>
+                        <div class="feature-icon"><i class="fas fa-book"></i></div>
+                        <h3 class="feature-title">Study Materials</h3>
+                        <p class="feature-description">Curated notes, assignments, and practice problems.</p>
+                        <p class="feature-extra">Resources updated regularly for multiple subjects.</p>
                     </div>
                     <div class="feature-card">
-                        <div class="feature-icon">🎯</div>
+                        <div class="feature-icon"><i class="fas fa-trophy"></i></div>
+                        <h3 class="feature-title">Success Stories</h3>
+                        <p class="feature-description">Get inspired by peers’ achievements.</p>
+                        <p class="feature-extra">Learn effective study strategies from others.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-question-circle"></i></div>
+                        <h3 class="feature-title">Q&A Forum</h3>
+                        <p class="feature-description">Ask doubts & help peers via discussions.</p>
+                        <p class="feature-extra">Post questions, upvote answers, and learn together.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-bullseye"></i></div>
                         <h3 class="feature-title">Goal Tracking</h3>
-                        <p class="feature-description">Monitor your progress and achieve your learning objectives with detailed analytics.</p>
+                        <p class="feature-description">Track learning progress & achievements.</p>
+                        <p class="feature-extra">View analytics & stay on schedule.</p>
                     </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-calendar-alt"></i></div>
+                        <h3 class="feature-title">Reminders & Timetable</h3>
+                        <p class="feature-description">Stay organized & never miss deadlines.</p>
+                        <p class="feature-extra">Set reminders for exams & study goals.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-user-friends"></i></div>
+                        <h3 class="feature-title">Find Study Partners</h3>
+                        <p class="feature-description">Connect with learners with similar goals.</p>
+                        <p class="feature-extra">Match based on subjects & availability.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-comments"></i></div>
+                        <h3 class="feature-title">Live Chat</h3>
+                        <p class="feature-description">Get instant help and support.</p>
+                        <p class="feature-extra">Discuss concepts without waiting for replies.</p>
+                    </div>
+                    {% endfor %}
                 </div>
             </div>
         </section>
     </main>
-{% endblock content %}
+
+    <script>
+        const track = document.getElementById("carouselTrack");
+        let scrollAmount = 0;
+
+        // Auto-scroll
+        let scrollSpeed = 1; 
+        function autoScroll() {
+            scrollAmount += scrollSpeed;
+            if(scrollAmount >= track.scrollWidth / 2) scrollAmount = 0;
+            track.style.transform = `translateX(-${scrollAmount}px)`;
+            requestAnimationFrame(autoScroll);
+        }
+        requestAnimationFrame(autoScroll);
+
+        // Manual arrows
+        const cardWidth = document.querySelector('.feature-card').offsetWidth + 24; 
+        function moveCarousel(direction) {
+            scrollAmount += direction * cardWidth;
+            if(scrollAmount < 0) scrollAmount = track.scrollWidth / 2 - cardWidth;
+            if(scrollAmount >= track.scrollWidth / 2) scrollAmount = 0;
+            track.style.transform = `translateX(-${scrollAmount}px)`;
+        }
+    </script>
+
+    <script src="{% static 'js/index.js' %}"></script>
+    {% include "footer.html" %}
+</body>
+</html>
