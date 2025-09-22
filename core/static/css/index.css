@@ -1336,4 +1336,64 @@ body.light-mode .forgot-link:hover {
   .delete-icon:hover {
     color: darkred;
   }
-  
+  /* Theme transition for smooth mode switching */
+body {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Ensure all elements transition smoothly */
+body * {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Mode toggle button styles */
+.mode-toggle {
+    background: transparent;
+    border: 2px solid #00bfff;
+    color: #00bfff;
+    padding: 8px 12px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1.2rem;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mode-toggle:hover {
+    background: #00bfff;
+    color: white;
+    transform: scale(1.1);
+}
+
+body.light-mode .mode-toggle {
+    border-color: #328E6E;
+    color: #328E6E;
+}
+
+body.light-mode .mode-toggle:hover {
+    background: #328E6E;
+    color: white;
+}
+
+/* Ensure navbar is consistent */
+.navbar {
+    transition: all 0.3s ease;
+}
+
+body.light-mode .navbar {
+    background: #328E6E !important;
+}
+
+/* Fix for active link states */
+.nav-link.active {
+    color: #00bfff !important;
+    font-weight: 600;
+}
+
+body.light-mode .nav-link.active {
+    color: #E1EEBC !important;
+}
