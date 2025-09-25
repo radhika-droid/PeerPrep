@@ -2,7 +2,9 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    
     path('', views.index, name='index'),
+    path('api/toggle-theme/', views.toggle_theme, name='toggle_theme'),
     path('success/', views.contact_success, name='contact_success'),
     path('register/', views.register, name='register'),
     path('dashboard/', views.dashboard, name='dashboard'),

@@ -22,6 +22,29 @@ from django.core.paginator import Paginator
 from .models import StudyProfile, StudyPartnerRequest, StudyPartnership, StudySession
 from .forms import StudyProfileForm, StudyPartnerRequestForm, StudySessionForm, StudyPartnerSearchForm,PartnerStudySession
 
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
+import json
+
+@require_POST
+@csrf_exempt
+def toggle_theme(request):
+    """Toggle between light and dark theme"""
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        try:
+            data = json.loads(request.body)
+            theme = data.get('theme')
+            
+            if theme in ['light', 'dark']:
+                request.session['theme'] = theme
+                return JsonResponse({'success': True, 'theme': theme})
+            else:
+                return JsonResponse({'success': False, 'error': 'Invalid theme'})
+                
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+    
+    return JsonResponse({'success': False, 'error': 'Invalid request'})
 def user_login(request):
     if request.method == 'POST':
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
