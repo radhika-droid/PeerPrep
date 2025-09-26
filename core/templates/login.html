@@ -1,5 +1,32 @@
-{% extends "base.html" %}
-{% block content %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Peer Prep</title>
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+</head>
+<body>
+    <!-- Background Orbs -->
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+    <div class="bg-orb bg-orb-3"></div>
+    <div class="bg-orb bg-orb-4"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <img src="{% static 'PeerPrep.png' %}" alt="PeerPrep Logo">                
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/" class="nav-link">Home</a></li>
+                <li><a href="{% url 'register' %}" class="nav-link">Register</a></li>
+            </ul>
+        </div>
+    </nav>
+
     <!-- Login Form -->
     <main class="main-content">
         <div class="container" style="grid-template-columns: 1fr; max-width: 500px;">
@@ -17,6 +44,8 @@
 
                 <form method="post" action="{% url 'login' %}" class="login-form">
     {% csrf_token %}
+     <input type="hidden" name="next" value="{{ request.GET.next }}">
+
     <div class="form-grid" style="grid-template-columns: 1fr;">
         <div class="form-group">
             <label class="form-label">Username <span class="required">*</span></label>

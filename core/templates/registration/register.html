@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="register-container">
+  <h2>Register</h2>
+
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Sign Up</button>
+  </form>
+
+  <p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+</div>
+
+<style>
+.register-container {
+  width: 350px;
+  margin: 50px auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fafafa;
+  text-align: center;
+}
+.register-container h2 {
+  margin-bottom: 20px;
+}
+.register-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.register-container button {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.register-container button:hover {
+  background: #45a049;
+}
+</style>
+{% endblock %}
