@@ -5,6 +5,7 @@
 - **rushika1256**: 20 points
 - **Soumyosish**: 20 points
 - **khushi-verma1504**: 20 points
+- **OUMIMANDAL**: 10 points
 - **sindhugattigoppula**: 10 points
 - **shreyamagar16**: 10 points
 - **mbabaj**: 10 points
