@@ -1,62 +1,79 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <title>{% block title %}PeerPrep{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PeerPrep - Collaborative Learning Platform</title>
+
+    <!-- Bootstrap CSS (dark theme) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom Styles -->
     <link rel="stylesheet" href="{% static 'css/index.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer.css' %}">
+    <link rel="stylesheet" href="{% static 'css/notes.css' %}">
 </head>
-<body>
-    <!-- Background Orbs -->
-    <div class="bg-orb bg-orb-1"></div>
-    <div class="bg-orb bg-orb-2"></div>
-    <div class="bg-orb bg-orb-3"></div>
-    <div class="bg-orb bg-orb-4"></div>
+<body class="bg-dark text-light">
 
     <!-- Navbar -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="logo">
-                <img src="{% static 'PeerPrep.png' %}" alt="PeerPrep Logo">
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+            <div class="container-fluid">
+                <!-- Brand -->
+                <a class="navbar-brand fw-bold" href="{% url 'home' %}">
+                 <img src="{% static 'PeerPrep.png' %}" alt="PeerPrep Logo" height="35" class="me-2">
+                 PeerPrep
+                 </a>
+
+
+                <!-- Navbar toggler (for mobile) -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Links -->
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'home' %}">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'notes:notes_page' %}">Notes</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
-            <ul class="nav-menu">
-                <li>
-                    <button class="mode-toggle" id="modeToggle" title="Toggle Mode" onclick="toggleMode()">
-                        <i class="fas fa-moon"></i>
-                    </button>
-                </li>
-                <li><a href="{% url 'index' %}" class="nav-link {% if request.path == '/' %}active{% endif %}">Home</a></li>
-                <li><a href="{% url 'feature' %}" class="nav-link {% if request.path == '/feature/' %}active{% endif %}">Features</a></li>
-                <li><a href="{% url 'about' %}" class="nav-link {% if request.path == '/about/' %}active{% endif %}">About</a></li>
-                <li><a href="{% url 'contact' %}" class="nav-link {% if request.path == '/contact/' %}active{% endif %}">Contact</a></li>
+        </nav>
+    </header>
 
-                {% if user.is_authenticated %}
-                    <li><a href="{% url 'dashboard' %}" class="nav-link {% if request.path == '/dashboard/' %}active{% endif %}">Dashboard</a></li>
-                    <li><a href="{% url 'logout' %}" class="nav-link">Logout</a></li>
-                {% else %}
-                    <li><a href="{% url 'login' %}" class="nav-link {% if request.path == '/login/' %}active{% endif %}">Login</a></li>
-                    <li><a href="{% url 'register' %}" class="nav-link {% if request.path == '/register/' %}active{% endif %}">Register</a></li>
-                {% endif %}
-            </ul>
-        </div>
-    </nav>
+    <!-- Messages -->
+    <div class="container mt-3">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
 
-    <main>
+    <!-- Main Content -->
+    <main class="container my-4">
         {% block content %}
         {% endblock content %}
     </main>
 
-    <!-- Footer included -->
+    <!-- Footer -->
     {% include "footer.html" %}
-    
-    <script src="{% static 'js/index.js' %}"></script>
-    <script>
-        // Initialize theme when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            applyThemeFromStorage();
-        });
-    </script>
+
+    <!-- Scripts -->
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>

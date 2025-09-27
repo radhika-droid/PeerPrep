@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Notes Sharing{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">📘 Notes Sharing</h2>
+
+    <!-- Flash Messages -->
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Upload Form -->
+    <div class="card mb-4 shadow bg-dark text-light">
+        <div class="card-header">
+            Upload a Note
+        </div>
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Upload</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Search Bar -->
+    <form method="get" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="q" class="form-control" placeholder="Search by title, subject, or uploader" value="{{ request.GET.q }}">
+            <button type="submit" class="btn btn-outline-secondary">Search</button>
+        </div>
+    </form>
+
+    <!-- Notes List (Responsive Cards) -->
+    {% if notes %}
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+        {% for note in notes %}
+        <div class="col">
+            <div class="card h-100 bg-dark text-light shadow-sm {% if highlight_id and note.id|stringformat:"s" == highlight_id %}border-success{% endif %}" id="{% if highlight_id and note.id|stringformat:"s" == highlight_id %}highlighted-note{% endif %}">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{ note.title }}</h5>
+                    <p class="card-text mb-1"><strong>Subject:</strong> {{ note.get_subject_display }}</p>
+                    <p class="card-text mb-1"><strong>Uploaded by:</strong> {{ note.get_uploader_name }}</p>
+                    <p class="card-text text-muted mb-3"><small>Uploaded on {{ note.upload_date|date:"M d, Y H:i" }}</small></p>
+                    {% if note.file %}
+                    <a href="{{ note.file.url }}" class="btn btn-success mt-auto" download title="Download {{ note.title }}">
+                        <i class="bi bi-download"></i> Download
+                    </a>
+                    {% else %}
+                    <span class="text-muted mt-auto">No file uploaded</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if notes.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ notes.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">Previous</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled"><span class="page-link">Previous</span></li>
+            {% endif %}
+
+            {% for num in notes.paginator.page_range %}
+                {% if notes.number == num %}
+                <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">{{ num }}</a>
+                </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if notes.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ notes.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">Next</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled"><span class="page-link">Next</span></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    {% else %}
+    <div class="alert alert-info">No notes found. 📂</div>
+    {% endif %}
+
+</div>
+
+<!-- Auto-scroll to newly uploaded note -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const highlighted = document.getElementById("highlighted-note");
+    if (highlighted) {
+        highlighted.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+});
+</script>
+
+{% endblock %}
+

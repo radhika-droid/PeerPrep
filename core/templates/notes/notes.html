@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container py-4 text-light">
+
+    <!-- Page Title -->
+    <h2 class="mb-4 text-center">📘 Notes Sharing</h2>
+
+    <!-- Upload Form -->
+    <div class="card bg-dark text-light shadow mb-4">
+        <div class="card-header border-secondary">
+            <h5 class="mb-0">Upload a Note</h5>
+        </div>
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data" class="row g-3">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="mb-3">
+                        {{ field.label_tag }}
+                        {{ field }}
+                        {% if field.errors %}
+                            <div class="text-danger small">{{ field.errors }}</div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-success">Upload</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Search Bar -->
+    <form method="get" class="mb-4 d-flex">
+        <input type="text" name="q" value="{{ request.GET.q }}" 
+               placeholder="Search by title, subject, or uploader"
+               class="form-control me-2 bg-dark text-light border-secondary">
+        <button type="submit" class="btn btn-outline-info">Search</button>
+    </form>
+
+    <!-- Notes Listing -->
+    <div class="card bg-dark text-light shadow">
+        <div class="card-header border-secondary">
+            <h5 class="mb-0">Available Notes</h5>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-dark table-hover table-bordered mb-0">
+                <thead>
+                    <tr class="text-info">
+                        <th>Title</th>
+                        <th>Subject</th>
+                        <th>Uploader</th>
+                        <th>Date</th>
+                        <th>File</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for note in notes %}
+                        <tr id="note-{{ note.id }}"
+                            {% if highlight_id and note.id|stringformat:"s" == highlight_id %}
+                                class="bg-secondary text-warning fw-bold"
+                            {% endif %}>
+                            <td>{{ note.title }}</td>
+                            <td>{{ note.subject }}</td>
+                            <td>{{ note.uploader.username }}</td>
+                            <td>{{ note.upload_date|date:"M d, Y H:i" }}</td>
+                            <td>
+                                <a href="{{ note.file.url }}" 
+                                   class="btn btn-sm btn-outline-info" 
+                                   download>
+                                    Download
+                                </a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center text-muted">No notes found.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <nav class="mt-3">
+        <ul class="pagination justify-content-center">
+            {% if notes.has_previous %}
+                <li class="page-item">
+                    <a class="page-link bg-dark text-light border-secondary" 
+                       href="?page={{ notes.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
+                        Previous
+                    </a>
+                </li>
+            {% endif %}
+            <li class="page-item active">
+                <span class="page-link bg-primary border-secondary">{{ notes.number }}</span>
+            </li>
+            {% if notes.has_next %}
+                <li class="page-item">
+                    <a class="page-link bg-dark text-light border-secondary" 
+                       href="?page={{ notes.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
+                        Next
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+
+</div>
+{% endblock %}
