@@ -1,0 +1,651 @@
+{% load static %}
+{% load partnership_extras %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Study Partners - PeerPrep</title>
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .partners-section, .sessions-section {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .section-title {
+            color: white;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title i {
+            margin-right: 0.5rem;
+            color: #3b82f6;
+        }
+        
+        .partner-card {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .partner-card:hover {
+            border-color: rgba(59, 130, 246, 0.3);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.1);
+        }
+        
+        .partner-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .partner-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .partner-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-right: 1rem;
+        }
+        
+        .partner-details h3 {
+            color: white;
+            margin: 0 0 0.25rem 0;
+            font-size: 1.2rem;
+        }
+        
+        .partner-meta {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+        
+        .partnership-stats {
+            display: flex;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .stat-item {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 8px;
+            padding: 0.5rem 0.75rem;
+            text-align: center;
+            flex: 1;
+        }
+        
+        .stat-number {
+            display: block;
+            color: #3b82f6;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        
+        .stat-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.8rem;
+        }
+        
+        .partner-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .btn-schedule {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-schedule:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-view-sessions, .btn-end-partnership {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-view-sessions:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .btn-end-partnership {
+            color: #ef4444;
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+        
+        .btn-end-partnership:hover {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: rgba(239, 68, 68, 0.5);
+        }
+        
+        .session-item {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .session-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+        
+        .session-title {
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        .session-date {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.85rem;
+        }
+        
+        .session-details {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        
+        .session-status {
+            display: inline-block;
+            padding: 0.125rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .status-upcoming {
+            background: rgba(255, 152, 0, 0.2);
+            color: #ffa500;
+        }
+        
+        .status-completed {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+        
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(15px);
+            margin: 3% auto;
+            padding: 2rem;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 16px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-title {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .close {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        
+        .close:hover {
+            color: white;
+        }
+        
+        /* Light mode styles */
+        body.light-mode .partners-section,
+        body.light-mode .sessions-section,
+        body.light-mode .modal-content {
+            background: var(--feature-card-bg);
+            border-color: var(--feature-card-border);
+        }
+        
+        body.light-mode .section-title,
+        body.light-mode .modal-title {
+            color: var(--feature-title-color);
+        }
+        
+        body.light-mode .section-title i {
+            color: var(--feature-icon-gradient-end);
+        }
+        
+        body.light-mode .partner-card,
+        body.light-mode .session-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(31, 95, 74, 0.2);
+        }
+        
+        body.light-mode .partner-details h3,
+        body.light-mode .session-title {
+            color: var(--feature-title-color);
+        }
+        
+        body.light-mode .partner-meta,
+        body.light-mode .session-date,
+        body.light-mode .session-details,
+        body.light-mode .empty-state {
+            color: var(--feature-description-color);
+        }
+        
+        body.light-mode .stat-item {
+            background: rgba(31, 95, 74, 0.1);
+            border-color: rgba(31, 95, 74, 0.2);
+        }
+        
+        body.light-mode .stat-number {
+            color: var(--feature-icon-gradient-end);
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .partner-actions {
+                margin-top: 1rem;
+            }
+            
+            .partnership-stats {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body onload="applyThemeFromStorage()">
+    <!-- Background Orbs -->
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+    <div class="bg-orb bg-orb-3"></div>
+    <div class="bg-orb bg-orb-4"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <img src="/static/PeerPrep.png" alt="PeerPrep Logo">
+            </div>
+            <ul class="nav-menu">
+                <button class="mode-toggle" id="modeToggle" title="Toggle Mode" onclick="toggleMode()">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <li><a href="{% url 'index' %}" class="nav-link">Home</a></li>
+                <li><a href="{% url 'dashboard' %}" class="nav-link">Dashboard</a></li>
+                <li><a href="{% url 'find_study_partners' %}" class="nav-link">Find Partners</a></li>
+                <li><a href="{% url 'my_partner_requests' %}" class="nav-link">Requests</a></li>
+                <li><a href="{% url 'my_study_partners' %}" class="nav-link active">My Partners</a></li>
+                <li><a href="{% url 'study_profile' %}" class="nav-link">Profile</a></li>
+                <li>
+                    <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="nav-link" style="background:none; border:none; color:white; font-size:1rem; cursor:pointer;">
+                            Logout
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container" style="grid-template-columns: 1fr; max-width: 1200px;">
+            <div class="page-header" style="text-align: center; margin-bottom: 2rem;">
+                <h1 class="main-title" style="font-size: 2.5rem;">My Study Partners</h1>
+                <p class="subtitle">
+                    Manage your study partnerships and schedule collaborative sessions.
+                </p>
+            </div>
+
+            <div class="dashboard-grid">
+                <!-- Study Partners -->
+                <div class="partners-section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-users"></i>
+                            Active Partnerships
+                        </h2>
+                        {% if partnerships %}
+                            <span style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">
+                                {{ partnerships|length }} partner{{ partnerships|length|pluralize }}
+                            </span>
+                        {% endif %}
+                    </div>
+                    
+                    {% if partnerships %}
+                        {% for partnership in partnerships %}
+                            {% with partner=partnership|get_partner:user %}
+                            <div class="partner-card" data-partnership-id="{{ partnership.id }}">
+                                <div class="partner-header">
+                                    <div class="partner-info">
+                                        <div class="partner-avatar">
+                                            {% if partner.study_profile %}
+                                                {{ partner.study_profile.get_user_initials }}
+                                            {% else %}
+                                                {{ partner.username.0|upper }}
+                                            {% endif %}
+                                        </div>
+                                        <div class="partner-details">
+                                            <h3>
+                                                {% if partner.study_profile %}
+                                                    {{ partner.study_profile.get_display_name }}
+                                                {% else %}
+                                                    {{ partner.username }}
+                                                {% endif %}
+                                            </h3>
+                                            <div class="partner-meta">
+                                                Partners since {{ partnership.created_at|date:"M Y" }}
+                                                {% if partner.study_profile and partner.study_profile.study_level %}
+                                                    • {{ partner.study_profile.get_study_level_display }}
+                                                {% endif %}
+                                                {% if partner.study_profile and partner.study_profile.timezone %}
+                                                    • {{ partner.study_profile.timezone }}
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="partnership-stats">
+                                    <div class="stat-item">
+                                        <span class="stat-number">{{ partnership.total_sessions }}</span>
+                                        <span class="stat-label">Sessions</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-number">
+                                            {% if partnership.last_session %}
+                                                {{ partnership.last_session|timesince }} ago
+                                            {% else %}
+                                                Never
+                                            {% endif %}
+                                        </span>
+                                        <span class="stat-label">Last Session</span>
+                                    </div>
+                                </div>
+                                
+                                {% if partner.study_profile and partner.study_profile.get_subjects_list %}
+                                <div style="margin-bottom: 1rem;">
+                                    <div style="color: rgba(255,255,255,0.7); font-size: 0.85rem; margin-bottom: 0.5rem;">Common subjects:</div>
+                                    <div style="display: flex; flex-wrap: wrap; gap: 0.25rem;">
+                                        {% for subject in partner.study_profile.get_subjects_list|slice:":4" %}
+                                            <span style="background: rgba(59, 130, 246, 0.2); color: #3b82f6; padding: 0.125rem 0.5rem; border-radius: 10px; font-size: 0.75rem; border: 1px solid rgba(59, 130, 246, 0.3);">
+                                                {{ subject }}
+                                            </span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                {% endif %}
+                                
+                                <div class="partner-actions">
+                                    <button class="btn-schedule" data-partnership="{{ partnership.id }}" data-partner-name="{{ partner|get_display_name_safe }}">
+                                        <i class="fas fa-calendar-plus" style="margin-right: 0.25rem;"></i>
+                                        Schedule Session
+                                    </button>
+                                    <button class="btn-view-sessions" data-partnership="{{ partnership.id }}">
+                                        <i class="fas fa-history" style="margin-right: 0.25rem;"></i>
+                                        View Sessions
+                                    </button>
+                                    <button class="btn-end-partnership" data-partnership="{{ partnership.id }}">
+                                        <i class="fas fa-times" style="margin-right: 0.25rem;"></i>
+                                        End Partnership
+                                    </button>
+                                </div>
+                            </div>
+                            {% endwith %}
+                        {% endfor %}
+                    {% else %}
+                        <div class="empty-state">
+                            <i class="fas fa-user-friends"></i>
+                            <h3>No study partners yet</h3>
+                            <p>When you connect with other students, they will appear here.</p>
+                            <div style="margin-top: 1rem;">
+                                <a href="{% url 'find_study_partners' %}" class="submit-btn" style="text-decoration: none; display: inline-flex; align-items: center; padding: 0.75rem 1.5rem;">
+                                    <i class="fas fa-search" style="margin-right: 0.5rem;"></i>
+                                    Find Study Partners
+                                </a>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Upcoming & Recent Sessions -->
+                <div class="sessions-section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-calendar"></i>
+                            Sessions
+                        </h2>
+                    </div>
+                    
+                    <!-- Upcoming Sessions -->
+                    <div style="margin-bottom: 2rem;">
+                        <h4 style="color: white; margin-bottom: 1rem; font-size: 1.1rem;">
+                            <i class="fas fa-clock" style="color: #ffa500; margin-right: 0.5rem;"></i>
+                            Upcoming
+                        </h4>
+                        
+                        {% if upcoming_sessions %}
+                            {% for session in upcoming_sessions %}
+                                <div class="session-item">
+                                    <div class="session-header">
+                                        <h5 class="session-title">{{ session.title }}</h5>
+                                        <span class="session-status status-upcoming">Upcoming</span>
+                                    </div>
+                                    <div class="session-details">
+                                        <div><i class="fas fa-book" style="margin-right: 0.5rem; color: #3b82f6;"></i>{{ session.subject }}</div>
+                                        <div><i class="fas fa-calendar" style="margin-right: 0.5rem; color: #3b82f6;"></i>{{ session.scheduled_time|date:"M d, Y \a\t g:i A" }}</div>
+                                        <div><i class="fas fa-clock" style="margin-right: 0.5rem; color: #3b82f6;"></i>{{ session.duration_hours }} hours</div>
+                                        {% if session.description %}
+                                            <div style="margin-top: 0.5rem; font-style: italic;">{{ session.description|truncatechars:100 }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div style="text-align: center; padding: 1rem; color: rgba(255,255,255,0.6); font-size: 0.9rem;">
+                                <i class="fas fa-calendar-times" style="opacity: 0.5; margin-bottom: 0.5rem; display: block;"></i>
+                                No upcoming sessions
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Recent Sessions -->
+                    <div>
+                        <h4 style="color: white; margin-bottom: 1rem; font-size: 1.1rem;">
+                            <i class="fas fa-history" style="color: #10b981; margin-right: 0.5rem;"></i>
+                            Recent
+                        </h4>
+                        
+                        {% if recent_sessions %}
+                            {% for session in recent_sessions %}
+                                <div class="session-item">
+                                    <div class="session-header">
+                                        <h5 class="session-title">{{ session.title }}</h5>
+                                        <span class="session-status {% if session.is_completed %}status-completed{% else %}status-upcoming{% endif %}">
+                                            {% if session.is_completed %}Completed{% else %}Scheduled{% endif %}
+                                        </span>
+                                    </div>
+                                    <div class="session-details">
+                                        <div><i class="fas fa-book" style="margin-right: 0.5rem; color: #3b82f6;"></i>{{ session.subject }}</div>
+                                        <div><i class="fas fa-calendar" style="margin-right: 0.5rem; color: #3b82f6;"></i>{{ session.scheduled_time|date:"M d, Y" }}</div>
+                                        {% if session.is_completed and session.notes %}
+                                            <div style="margin-top: 0.5rem; font-style: italic; color: rgba(255,255,255,0.8);">
+                                                <i class="fas fa-sticky-note" style="margin-right: 0.5rem; color: #3b82f6;"></i>
+                                                {{ session.notes|truncatechars:80 }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div style="text-align: center; padding: 1rem; color: rgba(255,255,255,0.6); font-size: 0.9rem;">
+                                <i class="fas fa-history" style="opacity: 0.5; margin-bottom: 0.5rem; display: block;"></i>
+                                No recent sessions
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Schedule Session Modal -->
+    <div id="scheduleModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Schedule Study Session</h2>
+                <span class="close" id="closeScheduleModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="partnerInfo" style="margin-bottom: 1.5rem;"></div>
+                <form id="scheduleForm">
+                    <div class="form-group">
+                        <label class="form-label">Session Title</label>
+                        <input type="text" name="title" class="form-input" placeholder="e.g., Calculus Study Session" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Subject</label>
+                        <input type="text" name="subject" class="form-input" placeholder="e.g., Mathematics" required>
+                    </div>
+                    
+                    <div class="form-grid" style="grid-template-columns: 2fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Date & Time</label>
+                            <input type="datetime-local" name="scheduled_time" class="form-input" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Duration (hours)</label>
+                            <select name="duration_hours" class="form-input">
+                                <option value="0.5">30 minutes</option>
+                                <option value="1">1 hour</option>
+                                <option value="1.5">1.5 hours</option>
+                                <option value="2" selected>2 hours</option>
+                                <option value="3">3 hours</option>
+                                <option value="4">4 hours</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Description (Optional)</label>
+                        <textarea name="description" class="form-textarea" rows="3" placeholder="What will you focus on during this session?"></textarea>
+                    </div>
+                    
+                    <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem;">
+                        <button type="button" class="btn-view-sessions" id="cancelSchedule">Cancel</button>
+                        <button type="submit" class="submit-btn" style="flex: none; width: auto; padding: 0.75rem 2rem;">
+                            <i class="fas fa-calendar-plus" style="margin-right: 0.5rem;"></i>
+                            Schedule Session
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'js/study_partners.js' %}"></script>
+    {% include "footer.html" %}
+    <script src="{% static 'js/index.js' %}"></script>
+</body>
+</html>

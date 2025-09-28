@@ -1,42 +1,5 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Peer Prep</title>
-    <link rel="stylesheet" href="{% static 'css/index.css' %}">
-</head>
-<body>
-    <!-- Background Orbs -->
-    <div class="bg-orb bg-orb-1"></div>
-    <div class="bg-orb bg-orb-2"></div>
-    <div class="bg-orb bg-orb-3"></div>
-    <div class="bg-orb bg-orb-4"></div>
-
-    <!-- Navbar -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="logo">
-                <img src="/static/PeerPrep.png" alt="PeerPrep Logo">
-            </div>
-            <ul class="nav-menu">
-                <li><a href="{% url 'dashboard' %}" class="nav-link active">Dashboard</a></li>
-                <li><a href="/" class="nav-link">Home</a></li>
-                <li><a href="{% url 'faq' %}" class="nav-link">FAQ</a></li>
-
-                <li>
-                    <form method="post" action="{% url 'logout' %}" style="display:inline;">
-                        {% csrf_token %}
-                        <button type="submit" class="nav-link" style="background:none; border:none; color:white; font-size:1rem; cursor:pointer;">
-                            Logout
-                        </button>
-                    </form>
-                </li>
-            </ul>
-        </div>
-    </nav>
-
+{% extends "base.html" %}
+{% block content %}
     <!-- Dashboard Content -->
     <main class="main-content">
         <div class="container" style="grid-template-columns: 1fr;">
@@ -79,8 +42,28 @@
                 <div class="feature-card">
                     <div class="feature-icon">👥</div>
                     <h3 class="feature-title">Find Study Partners</h3>
-                    <p class="feature-description">Connect with peers who share your learning goals and interests. Find</p>
-                    <button class="submit-btn" style="margin-top: 1rem;">Coming Soon</button>
+                    <p class="feature-description">Connect with peers who share your learning goals and interests.</p>
+                    <a href="{% url 'find_study_partners' %}">
+                        <button class="submit-btn" style="margin-top: 1rem;">Find Partners</button>
+                    </a>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🤝</div>
+                    <h3 class="feature-title">My Study Partners</h3>
+                    <p class="feature-description">Manage your study partnerships and schedule collaborative sessions.</p>
+                    <a href="{% url 'my_study_partners' %}">
+                        <button class="submit-btn" style="margin-top: 1rem;">My Partners</button>
+                    </a>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📧</div>
+                    <h3 class="feature-title">Partner Requests</h3>
+                    <p class="feature-description">View and respond to study partner requests from other students.</p>
+                    <a href="{% url 'my_partner_requests' %}">
+                        <button class="submit-btn" style="margin-top: 1rem;">View Requests</button>
+                    </a>
                 </div>
                 
                 <div class="feature-card">
@@ -93,8 +76,10 @@
                 <div class="feature-card">
                     <div class="feature-icon">📈</div>
                     <h3 class="feature-title">Progress Tracking</h3>
-                    <p class="feature-description">Monitor your learning progress and achievements.</p>
-                    <button class="submit-btn" style="margin-top: 1rem;">Coming Soon</button>
+                    <p class="feature-description">Monitor your learning progress, set goals, and track achievements with detailed analytics.</p>
+                    <a href="{% url 'progress_tracking' %}">
+                        <button class="submit-btn" style="margin-top: 1rem;">Track Progress</button>
+                    </a>
                 </div>
                 
                 <div class="feature-card">
@@ -134,7 +119,4 @@
             border-color: rgba(59, 130, 246, 0.4);
         }
     </style>
-    {% include "footer.html" %}
-    <script src="{% static 'js/index.js' %}"></script>
-</body>
-</html>
+{% endblock content %}
