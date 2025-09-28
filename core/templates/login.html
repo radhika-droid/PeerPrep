@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Peer Prep</title>
     <link rel="stylesheet" href="{% static 'css/index.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
     <!-- Background Orbs -->
@@ -19,12 +18,9 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="logo">
-                <img src="/static/PeerPrep.png" alt="PeerPrep Logo">
+                <img src="{% static 'PeerPrep.png' %}" alt="PeerPrep Logo">                
             </div>
             <ul class="nav-menu">
-                <button class="mode-toggle" id="modeToggle" title="Toggle Mode" onclick="toggleMode()">
-                    <i class="fas fa-moon"></i>
-                </button>
                 <li><a href="/" class="nav-link">Home</a></li>
                 <li><a href="{% url 'register' %}" class="nav-link">Register</a></li>
             </ul>
@@ -48,6 +44,8 @@
 
                 <form method="post" action="{% url 'login' %}" class="login-form">
     {% csrf_token %}
+     <input type="hidden" name="next" value="{{ request.GET.next }}">
+
     <div class="form-grid" style="grid-template-columns: 1fr;">
         <div class="form-group">
             <label class="form-label">Username <span class="required">*</span></label>
@@ -79,6 +77,4 @@
             </div>
         </div>
     </main>
-    <script src="{% static 'js/index.js' %}"></script>
-</body>
-</html>
+{% endblock content %}
