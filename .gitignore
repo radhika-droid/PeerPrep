@@ -27,4 +27,4 @@ Thumbs.db # Windows
 # Build and output directories
 /dist
 /build
-/out"db.sqlite3" 
+/outdb.sqlite3 
