@@ -8,18 +8,17 @@ __pycache__/
 # IDE and editor files
 .vscode/
 .idea/
-*.swp # Vim swap files
-*.iml # IntelliJ IDEA module files
+*.swp
+*.iml
 
 # Operating System files
-.DS_Store # macOS
-Thumbs.db # Windows
+.DS_Store
+Thumbs.db
 
 # Misc
 *.log
 *.tmp
 *.bak
-*.swp
 
 # Jupyter Notebook checkpoints
 .ipynb_checkpoints/
@@ -27,5 +26,14 @@ Thumbs.db # Windows
 # Build and output directories
 /dist
 /build
+
 /outdb.sqlite3 
 db.sqlite3 
+
+/out
+
+# Django-specific
+db.sqlite3
+/media/
+/staticfiles/
+

@@ -1,5 +1,54 @@
+// Theme management
+const THEME_KEY = "peerprep_theme";
+
+function applyThemeFromStorage() {
+    let theme = localStorage.getItem(THEME_KEY);
+    
+    // Set default theme to dark if not set
+    if (!theme) {
+        theme = "dark";
+        localStorage.setItem(THEME_KEY, theme);
+    }
+
+    if (theme === "light") {
+        document.body.classList.add("light-mode");
+        setLightModeIcon(true);
+    } else {
+        document.body.classList.remove("light-mode");
+        setLightModeIcon(false);
+    }
+}
+
+function setLightModeIcon(isLight) {
+    const icon = document.getElementById("modeToggle")?.querySelector("i");
+    if (!icon) return;
+    
+    if (isLight) {
+        icon.classList.remove("fa-moon");
+        icon.classList.add("fa-sun");
+        icon.title = "Switch to Dark Mode";
+    } else {
+        icon.classList.remove("fa-sun");
+        icon.classList.add("fa-moon");
+        icon.title = "Switch to Light Mode";
+    }
+}
+
+function toggleMode() {
+    const isNowLight = !document.body.classList.contains("light-mode");
+    
+    if (isNowLight) {
+        document.body.classList.add("light-mode");
+    } else {
+        document.body.classList.remove("light-mode");
+    }
+    
+    setLightModeIcon(isNowLight);
+    localStorage.setItem(THEME_KEY, isNowLight ? "light" : "dark");
+}
+
 // Smooth scrolling for navigation links
- document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();
         const target = document.querySelector(this.getAttribute('href'));
@@ -13,7 +62,7 @@
 });
 
 // Form submission with Django backend
-document.querySelector('.contact-form').addEventListener('submit', function(e) {
+document.querySelector('.contact-form')?.addEventListener('submit', function(e) {
     e.preventDefault();
 
     const submitBtn = document.querySelector('.submit-btn');
@@ -106,104 +155,9 @@ document.querySelectorAll('.form-input').forEach(input => {
         this.parentElement.style.transform = 'translateY(0)';
     });
 });
-// Adding success stories
 
-document.addEventListener("DOMContentLoaded", function () {
-    const modal = document.getElementById("storyModal");
-    const btn = document.getElementById("addStoryBtn");
-    const span = document.querySelector(".modal .close");
-    const form = document.getElementById("storyForm");
-    const storiesContainer = document.getElementById("storiesContainer");
-
-    // Open modal
-    btn?.addEventListener("click", () => modal.style.display = "block");
-
-    // Close modal
-    span?.addEventListener("click", () => modal.style.display = "none");
-    window.addEventListener("click", e => {
-        if (e.target == modal) modal.style.display = "none";
-    });
-
-    // AJAX form submission
-    form?.addEventListener("submit", function (e) {
-        e.preventDefault();
-        const url = form.action;
-        const formData = new FormData(form);
-
-        fetch(url, {
-            method: "POST",
-            headers: { "X-Requested-With": "XMLHttpRequest" },
-            body: formData,
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Close modal
-                modal.style.display = "none";
-                form.reset();
-
-                // Append new story
-                const newStory = document.createElement("div");
-                newStory.classList.add("feature-card");
-                newStory.innerHTML = `
-                    <div class="feature-icon">🏆</div>
-                    <h3 class="feature-title">${data.title}</h3>
-                    <p class="feature-description">${data.story}</p>
-                    <small>By ${data.user}</small>
-                `;
-                storiesContainer.prepend(newStory);
-            } else {
-                alert("Error: " + JSON.stringify(data.errors));
-            }
-        })
-        .catch(err => console.error(err));
-    });
-});
-
-// Dark Mode to Light Mode toggle
-
-const THEME_KEY="theme";
-
-function applyThemeFromStorage() { 
-  let theme = localStorage.getItem(THEME_KEY); 
-  if (!theme) {
-    theme = "dark";
-    localStorage.setItem(THEME_KEY, theme);
-  }
-
-  if (theme === "light") { 
-    document.body.classList.add("light-mode");
-    document.body.classList.remove("dark-mode"); 
-    setLightModeIcon(true); 
-  } else { 
-    document.body.classList.remove("light-mode");
-    document.body.classList.add("dark-mode");
-    setLightModeIcon(false); 
-  } 
-}
-
-function setLightModeIcon(isLight){
-  const icon = document.getElementById("modeToggle").querySelector("i"); 
-  if (!icon) return; 
-  if (isLight) { 
-    icon.classList.remove("fa-sun"); 
-    icon.classList.add("fa-moon"); 
-  } else { 
-    icon.classList.remove("fa-moon"); 
-    icon.classList.add("fa-sun"); 
-  } 
-}
-function toggleMode()
-{
-    const isNowLight=!document.body.classList.contains("light-mode");
-    document.body.classList.toggle("light-mode");
-    setLightModeIcon(isNowLight);
-    localStorage.setItem(THEME_KEY, isNowLight ? "light" : "dark");
-    applyThemeFromStorage();
-}
-window.addEventListener("DOMContentLoaded", applyThemeFromStorage);
-// Add this new section for the login form
-document.querySelector('.login-form').addEventListener('submit', function(e) {
+// Login form handling
+document.querySelector('.login-form')?.addEventListener('submit', function(e) {
     e.preventDefault();
 
     const submitBtn = this.querySelector('.submit-btn');
@@ -213,7 +167,6 @@ document.querySelector('.login-form').addEventListener('submit', function(e) {
     submitBtn.textContent = 'Signing In...';
     submitBtn.disabled = true;
 
-    // The fetch URL should be the login endpoint
     fetch(this.action, {
         method: 'POST',
         body: formData,
@@ -228,8 +181,7 @@ document.querySelector('.login-form').addEventListener('submit', function(e) {
             submitBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
             showNotification('Login successful!', 'success');
 
-            // Redirect to dashboard or home page on successful login
-            window.location.href = data.redirect_url || '{% url "dashboard" %}';
+            window.location.href = data.redirect_url || '/dashboard/';
         } else {
             submitBtn.textContent = 'Try Again';
             submitBtn.disabled = false;
@@ -250,3 +202,81 @@ document.querySelector('.login-form').addEventListener('submit', function(e) {
         }, 2000);
     });
 });
+
+// Initialize theme on page load
+document.addEventListener('DOMContentLoaded', function() {
+    applyThemeFromStorage();
+});
+// Enhanced theme management with session storage fallback
+function getStoredTheme() {
+    // Try localStorage first, then sessionStorage, then default to dark
+    return localStorage.getItem(THEME_KEY) || 
+           sessionStorage.getItem(THEME_KEY) || 
+           'dark';
+}
+
+function setStoredTheme(theme) {
+    // Store in both localStorage and sessionStorage for redundancy
+    localStorage.setItem(THEME_KEY, theme);
+    sessionStorage.setItem(THEME_KEY, theme);
+}
+
+function applyThemeFromStorage() {
+    const theme = getStoredTheme();
+    
+    if (theme === "light") {
+        document.body.classList.add("light-mode");
+        setLightModeIcon(true);
+    } else {
+        document.body.classList.remove("light-mode");
+        setLightModeIcon(false);
+    }
+}
+
+function toggleMode() {
+    const isNowLight = !document.body.classList.contains("light-mode");
+    const newTheme = isNowLight ? "light" : "dark";
+    
+    if (isNowLight) {
+        document.body.classList.add("light-mode");
+    } else {
+        document.body.classList.remove("light-mode");
+    }
+    
+    setLightModeIcon(isNowLight);
+    setStoredTheme(newTheme);
+    
+    // Sync with server session
+    syncThemeWithServer(newTheme);
+}
+
+function syncThemeWithServer(theme) {
+    // Optional: Sync theme preference with server
+    fetch('/api/toggle-theme/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': getCookie('csrftoken'),
+        },
+        body: JSON.stringify({theme: theme})
+    }).catch(error => {
+        console.log('Theme sync failed, but local storage will persist');
+    });
+}
+
+// Helper function to get CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}

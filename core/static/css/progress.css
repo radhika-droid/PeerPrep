@@ -1,0 +1,1036 @@
+/* Progress Tracking Styles - Add to core/static/css/progress.css */
+
+.progress-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.progress-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.progress-header .main-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #ffffff 0%, #3b82f6 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 1rem;
+}
+
+.progress-header .subtitle {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 2rem;
+}
+
+/* Quick Actions */
+.quick-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.action-btn {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+}
+
+/* Statistics Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.stat-card {
+    background: rgba(30, 41, 59, 0.4);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 16px;
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(59, 130, 246, 0.4);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+}
+
+.stat-content h3 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: white;
+    margin-bottom: 0.5rem;
+}
+
+.stat-content p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+/* Content Grid */
+.content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.left-column, .right-column {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* Progress Cards */
+.progress-card {
+    background: rgba(30, 41, 59, 0.4);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 16px;
+    padding: 2rem;
+    transition: all 0.3s ease;
+}
+
+.progress-card:hover {
+    border-color: rgba(59, 130, 246, 0.4);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.card-header h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: white;
+    margin: 0;
+}
+
+.time-period {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.85rem;
+}
+
+.header-btn {
+    background: rgba(59, 130, 246, 0.2);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 8px;
+    color: #3b82f6;
+    padding: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.header-btn:hover {
+    background: rgba(59, 130, 246, 0.3);
+    transform: scale(1.1);
+}
+
+/* Weekly Progress */
+.weekly-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.weekly-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.stat-label {
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.progress-bar {
+    background: rgba(15, 23, 42, 0.6);
+    border-radius: 8px;
+    height: 8px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-fill {
+    background: linear-gradient(135deg, #10b981, #059669);
+    height: 100%;
+    border-radius: 8px;
+    transition: width 0.8s ease;
+    position: relative;
+}
+
+.progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.stat-value {
+    color: white;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* Chart Container */
+.chart-container {
+    position: relative;
+    height: 250px;
+    margin-top: 1rem;
+}
+
+/* Goals Container */
+.goals-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.goal-item {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.goal-item:hover {
+    border-color: rgba(59, 130, 246, 0.4);
+    transform: translateX(5px);
+}
+
+.goal-header {
+    display: flex;
+    justify-content: between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.goal-info {
+    flex: 1;
+}
+
+.goal-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 0.5rem;
+}
+
+.goal-meta {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.goal-badge {
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 500;
+}
+
+.priority-low { background: rgba(107, 114, 128, 0.3); color: #9ca3af; }
+.priority-medium { background: rgba(251, 191, 36, 0.3); color: #fbbf24; }
+.priority-high { background: rgba(239, 68, 68, 0.3); color: #ef4444; }
+.priority-urgent { background: rgba(220, 38, 127, 0.3); color: #dc2626; }
+
+.status-not_started { background: rgba(107, 114, 128, 0.3); color: #9ca3af; }
+.status-in_progress { background: rgba(59, 130, 246, 0.3); color: #3b82f6; }
+.status-completed { background: rgba(16, 185, 129, 0.3); color: #10b981; }
+.status-paused { background: rgba(251, 191, 36, 0.3); color: #fbbf24; }
+
+.goal-progress {
+    margin-bottom: 1rem;
+}
+
+.goal-progress-bar {
+    background: rgba(15, 23, 42, 0.8);
+    border-radius: 6px;
+    height: 6px;
+    overflow: hidden;
+    margin-top: 0.5rem;
+}
+
+.goal-progress-fill {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    height: 100%;
+    border-radius: 6px;
+    transition: width 0.8s ease;
+}
+
+.goal-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.goal-btn {
+    background: transparent;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    color: #3b82f6;
+    border-radius: 6px;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.goal-btn:hover {
+    background: rgba(59, 130, 246, 0.2);
+}
+
+/* Activity Feed */
+.activity-feed {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.activity-item {
+    background: rgba(15, 23, 42, 0.6);
+    border-left: 3px solid #3b82f6;
+    border-radius: 8px;
+    padding: 1rem;
+    transition: all 0.3s ease;
+}
+
+.activity-item:hover {
+    background: rgba(15, 23, 42, 0.8);
+    transform: translateX(3px);
+}
+
+.activity-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.activity-icon {
+    font-size: 1.2rem;
+}
+
+.activity-title {
+    font-weight: 600;
+    color: white;
+    font-size: 0.95rem;
+}
+
+.activity-description {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+}
+
+.activity-time {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.75rem;
+}
+
+/* Achievements */
+.achievements-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.achievement-item {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.1));
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.3s ease;
+}
+
+.achievement-item:hover {
+    transform: scale(1.02);
+    border-color: rgba(59, 130, 246, 0.5);
+}
+
+.achievement-icon {
+    font-size: 2rem;
+    width: 50px;
+    text-align: center;
+}
+
+.achievement-content {
+    flex: 1;
+}
+
+.achievement-title {
+    font-weight: 600;
+    color: white;
+    font-size: 0.95rem;
+    margin-bottom: 0.3rem;
+}
+
+.achievement-description {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.8rem;
+}
+
+.achievement-points {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    padding: 0.3rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+/* Modals */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    overflow-y: auto;
+}
+
+.modal-content {
+    background: rgba(30, 41, 59, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 20px;
+    margin: 2% auto; /* Reduced top margin */
+    padding: 0;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh; /* Limit max height */
+    animation: modalSlideIn 0.3s ease;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-content.large {
+    max-width: 800px;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.modal-header {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    padding: 1.5rem 2rem;
+    border-radius: 20px 20px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0; /* Don't shrink header */
+}
+
+.modal-header h2 {
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.close {
+    color: white;
+    font-size: 2rem;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 1;
+    transition: all 0.3s ease;
+    padding: 0;
+    margin: 0;
+    background: none;
+    border: none;
+}
+
+.close:hover {
+    transform: scale(1.2);
+}
+.modal-form-container {
+    padding: 2rem;
+    flex: 1;
+    overflow-y: auto; /* Allow form content to scroll */
+    max-height: calc(90vh - 100px); /* Account for header height */
+}
+
+.modal-content form {
+    padding: 0;
+}
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 0.5rem;
+}
+
+.required {
+    color: #3b82f6;
+}
+
+.form-input, .form-textarea {
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 12px;
+    padding: 1rem 1.2rem;
+    color: white;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    outline: none;
+    resize: vertical;
+}
+
+.form-input:focus, .form-textarea:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    transform: translateY(-1px);
+}
+
+.form-input::placeholder, .form-textarea::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.form-textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+.modal-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    flex-shrink: 0; /* Don't shrink buttons */
+    background: rgba(30, 41, 59, 0.95); /* Ensure buttons are visible */
+}
+
+.btn-secondary {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+.submit-btn {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 120px;
+}
+
+.submit-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+}
+
+.submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+.view-all {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.view-all button {
+    background: transparent;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    color: #3b82f6;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.view-all button:hover {
+    background: rgba(59, 130, 246, 0.2);
+}
+
+/* Goal Detail Styles */
+.goal-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    gap: 2rem;
+}
+
+.goal-detail-info {
+    flex: 1;
+}
+
+.goal-detail-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 1rem;
+}
+
+.goal-detail-meta {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.goal-detail-description {
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.goal-detail-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    min-width: 200px;
+}
+
+.progress-update {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+.progress-update h4 {
+    color: white;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+.progress-input {
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.milestones-section {
+    margin-top: 2rem;
+}
+
+.milestones-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.milestones-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.milestone-item {
+    background: rgba(15, 23, 42, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.3s ease;
+}
+
+.milestone-item:hover {
+    background: rgba(15, 23, 42, 0.6);
+}
+
+.milestone-checkbox {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #3b82f6;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.milestone-checkbox.completed {
+    background: #3b82f6;
+    color: white;
+}
+
+.milestone-content {
+    flex: 1;
+}
+
+.milestone-title {
+    color: white;
+    font-weight: 500;
+    margin-bottom: 0.3rem;
+}
+
+.milestone-due {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.8rem;
+}
+
+/* Light Mode Styles */
+body.light-mode .progress-header .main-title {
+    background: linear-gradient(135deg, #1F5F4A 0%, #328E6E 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+body.light-mode .progress-header .subtitle {
+    color: #19624D;
+}
+
+body.light-mode .action-btn {
+    background: linear-gradient(135deg, #328E6E, #1F5F4A);
+}
+
+body.light-mode .stat-card {
+    background: #90C67C;
+    border: 1px solid rgba(31, 95, 74, 0.3);
+}
+
+body.light-mode .stat-icon {
+    background: linear-gradient(135deg, #1F5F4A, #328E6E);
+}
+
+body.light-mode .stat-content h3 {
+    color: #2F4F2F;
+}
+
+body.light-mode .stat-content p {
+    color: #19624D;
+}
+
+body.light-mode .progress-card {
+    background: #90C67C;
+    border: 1px solid rgba(31, 95, 74, 0.3);
+}
+
+body.light-mode .card-header h3 {
+    color: #2F4F2F;
+}
+
+body.light-mode .time-period {
+    color: #19624D;
+}
+
+body.light-mode .header-btn {
+    background: rgba(31, 95, 74, 0.2);
+    border: 1px solid rgba(31, 95, 74, 0.4);
+    color: #1F5F4A;
+}
+
+body.light-mode .stat-label {
+    color: #12241f;
+}
+
+body.light-mode .progress-bar {
+    background: rgba(31, 95, 74, 0.2);
+}
+
+body.light-mode .stat-value {
+    color: #2F4F2F;
+}
+
+body.light-mode .goal-item {
+    background: rgba(31, 95, 74, 0.1);
+    border: 1px solid rgba(31, 95, 74, 0.3);
+}
+
+body.light-mode .goal-title {
+    color: #2F4F2F;
+}
+
+body.light-mode .modal-content {
+    background: #90C67C;
+    border: 1px solid rgba(31, 95, 74, 0.4);
+}
+
+body.light-mode .modal-header {
+    background: linear-gradient(135deg, #328E6E, #1F5F4A);
+}
+body.light-mode .form-input, 
+body.light-mode .form-textarea {
+    background: #E1EEBC;
+    border: 1px solid #328E6E;
+    color: #2F4F2F;
+}
+
+body.light-mode .form-input:focus, 
+body.light-mode .form-textarea:focus {
+    border-color: #328E6E;
+    box-shadow: 0 0 0 3px rgba(50, 142, 110, 0.2);
+}
+
+body.light-mode .form-input::placeholder, 
+body.light-mode .form-textarea::placeholder {
+    color: rgba(47, 79, 47, 0.6);
+}
+
+body.light-mode .form-label {
+    color: #2F4F2F;
+}
+
+body.light-mode .btn-secondary {
+    border: 1px solid rgba(31, 95, 74, 0.4);
+    color: #1F5F4A;
+}
+
+body.light-mode .btn-secondary:hover {
+    background: rgba(31, 95, 74, 0.2);
+}
+
+body.light-mode .submit-btn {
+    background: linear-gradient(135deg, #328E6E, #1F5F4A);
+}
+
+body.light-mode .modal-actions {
+    background: #90C67C;
+    border-top: 1px solid rgba(31, 95, 74, 0.2);
+}
+body.light-mode .btn-secondary {
+    border: 1px solid rgba(31, 95, 74, 0.4);
+    color: #1F5F4A;
+}
+
+body.light-mode .activity-item {
+    background: rgba(31, 95, 74, 0.1);
+    border-left-color: #328E6E;
+}
+
+body.light-mode .activity-title {
+    color: #2F4F2F;
+}
+
+body.light-mode .activity-description {
+    color: #19624D;
+}
+
+body.light-mode .activity-time {
+    color: #67AE6E;
+}
+
+body.light-mode .achievement-item {
+    background: linear-gradient(135deg, rgba(31, 95, 74, 0.1), rgba(50, 142, 110, 0.1));
+    border: 1px solid rgba(31, 95, 74, 0.4);
+}
+
+body.light-mode .achievement-title {
+    color: #2F4F2F;
+}
+
+body.light-mode .achievement-description {
+    color: #19624D;
+}
+
+body.light-mode .milestone-item {
+    background: rgba(31, 95, 74, 0.1);
+    border: 1px solid rgba(31, 95, 74, 0.2);
+}
+
+body.light-mode .milestone-title {
+    color: #2F4F2F;
+}
+
+body.light-mode .milestone-due {
+    color: #19624D;
+}
+
+body.light-mode .milestone-checkbox {
+    border-color: #328E6E;
+}
+
+body.light-mode .milestone-checkbox.completed {
+    background: #328E6E;
+}
+
+body.light-mode .view-all button {
+    border: 1px solid rgba(31, 95, 74, 0.4);
+    color: #1F5F4A;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .content-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .progress-container {
+        padding: 0 1rem;
+    }
+    
+    .progress-header .main-title {
+        font-size: 2.5rem;
+    }
+    
+    .quick-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .action-btn {
+        width: 200px;
+        justify-content: center;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .modal-content {
+        width: 95%;
+        margin: 2% auto;
+    }
+    
+    .goal-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .goal-detail-header {
+        flex-direction: column;
+    }
+    
+    .goal-detail-actions {
+        width: 100%;
+    }
+}
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+        margin: 1% auto;
+        max-height: 95vh;
+    }
+    
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .modal-header {
+        padding: 1rem 1.5rem;
+    }
+    
+    .modal-form-container {
+        padding: 1.5rem;
+    }
+    
+    .modal-actions {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .btn-secondary, .submit-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}

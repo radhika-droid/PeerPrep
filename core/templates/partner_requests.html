@@ -1,0 +1,499 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partner Requests - PeerPrep</title>
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        .requests-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .requests-section {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .section-title {
+            color: white;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title i {
+            margin-right: 0.5rem;
+            color: #3b82f6;
+        }
+        
+        .request-card {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .request-card:hover {
+            border-color: rgba(59, 130, 246, 0.3);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.1);
+        }
+        
+        .request-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .request-user {
+            display: flex;
+            align-items: center;
+        }
+        
+        .request-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 1rem;
+        }
+        
+        .request-user-info h4 {
+            color: white;
+            margin: 0 0 0.25rem 0;
+            font-size: 1.1rem;
+        }
+        
+        .request-date {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.85rem;
+        }
+        
+        .request-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .status-pending {
+            background: rgba(255, 152, 0, 0.2);
+            color: #ffa500;
+            border: 1px solid rgba(255, 152, 0, 0.3);
+        }
+        
+        .status-accepted {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        
+        .status-declined {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        
+        .request-message {
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 3px solid #3b82f6;
+            padding: 1rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1rem 0;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.5;
+        }
+        
+        .request-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .btn-accept {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-accept:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-decline {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-decline:hover {
+            background: rgba(239, 68, 68, 0.3);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+        
+        .user-subjects {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+            margin-top: 0.5rem;
+        }
+        
+        .user-subject {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+            padding: 0.125rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+        
+        /* Light mode styles */
+        body.light-mode .requests-section {
+            background: var(--feature-card-bg);
+            border-color: var(--feature-card-border);
+        }
+        
+        body.light-mode .section-title {
+            color: var(--feature-title-color);
+        }
+        
+        body.light-mode .section-title i {
+            color: var(--feature-icon-gradient-end);
+        }
+        
+        body.light-mode .request-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(31, 95, 74, 0.2);
+        }
+        
+        body.light-mode .request-card:hover {
+            border-color: var(--feature-card-border-hover);
+        }
+        
+        body.light-mode .request-user-info h4 {
+            color: var(--feature-title-color);
+        }
+        
+        body.light-mode .request-date,
+        body.light-mode .empty-state {
+            color: var(--feature-description-color);
+        }
+        
+        body.light-mode .request-message {
+            background: rgba(31, 95, 74, 0.1);
+            border-left-color: var(--feature-icon-gradient-end);
+            color: var(--feature-description-color);
+        }
+        
+        body.light-mode .user-subject {
+            background: rgba(31, 95, 74, 0.2);
+            color: var(--feature-icon-gradient-start);
+            border-color: rgba(31, 95, 74, 0.3);
+        }
+        
+        @media (max-width: 768px) {
+            .requests-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body onload="applyThemeFromStorage()">
+    <!-- Background Orbs -->
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+    <div class="bg-orb bg-orb-3"></div>
+    <div class="bg-orb bg-orb-4"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <img src="/static/PeerPrep.png" alt="PeerPrep Logo">
+            </div>
+            <ul class="nav-menu">
+                <button class="mode-toggle" id="modeToggle" title="Toggle Mode" onclick="toggleMode()">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <li><a href="{% url 'index' %}" class="nav-link">Home</a></li>
+                <li><a href="{% url 'dashboard' %}" class="nav-link">Dashboard</a></li>
+                <li><a href="{% url 'find_study_partners' %}" class="nav-link">Find Partners</a></li>
+                <li><a href="{% url 'my_partner_requests' %}" class="nav-link active">Requests</a></li>
+                <li><a href="{% url 'my_study_partners' %}" class="nav-link">My Partners</a></li>
+                <li><a href="{% url 'study_profile' %}" class="nav-link">Profile</a></li>
+                <li>
+                    <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="nav-link" style="background:none; border:none; color:white; font-size:1rem; cursor:pointer;">
+                            Logout
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container" style="grid-template-columns: 1fr; max-width: 1200px;">
+            <div class="page-header" style="text-align: center; margin-bottom: 2rem;">
+                <h1 class="main-title" style="font-size: 2.5rem;">Study Partner Requests</h1>
+                <p class="subtitle">
+                    Manage incoming requests and track your sent invitations.
+                </p>
+            </div>
+
+            <div class="requests-container">
+                <!-- Incoming Requests -->
+                <div class="requests-section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-inbox"></i>
+                            Incoming Requests
+                        </h2>
+                    </div>
+                    
+                    {% if incoming_requests %}
+                        {% for request in incoming_requests %}
+                            <div class="request-card" data-request-id="{{ request.id }}">
+                                <div class="request-header">
+                                    <div class="request-user">
+                                        <div class="request-avatar">
+                                            {% if request.from_user.study_profile %}
+                                                {{ request.from_user.study_profile.get_user_initials }}
+                                            {% else %}
+                                                {{ request.from_user.username.0|upper }}
+                                            {% endif %}
+                                        </div>
+                                        <div class="request-user-info">
+                                            <h4>
+                                                {% if request.from_user.study_profile %}
+                                                    {{ request.from_user.study_profile.get_display_name }}
+                                                {% else %}
+                                                    {{ request.from_user.username }}
+                                                {% endif %}
+                                            </h4>
+                                            <div class="request-date">{{ request.created_at|date:"M d, Y \a\t g:i A" }}</div>
+                                            {% if request.from_user.study_profile and request.from_user.study_profile.get_subjects_list %}
+                                                <div class="user-subjects">
+                                                    {% for subject in request.from_user.study_profile.get_subjects_list|slice:":3" %}
+                                                        <span class="user-subject">{{ subject }}</span>
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="request-status status-{{ request.status }}">
+                                        {{ request.get_status_display }}
+                                    </div>
+                                </div>
+                                
+                                <div class="request-message">
+                                    "{{ request.message }}"
+                                </div>
+                                
+                                {% if request.status == 'pending' %}
+                                    <div class="request-actions">
+                                        <button class="btn-accept" data-request-id="{{ request.id }}" data-action="accept">
+                                            <i class="fas fa-check" style="margin-right: 0.25rem;"></i>
+                                            Accept
+                                        </button>
+                                        <button class="btn-decline" data-request-id="{{ request.id }}" data-action="decline">
+                                            <i class="fas fa-times" style="margin-right: 0.25rem;"></i>
+                                            Decline
+                                        </button>
+                                    </div>
+                                {% elif request.status == 'accepted' %}
+                                    <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(16, 185, 129, 0.1); border-radius: 8px; text-align: center;">
+                                        <i class="fas fa-handshake" style="color: #10b981; margin-right: 0.5rem;"></i>
+                                        <span style="color: #10b981; font-weight: 600;">You accepted this request!</span>
+                                        <div style="margin-top: 0.5rem;">
+                                            <a href="{% url 'my_study_partners' %}" style="color: #10b981; text-decoration: none;">
+                                                View your partnerships →
+                                            </a>
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(239, 68, 68, 0.1); border-radius: 8px; text-align: center;">
+                                        <i class="fas fa-times-circle" style="color: #ef4444; margin-right: 0.5rem;"></i>
+                                        <span style="color: #ef4444; font-weight: 600;">You declined this request</span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="empty-state">
+                            <i class="fas fa-inbox"></i>
+                            <h3>No incoming requests</h3>
+                            <p>When other students want to study with you, their requests will appear here.</p>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Outgoing Requests -->
+                <div class="requests-section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-paper-plane"></i>
+                            Sent Requests
+                        </h2>
+                    </div>
+                    
+                    {% if outgoing_requests %}
+                        {% for request in outgoing_requests %}
+                            <div class="request-card">
+                                <div class="request-header">
+                                    <div class="request-user">
+                                        <div class="request-avatar">
+                                            {% if request.to_user.study_profile %}
+                                                {{ request.to_user.study_profile.get_user_initials }}
+                                            {% else %}
+                                                {{ request.to_user.username.0|upper }}
+                                            {% endif %}
+                                        </div>
+                                        <div class="request-user-info">
+                                            <h4>
+                                                {% if request.to_user.study_profile %}
+                                                    {{ request.to_user.study_profile.get_display_name }}
+                                                {% else %}
+                                                    {{ request.to_user.username }}
+                                                {% endif %}
+                                            </h4>
+                                            <div class="request-date">{{ request.created_at|date:"M d, Y \a\t g:i A" }}</div>
+                                            {% if request.to_user.study_profile and request.to_user.study_profile.get_subjects_list %}
+                                                <div class="user-subjects">
+                                                    {% for subject in request.to_user.study_profile.get_subjects_list|slice:":3" %}
+                                                        <span class="user-subject">{{ subject }}</span>
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="request-status status-{{ request.status }}">
+                                        {{ request.get_status_display }}
+                                    </div>
+                                </div>
+                                
+                                <div class="request-message">
+                                    "{{ request.message }}"
+                                </div>
+                                
+                                {% if request.status == 'pending' %}
+                                    <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(255, 152, 0, 0.1); border-radius: 8px; text-align: center;">
+                                        <i class="fas fa-clock" style="color: #ffa500; margin-right: 0.5rem;"></i>
+                                        <span style="color: #ffa500; font-weight: 600;">Waiting for response...</span>
+                                    </div>
+                                {% elif request.status == 'accepted' %}
+                                    <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(16, 185, 129, 0.1); border-radius: 8px; text-align: center;">
+                                        <i class="fas fa-check-circle" style="color: #10b981; margin-right: 0.5rem;"></i>
+                                        <span style="color: #10b981; font-weight: 600;">Request accepted!</span>
+                                        {% if request.responded_at %}
+                                            <div style="font-size: 0.8rem; margin-top: 0.25rem; color: rgba(16, 185, 129, 0.8);">
+                                                Accepted on {{ request.responded_at|date:"M d, Y" }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                {% else %}
+                                    <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(239, 68, 68, 0.1); border-radius: 8px; text-align: center;">
+                                        <i class="fas fa-times-circle" style="color: #ef4444; margin-right: 0.5rem;"></i>
+                                        <span style="color: #ef4444; font-weight: 600;">Request declined</span>
+                                        {% if request.responded_at %}
+                                            <div style="font-size: 0.8rem; margin-top: 0.25rem; color: rgba(239, 68, 68, 0.8);">
+                                                Declined on {{ request.responded_at|date:"M d, Y" }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="empty-state">
+                            <i class="fas fa-paper-plane"></i>
+                            <h3>No sent requests</h3>
+                            <p>Requests you send to other students will appear here.</p>
+                            <div style="margin-top: 1rem;">
+                                <a href="{% url 'find_study_partners' %}" class="submit-btn" style="text-decoration: none; display: inline-flex; align-items: center; padding: 0.75rem 1.5rem;">
+                                    <i class="fas fa-search" style="margin-right: 0.5rem;"></i>
+                                    Find Study Partners
+                                </a>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="{% static 'js/study_partners.js' %}"></script>
+    
+    <script>
+        // Add event listeners for request response buttons
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle accept/decline buttons
+            document.querySelectorAll('.btn-accept, .btn-decline').forEach(button => {
+                button.addEventListener('click', function() {
+                    const requestId = this.getAttribute('data-request-id');
+                    const action = this.getAttribute('data-action');
+                    if (requestId && action) {
+                        respondToRequest(requestId, action);
+                    }
+                });
+            });
+        });
+    </script>
+    
+    {% include "footer.html" %}
+    <script src="{% static 'js/index.js' %}"></script>
+</body>
+</html>
