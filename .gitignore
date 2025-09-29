@@ -26,9 +26,13 @@ Thumbs.db
 # Build and output directories
 /dist
 /build
+
+/out"db.sqlite3" 
+
 /out
 
 # Django-specific
 db.sqlite3
 /media/
 /staticfiles/
+
