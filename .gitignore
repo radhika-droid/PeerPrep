@@ -27,7 +27,11 @@ Thumbs.db
 /dist
 /build
 
+
+/outdb.sqlite3 
+db.sqlite3 
 /out"db.sqlite3" 
+
 
 /out
 
