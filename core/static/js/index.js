@@ -250,3 +250,33 @@ document.querySelector('.login-form').addEventListener('submit', function(e) {
         }, 2000);
     });
 });
+
+ // Number of trail dots
+  const trailCount = 15;
+  const trail = [];
+
+  for (let i = 0; i < trailCount; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'trail-dot';
+    document.body.appendChild(dot);
+    trail.push({el: dot, x: 0, y: 0});
+  }
+
+  document.addEventListener('mousemove', (e) => {
+    trail[0].x = e.clientX;
+    trail[0].y = e.clientY;
+  });
+
+  function animateTrail() {
+    for (let i = trail.length - 1; i > 0; i--) {
+      trail[i].x += (trail[i-1].x - trail[i].x) * 0.25;
+      trail[i].y += (trail[i-1].y - trail[i].y) * 0.25;
+      trail[i].el.style.left = trail[i].x + 'px';
+      trail[i].el.style.top = trail[i].y + 'px';
+    }
+    trail[0].el.style.left = trail[0].x + 'px';
+    trail[0].el.style.top = trail[0].y + 'px';
+    requestAnimationFrame(animateTrail);
+  }
+
+  animateTrail();

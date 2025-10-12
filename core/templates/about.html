@@ -90,46 +90,6 @@
   transform: translateY(-10px) scale(1.03);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
-.feature {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-    opacity: 0;
-    transform: translateY(30px);
-    animation: fadeInUp 0.8s forwards;
-}
-
-.feature-icon i {
-    font-size: 2rem;
-    color: #00e6ff;
-}
-
-.card.fade-in {
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadeInUp 0.5s forwards;
-    animation-delay: 0.2s;
-}
-
-@keyframes fadeInUp {
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .cards {
-        flex-direction: column;
-        gap: 1rem;
-    }
-    .feature {
-        flex-direction: column;
-        text-align: center;
-    }
-}
 
     </style>
 </head>
@@ -174,50 +134,34 @@
 
     <!-- About Content Sections -->
     <section class="about-section">
-    <h2>Our Mission</h2>
-    <div class="feature">
-        <div class="feature-icon">
-            <i class="fas fa-bullseye"></i>
-        </div>
-        <div class="feature-text">
-            <p>At PeerPrep, our mission is to empower open-source communities by giving project maintainers and contributors the tools they need to collaborate effectively.</p>
-        </div>
-    </div>
-</section>
+        <h2>Our Mission</h2>
+        <p>At PeerPrep, our mission is to empower open-source communities by giving project maintainers and contributors the tools they need to collaborate effectively. 
+        We believe in making project management transparent, efficient, and engaging.</p>
+    </section>
 
-<section class="about-section">
-    <h2>Our Vision</h2>
-    <div class="feature">
-        <div class="feature-icon">
-            <i class="fas fa-eye"></i>
-        </div>
-        <div class="feature-text">
-            <p>We envision a future where open-source development is seamless, contributors feel valued, and maintainers focus on innovation.</p>
-        </div>
-    </div>
-</section>
+    <section class="about-section">
+        <h2>Our Vision</h2>
+        <p>We envision a future where open-source development is seamless, where contributors feel valued, and where project maintainers 
+        can focus on innovation instead of repetitive management tasks.</p>
+    </section>
 
-<section class="about-section">
-    <h2>What We Offer</h2>
-    <div class="cards">
-        <div class="card fade-in">
-            <i class="fas fa-users fa-2x"></i>
-            <h3>Collaboration</h3>
-            <p>Streamlined dashboards for admins and contributors to stay in sync.</p>
+    <section class="about-section">
+        <h2>What We Offer</h2>
+        <div class="cards">
+            <div class="card">
+                <h3>Collaboration</h3>
+                <p>Streamlined dashboards for project admins and contributors to stay in sync.</p>
+            </div>
+            <div class="card">
+                <h3>Transparency</h3>
+                <p>Track contributions, pull requests, and issues with clear visibility.</p>
+            </div>
+            <div class="card">
+                <h3>Community</h3>
+                <p>Encourage growth and engagement within open-source projects.</p>
+            </div>
         </div>
-        <div class="card fade-in">
-            <i class="fas fa-search fa-2x"></i>
-            <h3>Transparency</h3>
-            <p>Track contributions, pull requests, and issues with clear visibility.</p>
-        </div>
-        <div class="card fade-in">
-            <i class="fas fa-handshake fa-2x"></i>
-            <h3>Community</h3>
-            <p>Encourage growth and engagement within open-source projects.</p>
-        </div>
-    </div>
-</section>
-
+    </section>
 
     <section class="about-section">
         <h2>Looking Ahead</h2>

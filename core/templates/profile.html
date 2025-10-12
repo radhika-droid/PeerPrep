@@ -1,0 +1,138 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Peer Prep</title>
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        /* Profile Page Custom Styling */
+        body {
+            color: #f0f0f0;
+            background: linear-gradient(135deg, #0b0c10, #1f2833);
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        .profile-container {
+            max-width: 900px;
+            margin: 5rem auto;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(0, 230, 255, 0.4);
+            backdrop-filter: blur(8px);
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        .profile-header h1 {
+            font-size: 2.8rem;
+            color: #00e6ff;
+            text-shadow: 0 0 12px rgba(0,230,255,0.8);
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-header p {
+            font-size: 1.2rem;
+            color: #dcdcdc;
+            margin-bottom: 2rem;
+        }
+
+        .profile-details {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .profile-card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            width: 80%;
+            text-align: left;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .profile-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 0 15px rgba(0,230,255,0.5);
+        }
+
+        .profile-card h3 {
+            color: #00e6ff;
+            margin-bottom: 0.6rem;
+            font-size: 1.4rem;
+        }
+
+        .profile-card p {
+            color: #cccccc;
+            font-size: 1.1rem;
+            margin: 0;
+        }
+
+        .profile-actions {
+            margin-top: 2.5rem;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .profile-actions a, .profile-actions form button {
+            text-decoration: none;
+            color: white;
+            background-color: #00e6ff;
+            padding: 0.8rem 1.6rem;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: 0.3s ease;
+        }
+
+        .profile-actions a:hover, .profile-actions form button:hover {
+            background-color: #00c8e0;
+            transform: scale(1.05);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="profile-container">
+        <div class="profile-header">
+            <h1>Hello {{ user.username }} 👋</h1>
+            <p>Welcome back to Peer Prep!</p>
+        </div>
+
+        <div class="profile-details">
+            <div class="profile-card">
+                <h3><i class="fa-solid fa-envelope"></i> Email</h3>
+                <p>{{ user.email }}</p>
+            </div>
+
+            <div class="profile-card">
+                <h3><i class="fa-solid fa-calendar"></i> Joined On</h3>
+                <p>{{ user.date_joined|date:"F j, Y" }}</p>
+            </div>
+        </div>
+
+        <div class="profile-actions">
+            <a href="{% url 'dashboard' %}"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+            <a href="{% url 'forgot_password' %}"><i class="fa-solid fa-key"></i> Change Password</a>
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

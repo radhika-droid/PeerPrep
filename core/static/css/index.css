@@ -12,6 +12,16 @@
   --feature-title-color: #12241f;
   --feature-description-color: #F0F7E6;
 }
+.trail-dot {
+    position: fixed;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #6024eb;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+  }
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(135deg, #0f172a 0%, #1e293b 30%, #334155 100%);

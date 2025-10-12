@@ -43,6 +43,7 @@ def user_login(request):
 def timetable(request):
     return render(request, "timetable.html")
 
+
 @require_GET
 def auth_check(request):
     """API endpoint to check if user is authenticated"""
@@ -548,3 +549,7 @@ def delete_faq(request, faq_id):
     faq = FAQ.objects.get(id=faq_id)
     faq.delete()
     return redirect('faq')
+
+
+def profile_view(request):
+    return render(request, 'profile.html', {'user': request.user})
