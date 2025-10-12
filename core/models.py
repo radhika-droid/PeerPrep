@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 
+
 class Contact(models.Model):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
@@ -16,6 +17,7 @@ class Contact(models.Model):
     
     class Meta:
         ordering = ['-created_at']
+
 
 class SuccessStory(models.Model):
     CATEGORY_CHOICES = [
@@ -88,126 +90,74 @@ class StoryReaction(models.Model):
         
     def __str__(self):
         return f"{self.user.username} {self.reaction_type} {self.story.title}"
-    
-class Question(models.Model):
+
+
+# 
+class StudyNote(models.Model):
     SUBJECT_CHOICES = [
         ('math', 'Mathematics'),
-        ('science', 'Science'),
-        ('physics', 'Physics'),
-        ('chemistry', 'Chemistry'),
-        ('biology', 'Biology'),
-        ('computer_science', 'Computer Science'),
-        ('programming', 'Programming'),
-        ('english', 'English'),
-        ('history', 'History'),
-        ('geography', 'Geography'),
-        ('economics', 'Economics'),
-        ('psychology', 'Psychology'),
-        ('philosophy', 'Philosophy'),
-        ('engineering', 'Engineering'),
+        ('cs', 'Computer Science'),
+        ('ds', 'Data Structures'),
+        ('algorithms', 'Algorithms'),
+        ('web', 'Web Development'),
+        ('ml', 'Machine Learning'),
+        ('db', 'Databases'),
+        ('os', 'Operating Systems'),
+        ('networking', 'Networking'),
         ('other', 'Other'),
     ]
-    
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='questions')
-    subject = models.CharField(max_length=50, choices=SUBJECT_CHOICES)
-    title = models.CharField(max_length=300)
-    description = models.TextField()
-    tags = models.CharField(max_length=500, blank=True, help_text="Comma-separated tags")
-    upvotes_count = models.PositiveIntegerField(default=0)
-    is_solved = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
+    is_verified = models.BooleanField(default=False)
+
+    title = models.CharField(max_length=200, help_text="Title of your study notes")
+    subject = models.CharField(max_length=20, choices=SUBJECT_CHOICES, help_text="Subject of the notes")
+    topic = models.CharField(max_length=100, blank=True, help_text="Specific topic (e.g., Binary Search)")
+    description = models.TextField(blank=True, help_text="Brief description of the notes")
+
+    # File upload
+    file = models.FileField(upload_to='study_notes/', help_text="Upload PDF, DOCX, or image files")
+    thumbnail = models.ImageField(upload_to='note_thumbnails/', blank=True, null=True, help_text="Optional thumbnail image")
+
+    # Metadata
+    uploader = models.ForeignKey(User, on_delete=models.CASCADE, related_name='uploaded_notes')
+    upload_date = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
-    
-    class Meta:
-        ordering = ['-created_at']
-        verbose_name = 'Question'
-        verbose_name_plural = 'Questions'
-    
-    def __str__(self):
-        return self.title
-    
-    def get_tags_list(self):
-        """Return tags as a list"""
-        if self.tags:
-            return [tag.strip() for tag in self.tags.split(',') if tag.strip()]
-        return []
-    
-    def get_user_initials(self):
-        """Get user initials for avatar"""
-        if self.user.first_name and self.user.last_name:
-            return f"{self.user.first_name[0]}{self.user.last_name[0]}".upper()
-        elif self.user.first_name:
-            return self.user.first_name[0].upper()
-        return self.user.username[0].upper() if self.user.username else "U"
-    
-    def get_author_name(self):
-        """Get display name for author"""
-        if self.user.first_name and self.user.last_name:
-            return f"{self.user.first_name} {self.user.last_name}"
-        elif self.user.first_name:
-            return self.user.first_name
-        return self.user.username
-    
-    def answers_count(self):
-        return self.answers.count()
 
-class Answer(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='answers')
-    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='answers')
-    content = models.TextField()
-    upvotes_count = models.PositiveIntegerField(default=0)
-    is_accepted = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    
-    class Meta:
-        ordering = ['-is_accepted', '-upvotes_count', '-created_at']
-        verbose_name = 'Answer'
-        verbose_name_plural = 'Answers'
-    
-    def __str__(self):
-        return f"Answer by {self.user.username} to '{self.question.title}'"
-    
-    def get_user_initials(self):
-        """Get user initials for avatar"""
-        if self.user.first_name and self.user.last_name:
-            return f"{self.user.first_name[0]}{self.user.last_name[0]}".upper()
-        elif self.user.first_name:
-            return self.user.first_name[0].upper()
-        return self.user.username[0].upper() if self.user.username else "U"
-    
-    def get_author_name(self):
-        """Get display name for author"""
-        if self.user.first_name and self.user.last_name:
-            return f"{self.user.first_name} {self.user.last_name}"
-        elif self.user.first_name:
-            return self.user.first_name
-        return self.user.username
+    # Visibility settings
+    is_approved = models.BooleanField(default=True, help_text="Whether the note is approved for sharing")
+    is_public = models.BooleanField(default=True, help_text="Whether the note is visible to all users")
 
-class QuestionUpvote(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='upvotes')
-    created_at = models.DateTimeField(auto_now_add=True)
-    
-    class Meta:
-        unique_together = ('user', 'question')
-        
-    def __str__(self):
-        return f"{self.user.username} upvoted '{self.question.title}'"
+    # Track downloads
+    download_count = models.PositiveIntegerField(default=0)
 
-class AnswerUpvote(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    answer = models.ForeignKey(Answer, on_delete=models.CASCADE, related_name='upvotes')
-    created_at = models.DateTimeField(auto_now_add=True)
-    
     class Meta:
-        unique_together = ('user', 'answer')
-        
-    def __str__(self):
-        return f"{self.user.username} upvoted answer by {self.answer.user.username}"
-class FAQ(models.Model):
-    question = models.CharField(max_length=255)
-    answer = models.TextField()
+        ordering = ['-upload_date']
+        verbose_name = 'Study Note'
+        verbose_name_plural = 'Study Notes'
 
     def __str__(self):
-        return self.question
+        return f"{self.title} by {self.uploader.username}"
+
+    def get_file_extension(self):
+        """Return file extension in lowercase"""
+        if self.file:
+            return self.file.name.split('.')[-1].lower()
+        return ''
+
+    def is_pdf(self):
+        return self.get_file_extension() == 'pdf'
+
+    def is_image(self):
+        ext = self.get_file_extension()
+        return ext in ['png', 'jpg', 'jpeg', 'gif']
+
+    def is_docx(self):
+        return self.get_file_extension() == 'docx'
+
+    def get_uploader_name(self):
+        """Get display name for uploader"""
+        user = self.uploader
+        if user.first_name and user.last_name:
+            return f"{user.first_name} {user.last_name}"
+        elif user.first_name:
+            return user.first_name
+        return user.username

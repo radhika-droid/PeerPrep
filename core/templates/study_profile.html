@@ -1,0 +1,323 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Profile - PeerPrep</title>
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body onload="applyThemeFromStorage()">
+    <!-- Background Orbs -->
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+    <div class="bg-orb bg-orb-3"></div>
+    <div class="bg-orb bg-orb-4"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <img src="/static/PeerPrep.png" alt="PeerPrep Logo">
+            </div>
+            <ul class="nav-menu">
+                <button class="mode-toggle" id="modeToggle" title="Toggle Mode" onclick="toggleMode()">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <li><a href="{% url 'index' %}" class="nav-link">Home</a></li>
+                <li><a href="{% url 'dashboard' %}" class="nav-link">Dashboard</a></li>
+                <li><a href="{% url 'find_study_partners' %}" class="nav-link">Find Partners</a></li>
+                <li><a href="{% url 'my_partner_requests' %}" class="nav-link">Requests</a></li>
+                <li><a href="{% url 'my_study_partners' %}" class="nav-link">My Partners</a></li>
+                <li><a href="{% url 'study_profile' %}" class="nav-link active">Profile</a></li>
+                <li>
+                    <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="nav-link" style="background:none; border:none; color:white; font-size:1rem; cursor:pointer;">
+                            Logout
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container" style="grid-template-columns: 1fr; max-width: 800px;">
+            <div class="page-header" style="text-align: center; margin-bottom: 2rem;">
+                <h1 class="main-title" style="font-size: 2.5rem;">Study Profile</h1>
+                <p class="subtitle">
+                    Complete your profile to get better study partner matches and help others find you.
+                </p>
+            </div>
+
+            <!-- Profile Form -->
+            <div class="right-section">
+                <form method="post" class="study-profile-form" id="profileForm">
+                    {% csrf_token %}
+                    
+                    <!-- Basic Information -->
+                    <div class="form-section">
+                        <h3 class="form-title" style="font-size: 1.5rem; margin-bottom: 1rem;">
+                            <i class="fas fa-user" style="margin-right: 0.5rem; color: #3b82f6;"></i>
+                            Basic Information
+                        </h3>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Bio</label>
+                            {{ form.bio }}
+                            <small style="color: rgba(255,255,255,0.6); font-size: 0.8rem; margin-top: 0.5rem; display: block;">
+                                Tell others about your study goals, interests, and what you hope to achieve.
+                            </small>
+                        </div>
+                        
+                        <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div class="form-group">
+                                <label class="form-label">Study Level</label>
+                                {{ form.study_level }}
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Available for Partners
+                                    <input type="checkbox" {% if form.is_available.value %}checked{% endif %} name="is_available" style="margin-left: 0.5rem;">
+                                </label>
+                                <small style="color: rgba(255,255,255,0.6); font-size: 0.8rem; margin-top: 0.5rem; display: block;">
+                                    Turn this off if you're not currently looking for new study partners.
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Study Preferences -->
+                    <div class="form-section" style="margin-top: 2rem;">
+                        <h3 class="form-title" style="font-size: 1.5rem; margin-bottom: 1rem;">
+                            <i class="fas fa-book" style="margin-right: 0.5rem; color: #3b82f6;"></i>
+                            Study Preferences
+                        </h3>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Subjects</label>
+                            {{ form.subjects }}
+                            <small style="color: rgba(255,255,255,0.6); font-size: 0.8rem; margin-top: 0.5rem; display: block;">
+                                Separate multiple subjects with commas (e.g., Mathematics, Physics, Computer Science)
+                            </small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Study Goals</label>
+                            {{ form.study_goals }}
+                            <small style="color: rgba(255,255,255,0.6); font-size: 0.8rem; margin-top: 0.5rem; display: block;">
+                                What are you trying to achieve? Exams, projects, skill development, etc.
+                            </small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Preferred Study Times</label>
+                            {{ form.preferred_study_times }}
+                            <small style="color: rgba(255,255,255,0.6); font-size: 0.8rem; margin-top: 0.5rem; display: block;">
+                                When do you prefer to study? (e.g., morning, evening, weekends)
+                            </small>
+                        </div>
+                    </div>
+
+                    <!-- Location & Contact -->
+                    <div class="form-section" style="margin-top: 2rem;">
+                        <h3 class="form-title" style="font-size: 1.5rem; margin-bottom: 1rem;">
+                            <i class="fas fa-globe" style="margin-right: 0.5rem; color: #3b82f6;"></i>
+                            Location & Contact
+                        </h3>
+                        
+                        <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div class="form-group">
+                                <label class="form-label">Timezone</label>
+                                {{ form.timezone }}
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Languages</label>
+                                {{ form.languages }}
+                                <small style="color: rgba(255,255,255,0.6); font-size: 0.8rem; margin-top: 0.5rem; display: block;">
+                                    Languages you can communicate in
+                                </small>
+                            </div>
+                        </div>
+                        
+                        <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div class="form-group">
+                                <label class="form-label">Contact Preference</label>
+                                {{ form.contact_preference }}
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Contact Info (Optional)</label>
+                                {{ form.contact_info }}
+                                <small style="color: rgba(255,255,255,0.6); font-size: 0.8rem; margin-top: 0.5rem; display: block;">
+                                    Only if you selected a contact method above
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Form Actions -->
+                    <div style="display: flex; gap: 1rem; margin-top: 2rem; justify-content: center;">
+                        <button type="submit" class="submit-btn" style="flex: none; width: auto; padding: 0.75rem 2rem;">
+                            <i class="fas fa-save" style="margin-right: 0.5rem;"></i>
+                            Save Profile
+                        </button>
+                        <a href="{% url 'find_study_partners' %}" class="btn-view-profile" style="text-decoration: none; padding: 0.75rem 2rem; display: inline-flex; align-items: center;">
+                            <i class="fas fa-search" style="margin-right: 0.5rem;"></i>
+                            Find Partners
+                        </a>
+                    </div>
+                </form>
+
+                {% if profile.subjects %}
+                <!-- Profile Preview -->
+                <div style="margin-top: 3rem; padding: 2rem; background: rgba(0,0,0,0.2); border-radius: 12px; border: 1px solid rgba(59, 130, 246, 0.2);">
+                    <h3 style="color: white; margin-bottom: 1rem;">
+                        <i class="fas fa-eye" style="margin-right: 0.5rem; color: #3b82f6;"></i>
+                        Profile Preview
+                    </h3>
+                    <div class="partner-card" style="position: relative; margin: 0;">
+                        <div class="compatibility-score">Your Profile</div>
+                        
+                        <div class="partner-header">
+                            <div class="partner-avatar">{{ profile.get_user_initials }}</div>
+                            <div class="partner-info">
+                                <h3>{{ profile.get_display_name }}</h3>
+                                <div class="partner-level">{{ profile.get_study_level_display }}</div>
+                            </div>
+                        </div>
+                        
+                        {% if profile.bio %}
+                        <div class="partner-bio">{{ profile.bio }}</div>
+                        {% endif %}
+                        
+                        {% if profile.get_subjects_list %}
+                        <div class="partner-subjects">
+                            {% for subject in profile.get_subjects_list|slice:":3" %}
+                                <span class="subject-tag">{{ subject }}</span>
+                            {% endfor %}
+                            {% if profile.get_subjects_list|length > 3 %}
+                                <span class="subject-tag">+{{ profile.get_subjects_list|length|add:"-3" }} more</span>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                        
+                        <div class="partner-details">
+                            <div class="detail-item">
+                                <i class="fas fa-globe"></i>
+                                {{ profile.timezone }}
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-language"></i>
+                                {{ profile.get_languages_list|slice:":2"|join:", " }}
+                            </div>
+                            {% if profile.get_study_times_list %}
+                            <div class="detail-item" style="grid-column: 1 / -1;">
+                                <i class="fas fa-clock"></i>
+                                {{ profile.get_study_times_list|slice:":2"|join:", " }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        {% if profile.study_goals %}
+                        <div style="margin-bottom: 1rem; padding-top: 0.5rem; border-top: 1px solid rgba(255,255,255,0.1);">
+                            <div style="color: rgba(255,255,255,0.7); font-size: 0.85rem;">
+                                <i class="fas fa-target" style="color: #3b82f6; margin-right: 0.5rem;"></i>
+                                {{ profile.study_goals|truncatechars:100 }}
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <div style="text-align: center; padding: 1rem; background: rgba(59, 130, 246, 0.1); border-radius: 8px;">
+                            <i class="fas fa-info-circle" style="color: #3b82f6; margin-right: 0.5rem;"></i>
+                            This is how your profile appears to other students
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Handle form submission
+        document.getElementById('profileForm')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            
+            try {
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right: 0.5rem;"></i>Saving...';
+                submitBtn.disabled = true;
+                
+                const formData = new FormData(this);
+                
+                const response = await fetch('{% url "study_profile" %}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification('Profile updated successfully!', 'success');
+                    // Reload page to show updated preview
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                } else {
+                    showNotification('Please check the form for errors', 'error');
+                    console.error('Form errors:', data.errors);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Failed to save profile', 'error');
+            } finally {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+        
+        // Character counter for bio
+        const bioTextarea = document.querySelector('textarea[name="bio"]');
+        if (bioTextarea) {
+            const maxLength = 500;
+            const counter = document.createElement('div');
+            counter.style.cssText = 'text-align: right; color: rgba(255,255,255,0.6); font-size: 0.8rem; margin-top: 0.25rem;';
+            
+            function updateCounter() {
+                const remaining = maxLength - bioTextarea.value.length;
+                counter.textContent = `${remaining} characters remaining`;
+                counter.style.color = remaining < 50 ? '#ef4444' : 'rgba(255,255,255,0.6)';
+            }
+            
+            bioTextarea.addEventListener('input', updateCounter);
+            bioTextarea.parentNode.appendChild(counter);
+            updateCounter();
+        }
+        
+        // Auto-save draft (optional enhancement)
+        let saveTimeout;
+        document.querySelectorAll('#profileForm input, #profileForm textarea, #profileForm select').forEach(field => {
+            field.addEventListener('input', function() {
+                clearTimeout(saveTimeout);
+                saveTimeout = setTimeout(() => {
+                    // Could implement auto-save to localStorage here
+                    console.log('Auto-saving draft...');
+                }, 2000);
+            });
+        });
+    </script>
+
+    {% include "footer.html" %}
+    <script src="{% static 'js/index.js' %}"></script>
+</body>
+</html>
