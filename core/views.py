@@ -49,6 +49,7 @@ def user_login(request):
 def timetable(request):
     return render(request, "timetable.html")
 
+
 @require_GET
 def auth_check(request):
     """API endpoint to check if user is authenticated"""
