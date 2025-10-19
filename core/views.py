@@ -3,15 +3,21 @@ from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from .forms import ContactForm, SuccessStoryForm, QuestionForm, AnswerForm
-from .models import Contact, SuccessStory, StoryReaction, Question, Answer, QuestionUpvote, AnswerUpvote
-from django.views.decorators.http import require_POST, require_GET
+from .forms import SuccessStoryForm   # instead of ContactForm
+
+#from .models import Contact
+from .models import SuccessStory
+from django.views.decorators.http import require_POST
 from django.db.models import F
+from .models import SuccessStory, StoryReaction
+from .forms import SuccessStoryForm
+from .models import StudyNote                    
+from django.db.models import Q                   
+import os                                       
 import json
 from django.contrib.auth import authenticate, login
-from .models import FAQ
-from .forms import FAQForm 
-from django.contrib.auth.decorators import user_passes_test
+from django.shortcuts import render
+
 
 
 def user_login(request):
@@ -43,6 +49,7 @@ def user_login(request):
 def timetable(request):
     return render(request, "timetable.html")
 
+
 @require_GET
 def auth_check(request):
     """API endpoint to check if user is authenticated"""
@@ -53,10 +60,10 @@ def auth_check(request):
     })
 
 def index(request):
-    form = ContactForm()
+    form = SuccessStoryForm()
 
     if request.method == 'POST':
-        form = ContactForm(request.POST)
+        form = SuccessStoryForm(request.POST)
         if form.is_valid():
             contact = form.save()
             if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
@@ -101,6 +108,63 @@ def forgot_password(request):
             "message": "If details are correct, reset instructions will be sent."
         })
     return render(request, "registration/forgot_password.html")
+@login_required
+def upload_note(request):
+    """
+    Allows logged-in users to upload study notes (PDF/DOCX/Images).
+    """
+    if request.method == "POST":
+        title = request.POST.get("title")
+        subject = request.POST.get("subject")
+        file = request.FILES.get("file")
+
+        if title and subject and file:
+            StudyNote.objects.create(
+                title=title,
+                subject=subject,
+                file=file,
+                uploader=request.user,
+            )
+            return redirect("list_notes")  # redirect to notes list page
+
+    return render(request, "notes/upload_note.html")
+
+
+def list_notes(request):
+    """
+    Displays all uploaded notes with filtering and search.
+    """
+    query = request.GET.get("q", "")
+    subject_filter = request.GET.get("subject", "")
+
+    notes = StudyNote.objects.all()
+
+    if query:
+        notes = notes.filter(
+            Q(title__icontains=query) |
+            Q(subject__icontains=query) |
+            Q(uploader__username__icontains=query)
+        )
+
+    if subject_filter:
+        notes = notes.filter(subject__icontains=subject_filter)
+
+    return render(request, "notes/list_notes.html", {"notes": notes, "query": query})
+
+
+@login_required
+def download_note(request, note_id):
+    """
+    Handles note download and increments download count.
+    """
+    note = get_object_or_404(StudyNote, id=note_id)
+
+    # increment download count
+    note.download_count += 1
+    note.save()
+
+    response = FileResponse(note.file.open("rb"), as_attachment=True, filename=note.file.name)
+    return response
 
 @login_required
 def dashboard(request):
@@ -255,141 +319,18 @@ def get_success_stories(request):
         })
 
     return JsonResponse({'stories': stories_data, 'success': True})
-def questions(request):
-    """Display questions page"""
-    context = {
-        'user_is_authenticated': request.user.is_authenticated,
-    }
-    return render(request, 'questions.html', context)
-
 @login_required
 @require_POST
-def ask_question(request):
-    """Handle question submission via AJAX"""
+def api_create_success_story(request):
+    """Handle success story creation via API endpoint"""
     try:
-        form = QuestionForm(request.POST)
-        if form.is_valid():
-            question = form.save(commit=False)
-            question.user = request.user
-            question.save()
-
-            return JsonResponse({
-                'success': True,
-                'message': 'Your question has been posted successfully!',
-                'question_id': question.id
-            })
-
-        return JsonResponse({
-            'success': False,
-            'errors': form.errors
-        }, status=400)
-
-    except Exception as e:
-        return JsonResponse({
-            'success': False,
-            'error': str(e)
-        }, status=500)
-
-def get_questions(request):
-    """Return all questions as JSON"""
-    questions = Question.objects.select_related('user').prefetch_related('answers')
-    questions_data = []
-
-    for question in questions:
-        # Check if current user has upvoted this question
-        user_upvoted = False
-        if request.user.is_authenticated:
-            user_upvoted = QuestionUpvote.objects.filter(
-                user=request.user,
-                question=question
-            ).exists()
-
-        questions_data.append({
-            'id': question.id,
-            'title': question.title,
-            'description': question.description,
-            'subject': question.subject,
-            'author_name': question.get_author_name(),
-            'user_initials': question.get_user_initials(),
-            'user_id': question.user.id,
-            'tags': question.get_tags_list(),
-            'created_at': question.created_at.isoformat(),
-            'upvotes_count': question.upvotes_count,
-            'answers_count': question.answers_count(),
-            'is_solved': question.is_solved,
-            'user_upvoted': user_upvoted,
-        })
-
-    return JsonResponse({'questions': questions_data, 'success': True})
-
-def get_question_detail(request, question_id):
-    """Get detailed question with answers"""
-    try:
-        question = get_object_or_404(Question, id=question_id)
-        answers = Answer.objects.filter(question=question).select_related('user')
-        
-        # Check if current user has upvoted this question
-        user_upvoted = False
-        if request.user.is_authenticated:
-            user_upvoted = QuestionUpvote.objects.filter(
-                user=request.user,
-                question=question
-            ).exists()
-
-        question_data = {
-            'id': question.id,
-            'title': question.title,
-            'description': question.description,
-            'subject': question.subject,
-            'author_name': question.get_author_name(),
-            'user_initials': question.get_user_initials(),
-            'user_id': question.user.id,
-            'tags': question.get_tags_list(),
-            'created_at': question.created_at.isoformat(),
-            'upvotes_count': question.upvotes_count,
-            'is_solved': question.is_solved,
-            'user_upvoted': user_upvoted,
-        }
-
-        answers_data = []
-        for answer in answers:
-            # Check if current user has upvoted this answer
-            answer_user_upvoted = False
-            if request.user.is_authenticated:
-                answer_user_upvoted = AnswerUpvote.objects.filter(
-                    user=request.user,
-                    answer=answer
-                ).exists()
-
-            answers_data.append({
-                'id': answer.id,
-                'content': answer.content,
-                'author_name': answer.get_author_name(),
-                'user_initials': answer.get_user_initials(),
-                'user_id': answer.user.id,
-                'created_at': answer.created_at.isoformat(),
-                'upvotes_count': answer.upvotes_count,
-                'is_accepted': answer.is_accepted,
-                'user_upvoted': answer_user_upvoted,
-            })
-
-        return JsonResponse({
-            'success': True,
-            'question': question_data,
-            'answers': answers_data
-        })
-
-    except Exception as e:
-        return JsonResponse({'success': False, 'error': str(e)})
-
-@login_required
-@require_POST
-def answer_question(request, question_id):
-    """Handle answer submission via AJAX"""
-    try:
-        question = get_object_or_404(Question, id=question_id)
-        form = AnswerForm(request.POST)
-        
+        # Handle both JSON and FormData
+        if request.content_type == 'application/json':
+            data = json.loads(request.body)
+            form = SuccessStoryForm(data)
+        else:
+            form = SuccessStoryForm(request.POST)
+            
         if form.is_valid():
             answer = form.save(commit=False)
             answer.user = request.user
@@ -412,139 +353,4 @@ def answer_question(request, question_id):
             'success': False,
             'error': str(e)
         }, status=500)
-
-@login_required
-@require_POST
-def upvote_question(request, question_id):
-    """Handle question upvoting"""
-    try:
-        question = get_object_or_404(Question, id=question_id)
-        
-        existing_upvote = QuestionUpvote.objects.filter(
-            user=request.user,
-            question=question
-        ).first()
-        
-        if existing_upvote:
-            existing_upvote.delete()
-            question.upvotes_count = F('upvotes_count') - 1
-            question.save()
-            question.refresh_from_db()
-            
-            return JsonResponse({
-                'success': True,
-                'action': 'removed',
-                'new_count': question.upvotes_count
-            })
-        else:
-            QuestionUpvote.objects.create(
-                user=request.user,
-                question=question
-            )
-            question.upvotes_count = F('upvotes_count') + 1
-            question.save()
-            question.refresh_from_db()
-            
-            return JsonResponse({
-                'success': True,
-                'action': 'added',
-                'new_count': question.upvotes_count
-            })
-            
-    except Exception as e:
-        return JsonResponse({'success': False, 'error': str(e)})
-
-@login_required
-@require_POST
-def upvote_answer(request, answer_id):
-    """Handle answer upvoting"""
-    try:
-        answer = get_object_or_404(Answer, id=answer_id)
-        
-        existing_upvote = AnswerUpvote.objects.filter(
-            user=request.user,
-            answer=answer
-        ).first()
-        
-        if existing_upvote:
-            existing_upvote.delete()
-            answer.upvotes_count = F('upvotes_count') - 1
-            answer.save()
-            answer.refresh_from_db()
-            
-            return JsonResponse({
-                'success': True,
-                'action': 'removed',
-                'new_count': answer.upvotes_count
-            })
-        else:
-            AnswerUpvote.objects.create(
-                user=request.user,
-                answer=answer
-            )
-            answer.upvotes_count = F('upvotes_count') + 1
-            answer.save()
-            answer.refresh_from_db()
-            
-            return JsonResponse({
-                'success': True,
-                'action': 'added',
-                'new_count': answer.upvotes_count
-            })
-            
-    except Exception as e:
-        return JsonResponse({'success': False, 'error': str(e)})
-
-@login_required
-@require_POST
-def accept_answer(request, answer_id):
-    """Handle accepting an answer as the solution"""
-    try:
-        answer = get_object_or_404(Answer, id=answer_id)
-        question = answer.question
-        
-        if question.user != request.user:
-            return JsonResponse({
-                'success': False,
-                'error': 'Only the question author can accept answers'
-            }, status=403)
-        
-        if question.is_solved:
-            return JsonResponse({
-                'success': False,
-                'error': 'This question already has an accepted answer'
-            })
-        
-        answer.is_accepted = True
-        answer.save()
-        
-        question.is_solved = True
-        question.save()
-        
-        return JsonResponse({
-            'success': True,
-            'message': 'Answer accepted successfully!'
-        })
-        
-    except Exception as e:
-        return JsonResponse({'success': False, 'error': str(e)})
-def faq_view(request):
-    faqs = FAQ.objects.all()
-    return render(request, 'faq.html', {'faqs': faqs})
-
-# Only allow superusers
-@user_passes_test(lambda u: u.is_superuser)
-def add_faq(request):
-    if request.method == "POST":
-        form = FAQForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('faq')
-    else:
-        form = FAQForm()
-    return render(request, 'add_faq.html', {'form': form})
-@user_passes_test(lambda u: u.is_superuser)
-def delete_faq(request, faq_id):
-    faq = FAQ.objects.get(id=faq_id)
-    faq.delete()
-    return redirect('faq')
+    
