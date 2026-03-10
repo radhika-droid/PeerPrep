@@ -1,6 +1,12 @@
 from django.contrib import admin
-from .models import FAQ
-from .models import Contact, SuccessStory, StoryReaction, Question, Answer, QuestionUpvote, AnswerUpvote,Goal,Milestone,StudySession,Achievement,UserStats,WeeklyGoal,StudyProfile, StudyPartnerRequest, StudyPartnership,PartnerStudySession
+from .models import (
+    Contact, SuccessStory, StoryReaction, StudyNote,
+    FAQ, Question, Answer, QuestionUpvote, AnswerUpvote,
+    Goal, Milestone, StudySession, Achievement, UserStats, 
+    WeeklyGoal, StudyProfile, StudyPartnerRequest, 
+    StudyPartnership, PartnerStudySession
+)
+
 
 @admin.register(Contact)
 class ContactAdmin(admin.ModelAdmin):
@@ -49,6 +55,7 @@ class SuccessStoryAdmin(admin.ModelAdmin):
         }),
     )
 
+
 @admin.register(StoryReaction)
 class StoryReactionAdmin(admin.ModelAdmin):
     list_display = ('user', 'story', 'reaction_type', 'created_at')
@@ -56,24 +63,44 @@ class StoryReactionAdmin(admin.ModelAdmin):
     search_fields = ('user__username', 'story__title')
     ordering = ('-created_at',)
 
+
+@admin.register(StudyNote)
+class StudyNoteAdmin(admin.ModelAdmin):
+    # FIXED: Added 'is_verified' to list_display
+    list_display = ['title', 'subject', 'uploader', 'upload_date', 'is_approved', 'is_public', 'is_verified', 'download_count']
+    list_filter = ['subject', 'is_approved', 'is_public', 'is_verified', 'upload_date']
+    search_fields = ['title', 'topic', 'description', 'uploader__username']
+    readonly_fields = ['upload_date', 'updated_at', 'download_count']
+    list_editable = ['is_approved', 'is_public', 'is_verified']
+
+
+@admin.register(FAQ)
+class FAQAdmin(admin.ModelAdmin):
+    list_display = ['question', 'order', 'is_active', 'created_at']
+    list_filter = ['is_active', 'created_at']
+    search_fields = ['question', 'answer']
+    list_editable = ['order', 'is_active']
+    readonly_fields = ['created_at', 'updated_at']
+
+
 @admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
-    list_display = ('title', 'user', 'subject', 'is_solved', 'upvotes_count', 'answers_count', 'created_at')
-    list_filter = ('subject', 'is_solved', 'created_at')
-    search_fields = ('title', 'description', 'user__username', 'user__first_name', 'user__last_name', 'tags')
-    readonly_fields = ('upvotes_count', 'created_at', 'updated_at')
+    list_display = ('title', 'user', 'upvotes', 'views', 'is_solved', 'created_at')
+    list_filter = ('is_solved', 'created_at')
+    search_fields = ('title', 'content', 'user__username', 'tags')
+    readonly_fields = ('created_at', 'updated_at', 'views', 'upvotes')
     list_editable = ('is_solved',)
     ordering = ('-created_at',)
     
     fieldsets = (
         ('Question Information', {
-            'fields': ('user', 'subject', 'title', 'description', 'tags')
+            'fields': ('user', 'title', 'content', 'tags')
         }),
         ('Status', {
             'fields': ('is_solved',)
         }),
         ('Statistics', {
-            'fields': ('upvotes_count',),
+            'fields': ('upvotes', 'views'),
             'classes': ('collapse',)
         }),
         ('Timestamps', {
@@ -82,12 +109,13 @@ class QuestionAdmin(admin.ModelAdmin):
         }),
     )
 
+
 @admin.register(Answer)
 class AnswerAdmin(admin.ModelAdmin):
-    list_display = ('question_title', 'user', 'is_accepted', 'upvotes_count', 'created_at')
-    list_filter = ('is_accepted', 'created_at', 'question__subject')
+    list_display = ('question_title', 'user', 'is_accepted', 'upvotes', 'created_at')
+    list_filter = ('is_accepted', 'created_at')
     search_fields = ('content', 'user__username', 'question__title')
-    readonly_fields = ('upvotes_count', 'created_at', 'updated_at')
+    readonly_fields = ('created_at', 'updated_at', 'upvotes')
     list_editable = ('is_accepted',)
     ordering = ('-created_at',)
     
@@ -103,7 +131,7 @@ class AnswerAdmin(admin.ModelAdmin):
             'fields': ('is_accepted',)
         }),
         ('Statistics', {
-            'fields': ('upvotes_count',),
+            'fields': ('upvotes',),
             'classes': ('collapse',)
         }),
         ('Timestamps', {
@@ -111,6 +139,7 @@ class AnswerAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
+
 
 @admin.register(QuestionUpvote)
 class QuestionUpvoteAdmin(admin.ModelAdmin):
@@ -122,6 +151,7 @@ class QuestionUpvoteAdmin(admin.ModelAdmin):
     def question_title(self, obj):
         return obj.question.title[:50] + '...' if len(obj.question.title) > 50 else obj.question.title
     question_title.short_description = 'Question'
+
 
 @admin.register(AnswerUpvote)
 class AnswerUpvoteAdmin(admin.ModelAdmin):
@@ -138,77 +168,62 @@ class AnswerUpvoteAdmin(admin.ModelAdmin):
         return obj.answer.user.username
     answer_author.short_description = 'Answer Author'
 
-@admin.register(FAQ)
-class FAQAdmin(admin.ModelAdmin):
-    list_display = ('question', 'answer')
-
-# Add these admin configurations to your core/admin.py file
 
 @admin.register(Goal)
 class GoalAdmin(admin.ModelAdmin):
-    list_display = ('title', 'user', 'category', 'priority', 'status', 'progress_percentage', 'target_date', 'is_completed', 'created_at')
-    list_filter = ('category', 'priority', 'status', 'is_completed', 'created_at')
-    search_fields = ('title', 'description', 'user__username', 'user__first_name', 'user__last_name')
-    readonly_fields = ('created_at', 'updated_at', 'completed_at')
-    list_editable = ('status', 'progress_percentage')
+    list_display = ('title', 'user', 'goal_type', 'target_hours', 'current_hours', 'is_completed', 'start_date', 'end_date')
+    list_filter = ('goal_type', 'is_completed', 'start_date')
+    search_fields = ('title', 'description', 'user__username')
+    readonly_fields = ('created_at',)
+    list_editable = ('is_completed',)
     ordering = ('-created_at',)
     
     fieldsets = (
         ('Goal Information', {
-            'fields': ('user', 'title', 'description', 'category', 'priority')
+            'fields': ('user', 'title', 'description', 'goal_type')
         }),
         ('Progress', {
-            'fields': ('status', 'progress_percentage', 'is_completed', 'target_date')
+            'fields': ('target_hours', 'current_hours', 'is_completed', 'start_date', 'end_date')
         }),
         ('Timestamps', {
-            'fields': ('created_at', 'updated_at', 'completed_at'),
+            'fields': ('created_at',),
             'classes': ('collapse',)
         }),
     )
+
 
 @admin.register(Milestone)
 class MilestoneAdmin(admin.ModelAdmin):
-    list_display = ('title', 'goal', 'goal_user', 'is_completed', 'due_date', 'created_at')
-    list_filter = ('is_completed', 'due_date', 'created_at')
-    search_fields = ('title', 'description', 'goal__title', 'goal__user__username')
-    readonly_fields = ('created_at', 'completed_at')
-    list_editable = ('is_completed',)
-    ordering = ('-created_at',)
-    
-    def goal_user(self, obj):
-        return obj.goal.user.username
-    goal_user.short_description = 'Goal Owner'
+    list_display = ('title', 'goal', 'is_completed', 'order')
+    list_filter = ('is_completed',)
+    search_fields = ('title', 'description', 'goal__title')
+    list_editable = ('is_completed', 'order')
+    ordering = ('order',)
     
     fieldsets = (
         ('Milestone Information', {
-            'fields': ('goal', 'title', 'description', 'due_date')
+            'fields': ('goal', 'title', 'description', 'order')
         }),
         ('Status', {
-            'fields': ('is_completed',)
-        }),
-        ('Timestamps', {
-            'fields': ('created_at', 'completed_at'),
-            'classes': ('collapse',)
+            'fields': ('is_completed', 'completed_at')
         }),
     )
 
+
 @admin.register(StudySession)
 class StudySessionAdmin(admin.ModelAdmin):
-    list_display = ('title', 'user', 'subject', 'duration_minutes', 'productivity_rating', 'date', 'created_at')
-    list_filter = ('subject', 'date', 'productivity_rating', 'created_at')
-    search_fields = ('title', 'description', 'notes', 'user__username', 'user__first_name', 'user__last_name')
+    list_display = ('user', 'subject', 'duration_minutes', 'date', 'created_at')
+    list_filter = ('date', 'subject', 'created_at')
+    search_fields = ('user__username', 'subject', 'notes')
     readonly_fields = ('created_at',)
     ordering = ('-date', '-created_at')
     
     fieldsets = (
         ('Session Information', {
-            'fields': ('user', 'subject', 'title', 'description', 'date')
-        }),
-        ('Performance', {
-            'fields': ('duration_minutes', 'productivity_rating')
+            'fields': ('user', 'subject', 'duration_minutes', 'date')
         }),
         ('Additional', {
-            'fields': ('goals_related', 'notes'),
+            'fields': ('notes',),
             'classes': ('collapse',)
         }),
         ('Timestamps', {
@@ -217,32 +232,30 @@ class StudySessionAdmin(admin.ModelAdmin):
         }),
     )
 
+
 @admin.register(Achievement)
 class AchievementAdmin(admin.ModelAdmin):
-    list_display = ('title', 'user', 'achievement_type', 'points', 'is_earned', 'earned_at')
-    list_filter = ('achievement_type', 'is_earned', 'earned_at')
-    search_fields = ('title', 'description', 'user__username', 'user__first_name', 'user__last_name')
+    list_display = ('title', 'user', 'achievement_type', 'earned_at')
+    list_filter = ('achievement_type', 'earned_at')
+    search_fields = ('title', 'description', 'user__username')
     readonly_fields = ('earned_at',)
-    list_editable = ('is_earned',)
     ordering = ('-earned_at',)
     
     fieldsets = (
         ('Achievement Information', {
             'fields': ('user', 'title', 'description', 'achievement_type', 'icon')
         }),
-        ('Rewards', {
-            'fields': ('points', 'is_earned', 'related_goal')
-        }),
         ('Timestamps', {
             'fields': ('earned_at',)
         }),
     )
 
+
 @admin.register(UserStats)
 class UserStatsAdmin(admin.ModelAdmin):
-    list_display = ('user', 'total_study_hours', 'total_goals_completed', 'current_streak_days', 'achievement_points', 'last_activity_date')
-    search_fields = ('user__username', 'user__first_name', 'user__last_name')
-    readonly_fields = ('created_at', 'updated_at')
+    list_display = ('user', 'total_study_hours', 'total_sessions', 'current_streak', 'longest_streak', 'goals_completed')
+    search_fields = ('user__username',)
+    readonly_fields = ('updated_at',)
     ordering = ('-total_study_hours',)
     
     fieldsets = (
@@ -250,13 +263,55 @@ class UserStatsAdmin(admin.ModelAdmin):
             'fields': ('user',)
         }),
         ('Study Statistics', {
-            'fields': ('total_study_hours', 'current_streak_days', 'longest_streak_days', 'last_activity_date')
+            'fields': ('total_study_hours', 'total_sessions', 'current_streak', 'longest_streak', 'last_study_date')
         }),
-        ('Community Statistics', {
-            'fields': ('total_questions_asked', 'total_answers_given', 'total_success_stories')
+        ('Goals', {
+            'fields': ('goals_completed',)
         }),
-        ('Achievements', {
-            'fields': ('total_goals_completed', 'achievement_points')
+        ('Timestamps', {
+            'fields': ('updated_at',),
+            'classes': ('collapse',)
+        }),
+    )
+
+
+@admin.register(WeeklyGoal)
+class WeeklyGoalAdmin(admin.ModelAdmin):
+    # FIXED: Removed non-existent fields (actual_study_hours, target_sessions, actual_sessions)
+    # Using actual model fields: target_hours, current_hours
+    list_display = ('user', 'week_start', 'target_hours', 'current_hours', 'is_completed')
+    list_filter = ('week_start', 'is_completed', 'created_at')
+    search_fields = ('user__username',)
+    readonly_fields = ('created_at',)
+    ordering = ('-week_start',)
+    
+    fieldsets = (
+        ('Weekly Goal', {
+            'fields': ('user', 'week_start')
+        }),
+        ('Progress', {
+            'fields': ('target_hours', 'current_hours', 'is_completed')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at',)
+        }),
+    )
+
+
+@admin.register(StudyProfile)
+class StudyProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'study_level', 'created_at')
+    list_filter = ('study_level', 'created_at')
+    search_fields = ('user__username', 'subjects_of_interest', 'bio')
+    readonly_fields = ('created_at', 'updated_at')
+    ordering = ('-created_at',)
+    
+    fieldsets = (
+        ('User Information', {
+            'fields': ('user', 'bio', 'avatar')
+        }),
+        ('Study Preferences', {
+            'fields': ('subjects_of_interest', 'study_level', 'study_goals', 'preferred_study_time')
         }),
         ('Timestamps', {
             'fields': ('created_at', 'updated_at'),
@@ -264,56 +319,6 @@ class UserStatsAdmin(admin.ModelAdmin):
         }),
     )
 
-@admin.register(WeeklyGoal)
-class WeeklyGoalAdmin(admin.ModelAdmin):
-    list_display = ('user', 'week_start', 'target_study_hours', 'actual_study_hours', 'target_sessions', 'actual_sessions', 'progress_percentage', 'is_completed')
-    list_filter = ('week_start', 'is_completed', 'created_at')
-    search_fields = ('user__username', 'user__first_name', 'user__last_name')
-    readonly_fields = ('created_at', 'progress_percentage')
-    ordering = ('-week_start',)
-    
-    def progress_percentage(self, obj):
-        return f"{obj.progress_percentage():.1f}%"
-    progress_percentage.short_description = 'Progress %'
-    
-    fieldsets = (
-        ('Weekly Goal', {
-            'fields': ('user', 'week_start')
-        }),
-        ('Targets', {
-            'fields': ('target_study_hours', 'target_sessions')
-        }),
-        ('Actual Progress', {
-            'fields': ('actual_study_hours', 'actual_sessions', 'is_completed')
-        }),
-        ('Timestamps', {
-            'fields': ('created_at',)
-        }),
-    )
-@admin.register(StudyProfile)
-class StudyProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'study_level', 'timezone', 'is_available', 'created_at')
-    list_filter = ('study_level', 'timezone', 'is_available', 'created_at')
-    search_fields = ('user__username', 'user__first_name', 'user__last_name', 'subjects', 'bio')
-    readonly_fields = ('created_at', 'updated_at')
-    list_editable = ('is_available',)
-    ordering = ('-created_at',)
-    
-    fieldsets = (
-        ('User Information', {
-            'fields': ('user', 'bio', 'is_available')
-        }),
-        ('Study Preferences', {
-            'fields': ('subjects', 'study_level', 'study_goals')
-        }),
-        ('Availability & Contact', {
-            'fields': ('preferred_study_times', 'timezone', 'languages', 'contact_preference', 'contact_info')
-        }),
-        ('Timestamps', {
-            'fields': ('created_at', 'updated_at'),
-            'classes': ('collapse',)
-        }),
-    )
 
 @admin.register(StudyPartnerRequest)
 class StudyPartnerRequestAdmin(admin.ModelAdmin):
@@ -335,33 +340,31 @@ class StudyPartnerRequestAdmin(admin.ModelAdmin):
         }),
     )
 
+
 @admin.register(StudyPartnership)
 class StudyPartnershipAdmin(admin.ModelAdmin):
-    list_display = ('user1', 'user2', 'is_active', 'total_sessions', 'last_session', 'created_at')
+    list_display = ('user1', 'user2', 'is_active', 'created_at')
     list_filter = ('is_active', 'created_at')
     search_fields = ('user1__username', 'user2__username')
-    readonly_fields = ('created_at', 'total_sessions', 'last_session')
+    readonly_fields = ('created_at',)
     list_editable = ('is_active',)
     ordering = ('-created_at',)
 
+
 @admin.register(PartnerStudySession)
 class PartnerStudySessionAdmin(admin.ModelAdmin):
-    list_display = ('title', 'partnership', 'subject', 'scheduled_time', 'duration_hours', 'is_completed', 'created_by')
-    list_filter = ('subject', 'is_completed', 'scheduled_time', 'created_at')
-    search_fields = ('title', 'description', 'subject', 'partnership__user1__username', 'partnership__user2__username')
+    list_display = ('partnership', 'subject', 'duration_minutes', 'date', 'created_by')
+    list_filter = ('subject', 'date', 'created_at')
+    search_fields = ('subject', 'partnership__user1__username', 'partnership__user2__username')
     readonly_fields = ('created_at',)
-    list_editable = ('is_completed',)
-    ordering = ('-scheduled_time',)
+    ordering = ('-date',)
     
     fieldsets = (
         ('Session Information', {
-            'fields': ('title', 'description', 'subject', 'partnership', 'created_by')
+            'fields': ('partnership', 'subject', 'created_by', 'date')
         }),
-        ('Schedule', {
-            'fields': ('scheduled_time', 'duration_hours')
-        }),
-        ('Status', {
-            'fields': ('is_completed', 'notes')
+        ('Details', {
+            'fields': ('duration_minutes', 'notes')
         }),
         ('Timestamp', {
             'fields': ('created_at',)

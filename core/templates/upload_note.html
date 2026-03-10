@@ -1,12 +1,39 @@
 {% extends "base.html" %}
 
+{% block title %}Upload Note — PeerPrep{% endblock %}
+
 {% block content %}
-<div class="container">
-  <h2 class="text-light">Upload a Note</h2>
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Upload</button>
-  </form>
+<div class="container mt-5" style="max-width:700px;">
+
+    <h1 class="mb-4">Upload a New Note</h1>
+
+    <div class="card bg-dark text-light p-4" 
+         style="border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+
+        <form action="" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label class="form-label">Title</label>
+                <input type="text" name="title" class="form-control bg-secondary text-light" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Description</label>
+                <textarea name="description" class="form-control bg-secondary text-light" rows="4" required></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Upload File</label>
+                <input type="file" name="file" class="form-control bg-secondary text-light" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 mt-3">
+                Upload Note
+            </button>
+
+        </form>
+    </div>
+
 </div>
 {% endblock %}

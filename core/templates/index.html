@@ -1,199 +1,662 @@
+{% extends "base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PeerPrep - Collaborative Learning Platform</title>
-    <link rel="stylesheet" href="{% static 'css/index.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
-        /* General Reset */
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Poppins', sans-serif; background: #121212; color: #fff; line-height: 1.6; }
 
-        a { text-decoration: none; color: inherit; }
+{% block title %}PeerPrep – Your Study Platform{% endblock %}
 
-        section { padding: 4rem 2rem; text-align: center; }
-        h2 { font-size: 2.5rem; margin-bottom: 1rem; }
-        p { max-width: 800px; margin: 0 auto 1.5rem; color: #e0e0e0; }
+{% block content %}
+<style>
+    /* Hero Section */
+    .hero-section {
+        text-align: center;
+        padding: 5rem 0 4rem;
+        position: relative;
+    }
 
-        .btn { display: inline-block; padding: 0.75rem 1.5rem; margin: 0.5rem; border-radius: 8px; font-weight: 600; transition: 0.3s ease; cursor: pointer; }
-        .btn-primary { background: #00bfff; color: #fff; }
-        .btn-primary:hover { background: #0099cc; }
-        .btn-outline { border: 2px solid #00bfff; color: #00bfff; }
-        .btn-outline:hover { background: #00bfff; color: #fff; }
+    .hero-badge {
+        display: inline-block;
+        background: var(--gradient-1);
+        color: white;
+        padding: 0.5rem 1.5rem;
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 1.5rem;
+        animation: fadeInDown 0.8s ease;
+        box-shadow: 0 4px 15px var(--shadow);
+    }
 
-        
-        /* Hero Section */
-        .hero { display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; text-align: center; padding-top: 6rem; }
-        .hero h1 { font-size: 4rem; font-weight: 900; background: linear-gradient(90deg, #00bfff, #ffffff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 1rem; }
-        .hero p { font-size: 1.25rem; color: #ccc; max-width: 700px; }
+    .hero-title {
+        font-size: 4.5rem;
+        font-weight: 900;
+        color: var(--text-primary);
+        margin-bottom: 1.5rem;
+        animation: fadeInUp 0.8s ease 0.1s both;
+        line-height: 1.1;
+        letter-spacing: -2px;
+    }
 
-        /* Features Grid */
-        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2rem; margin-top: 2rem; }
-        .feature-card { background: rgba(255,255,255,0.05); padding: 2rem; border-radius: 12px; transition: transform 0.3s ease; }
-        .feature-card:hover { transform: translateY(-5px); }
-        .feature-card i { font-size: 2rem; margin-bottom: 1rem; color: #00bfff; }
+    .hero-title .gradient-text {
+        background: var(--gradient-hero);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
 
-        /* Steps */
-        .steps { display: flex; flex-wrap: wrap; justify-content: center; gap: 2rem; margin-top: 2rem; }
-        .step { max-width: 250px; background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 10px; transition: transform 0.3s ease; }
-        .step:hover { transform: translateY(-5px); }
-        .step i { font-size: 2rem; color: #00bfff; margin-bottom: 0.5rem; }
+    .hero-subtitle {
+        font-size: 1.4rem;
+        color: var(--text-secondary);
+        margin-bottom: 3rem;
+        animation: fadeInUp 0.8s ease 0.2s both;
+        font-weight: 500;
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+        line-height: 1.6;
+    }
 
-        /* Community */
-        .community-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
-        .community-card { background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 10px; font-weight: 500; }
+    .hero-cta {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        align-items: center;
+        animation: fadeInUp 0.8s ease 0.3s both;
+        flex-wrap: wrap;
+    }
 
-        /* CTA */
-        .cta { background: linear-gradient(90deg, #00bfff, #0099cc); color: #fff; padding: 3rem 2rem; border-radius: 16px; margin: 2rem auto; }
+    .btn-primary-hero {
+        background: var(--gradient-1);
+        color: white;
+        padding: 1rem 2.5rem;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 20px var(--shadow);
+        border: none;
+    }
 
-        /* Background Orbs */
-        .bg-orb { position: absolute; border-radius: 50%; opacity: 0.2; }
-        .bg-orb-1 { width: 200px; height: 200px; background: #00bfff; top: 10%; left: 5%; }
-        .bg-orb-2 { width: 300px; height: 300px; background: #0099cc; top: 40%; right: 10%; }
-        .bg-orb-3 { width: 150px; height: 150px; background: #00ffff; bottom: 20%; left: 20%; }
-        .bg-orb-4 { width: 250px; height: 250px; background: #00bfff; bottom: 10%; right: 15%; }
+    .btn-primary-hero:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 30px var(--shadow);
+        color: white;
+    }
 
-        /* Responsive */
-        @media(max-width:768px) {
-            .hero h1 { font-size: 3rem; }
-            .features-grid, .steps, .community-grid { grid-template-columns: 1fr; }
-            .navbar { flex-direction: column; gap: 1rem; }
+    .btn-secondary-hero {
+        background: transparent;
+        color: var(--text-primary);
+        padding: 1rem 2.5rem;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        border: 2px solid var(--border-color);
+    }
+
+    .btn-secondary-hero:hover {
+        background: var(--bg-tertiary);
+        border-color: var(--accent-primary);
+        color: var(--text-primary);
+    }
+
+    .hero-stats {
+        display: flex;
+        justify-content: center;
+        gap: 4rem;
+        margin-top: 4rem;
+        flex-wrap: wrap;
+        padding: 2rem 0;
+    }
+
+    .stat-item {
+        text-align: center;
+        animation: fadeInUp 0.8s ease 0.4s both;
+    }
+
+    .stat-number {
+        font-size: 3rem;
+        font-weight: 900;
+        background: var(--gradient-1);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        display: block;
+        line-height: 1;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    /* Section Styling */
+    .section-wrapper {
+        margin: 5rem 0;
+    }
+
+    .section-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .section-badge {
+        display: inline-block;
+        background: var(--bg-tertiary);
+        color: var(--accent-primary);
+        padding: 0.5rem 1.2rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 1rem;
+    }
+
+    .section-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+        letter-spacing: -1px;
+    }
+
+    .section-description {
+        font-size: 1.1rem;
+        color: var(--text-secondary);
+        max-width: 600px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+
+    /* Card Grid */
+    .card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    /* Enhanced Card Styles */
+    .nav-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        padding: 2rem;
+        text-decoration: none;
+        color: var(--text-primary);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .nav-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--gradient-1);
+        opacity: 0;
+        transition: opacity 0.4s ease;
+        z-index: 0;
+    }
+
+    .nav-card:hover::before {
+        opacity: 0.08;
+    }
+
+    .nav-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 40px var(--shadow);
+        border-color: var(--accent-primary);
+    }
+
+    .card-icon-wrapper {
+        width: 60px;
+        height: 60px;
+        background: var(--gradient-1);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.4s ease;
+        z-index: 1;
+    }
+
+    .nav-card:hover .card-icon-wrapper {
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    .card-icon {
+        font-size: 1.8rem;
+        color: white;
+    }
+
+    .card-content {
+        z-index: 1;
+    }
+
+    .card-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin: 0 0 0.5rem 0;
+        color: var(--text-primary);
+    }
+
+    .card-description {
+        font-size: 0.95rem;
+        color: var(--text-muted);
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    /* Feature Cards with Different Gradients */
+    .feature-card-1 .card-icon-wrapper { background: var(--gradient-1); }
+    .feature-card-2 .card-icon-wrapper { background: var(--gradient-2); }
+    .feature-card-3 .card-icon-wrapper { background: var(--gradient-3); }
+    .feature-card-4 .card-icon-wrapper { background: var(--gradient-4); }
+
+    /* Tools Section with Different Style */
+    .tools-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .tool-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 1.5rem;
+        text-decoration: none;
+        color: var(--text-primary);
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .tool-card:hover {
+        background: var(--bg-tertiary);
+        border-color: var(--accent-primary);
+        transform: translateX(5px);
+        box-shadow: 0 4px 20px var(--shadow);
+    }
+
+    .tool-icon {
+        font-size: 1.5rem;
+        color: var(--accent-primary);
+        width: 40px;
+        text-align: center;
+    }
+
+    .tool-title {
+        font-size: 1rem;
+        font-weight: 600;
+        margin: 0;
+        color: var(--text-primary);
+    }
+
+    /* CTA Section */
+    .cta-section {
+        background: var(--gradient-hero);
+        border-radius: 24px;
+        padding: 5rem 2rem;
+        text-align: center;
+        margin: 5rem 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .cta-section::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        animation: rotate 30s linear infinite;
+    }
+
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .cta-content {
+        position: relative;
+        z-index: 1;
+    }
+
+    .cta-title {
+        font-size: 3rem;
+        font-weight: 900;
+        color: white;
+        margin-bottom: 1rem;
+        letter-spacing: -1px;
+    }
+
+    .cta-description {
+        font-size: 1.3rem;
+        color: rgba(255, 255, 255, 0.95);
+        margin-bottom: 2.5rem;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .cta-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .cta-button {
+        background: white;
+        color: var(--accent-primary);
+        padding: 1rem 2.5rem;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 1.1rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    .cta-button:hover {
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 12px 36px rgba(0, 0, 0, 0.3);
+        color: var(--accent-primary);
+    }
+
+    .cta-button-secondary {
+        background: transparent;
+        color: white;
+        border: 2px solid white;
+    }
+
+    .cta-button-secondary:hover {
+        background: white;
+        color: var(--accent-primary);
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
         }
-    </style>
-</head>
-<body>
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
 
-    <!-- Background Orbs -->
-    <div class="bg-orb bg-orb-1"></div>
-    <div class="bg-orb bg-orb-2"></div>
-    <div class="bg-orb bg-orb-3"></div>
-    <div class="bg-orb bg-orb-4"></div>
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
 
-    <!-- Navbar -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="logo">
-                <img src="/static/PeerPrep.png" alt="PeerPrep Logo">
-            </div>
-            <ul class="nav-menu">
-                <button class="mode-toggle" id="modeToggle" title="Toggle Mode" onclick="toggleMode()">
-                        <i class="fas fa-moon"></i>
-                </button>
-                <li><a href="{% url 'index' %}" class="nav-link">Home</a></li>
-                <li><a href="{% url 'feature' %}" class="nav-link">Features</a></li>
-                <li><a href="{% url 'about' %}" class="nav-link active">About</a></li>
-                <li><a href="{% url 'contact' %}" class="nav-link">Contact</a></li>
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .hero-title {
+            font-size: 2.5rem;
+        }
 
-                {% if user.is_authenticated %}
-                    <li><a href="{% url 'dashboard' %}" class="nav-link">Dashboard</a></li>
-                    <li><a href="{% url 'logout' %}" class="nav-link">Logout</a></li>
-                {% else %}
-                    <li><a href="{% url 'login' %}" class="nav-link">Login</a></li>
-                    <li><a href="{% url 'register' %}" class="nav-link">Register</a></li>
-                {% endif %}
-            </ul>
+        .hero-subtitle {
+            font-size: 1.1rem;
+        }
+
+        .hero-stats {
+            gap: 2rem;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+        }
+
+        .card-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .tools-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .section-title {
+            font-size: 2rem;
+        }
+
+        .cta-title {
+            font-size: 2rem;
+        }
+
+        .cta-description {
+            font-size: 1.1rem;
+        }
+    }
+</style>
+
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="hero-badge">🎓 Trusted by 10,000+ Students</div>
+    <h1 class="hero-title">
+        Master Your Studies with <span class="gradient-text">PeerPrep</span>
+    </h1>
+    <p class="hero-subtitle">
+        The all-in-one platform designed to help you excel in your academic journey through collaboration, practice, and smart planning
+    </p>
+
+    <div class="hero-cta">
+        <a href="{% url 'register' %}" class="btn-primary-hero">
+            Get Started Free <i class="fas fa-arrow-right"></i>
+        </a>
+        <a href="{% url 'feature' %}" class="btn-secondary-hero">
+            Explore Features <i class="fas fa-compass"></i>
+        </a>
+    </div>
+
+    <div class="hero-stats">
+        <div class="stat-item">
+            <span class="stat-number">10K+</span>
+            <span class="stat-label">Active Students</span>
         </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section class="hero">
-        <h1>Welcome to PeerPrep</h1>
-        <p>Collaborative learning made simple and engaging.</p>
-        <div>
-            <a href="{% url 'register' %}" class="btn btn-primary">Get Started</a>
-            <a href="{% url 'feature' %}" class="btn btn-outline">Explore Features</a>
+        <div class="stat-item">
+            <span class="stat-number">50K+</span>
+            <span class="stat-label">Questions Solved</span>
         </div>
-    </section>
+        <div class="stat-item">
+            <span class="stat-number">95%</span>
+            <span class="stat-label">Success Rate</span>
+        </div>
+    </div>
+</div>
 
-    <!-- About Section -->
-    <section id="about">
-        <h2>About PeerPrep</h2>
-        <p>PeerPrep empowers students and contributors through collaboration, structured learning, and real-time support. Our mission is to make open-source and peer learning accessible, enjoyable, and impactful.</p>
-    </section>
+<!-- Core Features Section -->
+<div class="section-wrapper">
+    <div class="section-header">
+        <div class="section-badge">Core Features</div>
+        <h2 class="section-title">Everything You Need to Succeed</h2>
+        <p class="section-description">Powerful tools designed to enhance your learning experience and boost your productivity</p>
+    </div>
 
-    <!-- Features Section -->
-    <section id="features">
-        <h2>Features</h2>
-        <div class="features-grid">
-            <div class="feature-card">
-                <i class="fas fa-users"></i>
-                <h3>Collaborative Learning</h3>
-                <p>Study together, solve problems, and grow as a team.</p>
+    <div class="card-grid">
+        <a href="{% url 'dashboard' %}" class="nav-card feature-card-1">
+            <div class="card-icon-wrapper">
+                <i class="fas fa-tachometer-alt card-icon"></i>
             </div>
-            <div class="feature-card">
-                <i class="fas fa-book"></i>
-                <h3>Structured Content</h3>
-                <p>Well-organized resources to help you stay on track.</p>
+            <div class="card-content">
+                <h3 class="card-title">Dashboard</h3>
+                <p class="card-description">Your personalized control center to track progress, manage tasks, and stay organized</p>
             </div>
-            <div class="feature-card">
-                <i class="fas fa-bullseye"></i>
-                <h3>Goal Tracking</h3>
-                <p>Set milestones and monitor your learning journey.</p>
+        </a>
+
+        <a href="{% url 'questions' %}" class="nav-card feature-card-2">
+            <div class="card-icon-wrapper">
+                <i class="fas fa-code card-icon"></i>
             </div>
-            <div class="feature-card">
-                <i class="fas fa-comments"></i>
-                <h3>Live Chat</h3>
-                <p>Instant messaging to connect with peers and mentors.</p>
+            <div class="card-content">
+                <h3 class="card-title">Practice Questions</h3>
+                <p class="card-description">Solve coding challenges and strengthen your problem-solving skills daily</p>
             </div>
-            <div class="feature-card">
+        </a>
+
+        <a href="{% url 'notes_list' %}" class="nav-card feature-card-3">
+            <div class="card-icon-wrapper">
+                <i class="fas fa-book-open card-icon"></i>
+            </div>
+            <div class="card-content">
+                <h3 class="card-title">Smart Notes</h3>
+                <p class="card-description">Access, organize, and share comprehensive study materials with your peers</p>
+            </div>
+        </a>
+
+        <a href="{% url 'timetable' %}" class="nav-card feature-card-4">
+            <div class="card-icon-wrapper">
+                <i class="fas fa-calendar-check card-icon"></i>
+            </div>
+            <div class="card-content">
+                <h3 class="card-title">Smart Timetable</h3>
+                <p class="card-description">Plan your study sessions efficiently with our intelligent scheduling system</p>
+            </div>
+        </a>
+
+        <a href="{% url 'progress' %}" class="nav-card feature-card-1">
+            <div class="card-icon-wrapper">
+                <i class="fas fa-chart-line card-icon"></i>
+            </div>
+            <div class="card-content">
+                <h3 class="card-title">Progress Tracking</h3>
+                <p class="card-description">Visualize your growth with detailed analytics and performance insights</p>
+            </div>
+        </a>
+
+        <a href="{% url 'success_stories' %}" class="nav-card feature-card-2">
+            <div class="card-icon-wrapper">
+                <i class="fas fa-trophy card-icon"></i>
+            </div>
+            <div class="card-content">
+                <h3 class="card-title">Success Stories</h3>
+                <p class="card-description">Get inspired by achievements and milestones from our community</p>
+            </div>
+        </a>
+    </div>
+</div>
+
+<!-- Additional Tools Section -->
+<div class="section-wrapper">
+    <div class="section-header">
+        <div class="section-badge">Additional Tools</div>
+        <h2 class="section-title">More Ways to Excel</h2>
+        <p class="section-description">Explore additional features to maximize your learning potential</p>
+    </div>
+
+    <div class="tools-grid">
+        <a href="{% url 'study_partners' %}" class="tool-card">
+            <i class="fas fa-users tool-icon"></i>
+            <h3 class="tool-title">Find Study Partners</h3>
+        </a>
+
+        <a href="{% url 'my_partners' %}" class="tool-card">
+            <i class="fas fa-handshake tool-icon"></i>
+            <h3 class="tool-title">My Study Groups</h3>
+        </a>
+
+        <a href="{% url 'upload_note' %}" class="tool-card">
+            <i class="fas fa-cloud-upload-alt tool-icon"></i>
+            <h3 class="tool-title">Upload Notes</h3>
+        </a>
+
+        <a href="{% url 'faq' %}" class="tool-card">
+            <i class="fas fa-question-circle tool-icon"></i>
+            <h3 class="tool-title">Help Center</h3>
+        </a>
+
+        <a href="{% url 'study_profile' %}" class="tool-card">
+            <i class="fas fa-graduation-cap tool-icon"></i>
+            <h3 class="tool-title">Study Profile</h3>
+        </a>
+
+        <a href="{% url 'partner_requests' %}" class="tool-card">
+            <i class="fas fa-user-friends tool-icon"></i>
+            <h3 class="tool-title">Connection Requests</h3>
+        </a>
+
+        <a href="{% url 'add_success_story' %}" class="tool-card">
+            <i class="fas fa-plus-circle tool-icon"></i>
+            <h3 class="tool-title">Share Your Story</h3>
+        </a>
+
+        <a href="{% url 'about' %}" class="tool-card">
+            <i class="fas fa-info-circle tool-icon"></i>
+            <h3 class="tool-title">About PeerPrep</h3>
+        </a>
+    </div>
+</div>
+
+<!-- CTA Section -->
+<div class="cta-section">
+    <div class="cta-content">
+        <h2 class="cta-title">Ready to Transform Your Learning?</h2>
+        <p class="cta-description">Join thousands of students who are already achieving their academic goals with PeerPrep</p>
+        <div class="cta-buttons">
+            <a href="{% url 'register' %}" class="cta-button">
                 <i class="fas fa-rocket"></i>
-                <h3>Upcoming Features</h3>
-                <p>Stay tuned for exciting tools coming soon!</p>
-            </div>
+                Start Learning Today
+            </a>
+            <a href="{% url 'contact' %}" class="cta-button cta-button-secondary">
+                <i class="fas fa-envelope"></i>
+                Contact Us
+            </a>
         </div>
-    </section>
+    </div>
+</div>
 
-    <!-- How It Works Section -->
-    <section id="how-it-works">
-        <h2>How It Works</h2>
-        <div class="steps">
-            <div class="step">
-                <i class="fas fa-user-plus"></i>
-                <h4>Sign Up</h4>
-                <p>Create your free account and join PeerPrep.</p>
-            </div>
-            <div class="step">
-                <i class="fas fa-users"></i>
-                <h4>Join a Session</h4>
-                <p>Collaborate with peers in real-time sessions.</p>
-            </div>
-            <div class="step">
-                <i class="fas fa-tasks"></i>
-                <h4>Track Progress</h4>
-                <p>Set learning goals and measure achievements.</p>
-            </div>
-            <div class="step">
-                <i class="fas fa-graduation-cap"></i>
-                <h4>Grow Together</h4>
-                <p>Learn, share, and succeed as part of the community.</p>
-            </div>
-        </div>
-    </section>
+<script>
+    // Add staggered animations to cards
+    document.addEventListener('DOMContentLoaded', () => {
+        const cards = document.querySelectorAll('.nav-card, .tool-card');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.style.animation = `fadeInUp 0.6s ease both`;
+                    }, index * 50);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
 
-    <!-- Community Section -->
-    <section id="community">
-        <h2>Our Community</h2>
-        <p>We’re proud to be powered by contributors, learners, and mentors worldwide.</p>
-        <div class="community-grid">
-            <div class="community-card"><strong>1000+</strong> Active Learners</div>
-            <div class="community-card"><strong>200+</strong> Contributors</div>
-            <div class="community-card"><strong>50+</strong> Countries</div>
-        </div>
-    </section>
+        cards.forEach(card => {
+            card.style.opacity = '0';
+            observer.observe(card);
+        });
+    });
+</script>
 
-    <!-- Call To Action -->
-    <section class="cta">
-        <h2>Start Your Learning Journey Today</h2>
-        <p>Join PeerPrep and become part of a global collaborative learning community.</p>
-        <a href="{% url 'register' %}" class="btn btn-primary">Sign Up Now</a>
-    </section>
-
-    <!-- Footer -->
-    {% include "footer.html" %}
-
-    <script src="{% static 'js/index.js' %}"></script>
-</body>
-</html>
+{% endblock %}

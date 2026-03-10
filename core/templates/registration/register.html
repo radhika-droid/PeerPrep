@@ -1,45 +1,670 @@
 {% extends "base.html" %}
+{% load static %}
+
+{% block title %}Register — PeerPrep{% endblock %}
+
 {% block content %}
+<style>
+    .register-container {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+    }
+    
+    .register-card {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        border-radius: 20px;
+        border: 1px solid rgba(255,255,255,0.1);
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        overflow: hidden;
+        position: relative;
+    }
+    
+    .register-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    }
+    
+    .register-header {
+        text-align: center;
+        padding: 2rem 2rem 1rem;
+        background: rgba(255,255,255,0.02);
+    }
+    
+    .register-icon {
+        width: 70px;
+        height: 70px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        font-size: 2rem;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        animation: float 3s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+    
+    .register-title {
+        font-size: 2rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+    }
+    
+    .register-subtitle {
+        color: rgba(255,255,255,0.6);
+        font-size: 0.95rem;
+    }
+    
+    .register-form {
+        padding: 2rem;
+    }
+    
+    .form-floating-custom {
+        position: relative;
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-floating-custom input {
+        width: 100%;
+        padding: 1rem 1rem 1rem 3rem;
+        background: rgba(255,255,255,0.05);
+        border: 2px solid rgba(255,255,255,0.1);
+        border-radius: 12px;
+        color: #fff;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .form-floating-custom input:focus {
+        outline: none;
+        border-color: #667eea;
+        background: rgba(255,255,255,0.08);
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    }
+    
+    .form-floating-custom input.is-valid {
+        border-color: #51cf66;
+    }
+    
+    .form-floating-custom input.is-invalid {
+        border-color: #ff6b6b;
+    }
+    
+    .form-floating-custom label {
+        position: absolute;
+        left: 3rem;
+        top: 1rem;
+        color: rgba(255,255,255,0.5);
+        pointer-events: none;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+    }
+    
+    .form-floating-custom input:focus + label,
+    .form-floating-custom input:not(:placeholder-shown) + label {
+        top: -0.5rem;
+        left: 0.75rem;
+        font-size: 0.75rem;
+        color: #667eea;
+        background: #1a1a2e;
+        padding: 0 0.5rem;
+    }
+    
+    .input-icon {
+        position: absolute;
+        left: 1rem;
+        top: 1rem;
+        color: rgba(255,255,255,0.4);
+        font-size: 1.2rem;
+        transition: color 0.3s ease;
+    }
+    
+    .form-floating-custom input:focus ~ .input-icon {
+        color: #667eea;
+    }
+    
+    .password-toggle {
+        position: absolute;
+        right: 1rem;
+        top: 1rem;
+        background: none;
+        border: none;
+        color: rgba(255,255,255,0.4);
+        cursor: pointer;
+        font-size: 1.2rem;
+        transition: color 0.3s ease;
+    }
+    
+    .password-toggle:hover {
+        color: #667eea;
+    }
+    
+    .password-strength {
+        margin-top: 0.5rem;
+        height: 4px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 2px;
+        overflow: hidden;
+    }
+    
+    .password-strength-bar {
+        height: 100%;
+        width: 0;
+        transition: all 0.3s ease;
+        border-radius: 2px;
+    }
+    
+    .password-strength-text {
+        font-size: 0.8rem;
+        margin-top: 0.25rem;
+        color: rgba(255,255,255,0.6);
+    }
+    
+    .password-requirements {
+        margin-top: 0.5rem;
+        padding: 0.75rem;
+        background: rgba(255,255,255,0.03);
+        border-radius: 8px;
+        font-size: 0.85rem;
+    }
+    
+    .requirement {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: rgba(255,255,255,0.5);
+        margin-bottom: 0.25rem;
+    }
+    
+    .requirement.met {
+        color: #51cf66;
+    }
+    
+    .requirement-icon {
+        font-size: 1rem;
+    }
+    
+    .btn-register {
+        width: 100%;
+        padding: 1rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 12px;
+        color: #fff;
+        font-weight: 600;
+        font-size: 1.05rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        margin-top: 0.5rem;
+    }
+    
+    .btn-register::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: left 0.5s ease;
+    }
+    
+    .btn-register:hover::before {
+        left: 100%;
+    }
+    
+    .btn-register:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+    }
+    
+    .btn-register:active {
+        transform: translateY(0);
+    }
+    
+    .btn-register:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+    
+    .terms-checkbox {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background: rgba(255,255,255,0.03);
+        border-radius: 10px;
+        font-size: 0.9rem;
+        color: rgba(255,255,255,0.7);
+    }
+    
+    .terms-checkbox input {
+        margin-top: 0.25rem;
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+        accent-color: #667eea;
+    }
+    
+    .terms-checkbox a {
+        color: #667eea;
+        text-decoration: none;
+    }
+    
+    .terms-checkbox a:hover {
+        text-decoration: underline;
+    }
+    
+    .divider {
+        display: flex;
+        align-items: center;
+        margin: 1.5rem 0;
+        color: rgba(255,255,255,0.4);
+        font-size: 0.9rem;
+    }
+    
+    .divider::before,
+    .divider::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: rgba(255,255,255,0.1);
+    }
+    
+    .divider span {
+        padding: 0 1rem;
+    }
+    
+    .social-register {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .social-btn {
+        padding: 0.75rem;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 10px;
+        color: #fff;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+    }
+    
+    .social-btn:hover {
+        background: rgba(255,255,255,0.1);
+        transform: translateY(-2px);
+        color: #fff;
+    }
+    
+    .login-link {
+        text-align: center;
+        padding: 1.5rem 2rem 2rem;
+        background: rgba(255,255,255,0.02);
+        color: rgba(255,255,255,0.7);
+    }
+    
+    .login-link a {
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.3s ease;
+    }
+    
+    .login-link a:hover {
+        color: #764ba2;
+    }
+    
+    .alert {
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        border: none;
+        animation: slideDown 0.3s ease;
+    }
+    
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .alert-danger {
+        background: rgba(220, 53, 69, 0.2);
+        color: #ff6b6b;
+        border-left: 4px solid #dc3545;
+    }
+    
+    .errorlist {
+        list-style: none;
+        padding: 0;
+        margin: 0.5rem 0 0 0;
+        color: #ff6b6b;
+        font-size: 0.85rem;
+    }
+    
+    .benefits-strip {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+        padding: 1.5rem 2rem;
+        background: rgba(255,255,255,0.02);
+        border-top: 1px solid rgba(255,255,255,0.05);
+    }
+    
+    .benefit-item {
+        text-align: center;
+        color: rgba(255,255,255,0.6);
+        font-size: 0.85rem;
+    }
+    
+    .benefit-icon {
+        font-size: 1.5rem;
+        margin-bottom: 0.25rem;
+        color: #667eea;
+    }
+    
+    @media (max-width: 576px) {
+        .social-register {
+            grid-template-columns: 1fr;
+        }
+        
+        .benefits-strip {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+    }
+</style>
+
 <div class="register-container">
-  <h2>Register</h2>
+    <div class="container" style="max-width:500px;">
+        <div class="register-card">
+            <div class="register-header">
+                <div class="register-icon">✨</div>
+                <h1 class="register-title">Create Account</h1>
+                <p class="register-subtitle">Join PeerPrep and start your journey</p>
+            </div>
 
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Sign Up</button>
-  </form>
+            <div class="register-form">
+                <form method="POST" id="registerForm">
+                    {% csrf_token %}
+                    
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
 
-  <p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+                    <div class="form-floating-custom">
+                        <span class="input-icon">👤</span>
+                        <input type="text" 
+                               name="{{ form.username.name }}" 
+                               id="id_username"
+                               placeholder=" "
+                               autocomplete="username"
+                               value="{{ form.username.value|default:'' }}"
+                               required>
+                        <label for="id_username">{{ form.username.label }}</label>
+                        {% if form.username.errors %}
+                            {{ form.username.errors }}
+                        {% endif %}
+                    </div>
+
+                    <div class="form-floating-custom">
+                        <span class="input-icon">🔒</span>
+                        <input type="password" 
+                               name="{{ form.password1.name }}" 
+                               id="id_password1"
+                               placeholder=" "
+                               autocomplete="new-password"
+                               required>
+                        <label for="id_password1">{{ form.password1.label }}</label>
+                        <button type="button" class="password-toggle" onclick="togglePassword('id_password1')">
+                            👁️
+                        </button>
+                        <div class="password-strength">
+                            <div class="password-strength-bar" id="strengthBar"></div>
+                        </div>
+                        <div class="password-strength-text" id="strengthText"></div>
+                        <div class="password-requirements" id="requirements">
+                            <div class="requirement" id="req-length">
+                                <span class="requirement-icon">○</span>
+                                <span>At least 8 characters</span>
+                            </div>
+                            <div class="requirement" id="req-upper">
+                                <span class="requirement-icon">○</span>
+                                <span>One uppercase letter</span>
+                            </div>
+                            <div class="requirement" id="req-lower">
+                                <span class="requirement-icon">○</span>
+                                <span>One lowercase letter</span>
+                            </div>
+                            <div class="requirement" id="req-number">
+                                <span class="requirement-icon">○</span>
+                                <span>One number</span>
+                            </div>
+                        </div>
+                        {% if form.password1.errors %}
+                            {{ form.password1.errors }}
+                        {% endif %}
+                    </div>
+
+                    <div class="form-floating-custom">
+                        <span class="input-icon">✓</span>
+                        <input type="password" 
+                               name="{{ form.password2.name }}" 
+                               id="id_password2"
+                               placeholder=" "
+                               autocomplete="new-password"
+                               required>
+                        <label for="id_password2">{{ form.password2.label }}</label>
+                        <button type="button" class="password-toggle" onclick="togglePassword('id_password2')">
+                            👁️
+                        </button>
+                        {% if form.password2.errors %}
+                            {{ form.password2.errors }}
+                        {% endif %}
+                    </div>
+
+                    <div class="terms-checkbox">
+                        <input type="checkbox" id="terms" required>
+                        <label for="terms">
+                            I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn-register" id="submitBtn">
+                        Create Account
+                    </button>
+                </form>
+
+                <div class="divider">
+                    <span>OR</span>
+                </div>
+
+                <div class="social-register">
+                    <a href="#" class="social-btn">
+                        <span>G</span>
+                        <span>Google</span>
+                    </a>
+                    <a href="#" class="social-btn">
+                        <span>👨‍💻</span>
+                        <span>GitHub</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="login-link">
+                Already have an account? 
+                <a href="{% url 'register' %}">Sign in instead</a>
+            </div>
+
+            <div class="benefits-strip">
+                <div class="benefit-item">
+                    <div class="benefit-icon">🚀</div>
+                    <div>Fast Setup</div>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-icon">🎓</div>
+                    <div>Learn Together</div>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-icon">💡</div>
+                    <div>Smart Tools</div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<style>
-.register-container {
-  width: 350px;
-  margin: 50px auto;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background: #fafafa;
-  text-align: center;
+<script>
+function togglePassword(inputId) {
+    const passwordInput = document.getElementById(inputId);
+    const toggleBtn = passwordInput.nextElementSibling.nextElementSibling;
+    
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleBtn.textContent = '🙈';
+    } else {
+        passwordInput.type = 'password';
+        toggleBtn.textContent = '👁️';
+    }
 }
-.register-container h2 {
-  margin-bottom: 20px;
+
+// Password strength checker
+const password1Input = document.getElementById('id_password1');
+const strengthBar = document.getElementById('strengthBar');
+const strengthText = document.getElementById('strengthText');
+
+password1Input.addEventListener('input', function() {
+    const password = this.value;
+    let strength = 0;
+    
+    // Check requirements
+    const hasLength = password.length >= 8;
+    const hasUpper = /[A-Z]/.test(password);
+    const hasLower = /[a-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    
+    // Update requirement indicators
+    updateRequirement('req-length', hasLength);
+    updateRequirement('req-upper', hasUpper);
+    updateRequirement('req-lower', hasLower);
+    updateRequirement('req-number', hasNumber);
+    
+    // Calculate strength
+    if (hasLength) strength++;
+    if (hasUpper) strength++;
+    if (hasLower) strength++;
+    if (hasNumber) strength++;
+    if (password.length >= 12) strength++;
+    if (/[!@#$%^&*]/.test(password)) strength++;
+    
+    // Update strength bar
+    const percentage = (strength / 6) * 100;
+    strengthBar.style.width = percentage + '%';
+    
+    if (strength <= 2) {
+        strengthBar.style.background = '#ff6b6b';
+        strengthText.textContent = 'Weak password';
+        strengthText.style.color = '#ff6b6b';
+    } else if (strength <= 4) {
+        strengthBar.style.background = '#ffd93d';
+        strengthText.textContent = 'Medium password';
+        strengthText.style.color = '#ffd93d';
+    } else {
+        strengthBar.style.background = '#51cf66';
+        strengthText.textContent = 'Strong password';
+        strengthText.style.color = '#51cf66';
+    }
+});
+
+function updateRequirement(id, met) {
+    const element = document.getElementById(id);
+    if (met) {
+        element.classList.add('met');
+        element.querySelector('.requirement-icon').textContent = '✓';
+    } else {
+        element.classList.remove('met');
+        element.querySelector('.requirement-icon').textContent = '○';
+    }
 }
-.register-container form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.register-container button {
-  background: #4CAF50;
-  color: white;
-  border: none;
-  padding: 10px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-.register-container button:hover {
-  background: #45a049;
-}
-</style>
+
+// Password match validation
+const password2Input = document.getElementById('id_password2');
+
+password2Input.addEventListener('input', function() {
+    if (this.value && password1Input.value) {
+        if (this.value === password1Input.value) {
+            this.classList.add('is-valid');
+            this.classList.remove('is-invalid');
+        } else {
+            this.classList.add('is-invalid');
+            this.classList.remove('is-valid');
+        }
+    } else {
+        this.classList.remove('is-valid', 'is-invalid');
+    }
+});
+
+// Form validation
+document.getElementById('registerForm').addEventListener('submit', function(e) {
+    const terms = document.getElementById('terms');
+    
+    if (!terms.checked) {
+        e.preventDefault();
+        alert('Please accept the Terms of Service and Privacy Policy');
+        return;
+    }
+    
+    if (password1Input.value !== password2Input.value) {
+        e.preventDefault();
+        alert('Passwords do not match');
+        return;
+    }
+});
+
+// Add focus animations
+document.querySelectorAll('input').forEach(input => {
+    input.addEventListener('focus', function() {
+        this.parentElement.style.transform = 'scale(1.02)';
+    });
+    
+    input.addEventListener('blur', function() {
+        this.parentElement.style.transform = 'scale(1)';
+    });
+});
+</script>
+
 {% endblock %}

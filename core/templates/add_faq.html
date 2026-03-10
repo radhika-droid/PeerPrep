@@ -1,9 +1,42 @@
 {% extends "base.html" %}
+
+{% block title %}FAQ — PeerPrep{% endblock %}
+
 {% block content %}
-  <h2>Add FAQ</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Save</button>
-  </form>
-{% endblock content %}
+<div class="container mt-4">
+
+    <h1 class="mb-4">Frequently Asked Questions</h1>
+
+    {% if faqs %}
+        <div class="accordion" id="faqAccordion">
+            {% for faq in faqs %}
+            <div class="accordion-item bg-dark text-light" 
+                 style="border:1px solid rgba(255,255,255,0.1);">
+
+                <h2 class="accordion-header" id="heading{{ forloop.counter }}">
+                    <button class="accordion-button collapsed bg-dark text-light"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#collapse{{ forloop.counter }}"
+                            aria-expanded="false">
+                        {{ faq.question }}
+                    </button>
+                </h2>
+
+                <div id="collapse{{ forloop.counter }}"
+                     class="accordion-collapse collapse"
+                     data-bs-parent="#faqAccordion">
+                    <div class="accordion-body text-light">
+                        {{ faq.answer }}
+                    </div>
+                </div>
+
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-muted">No FAQs have been added yet.</p>
+    {% endif %}
+
+</div>
+{% endblock %}

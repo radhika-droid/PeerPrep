@@ -1,79 +1,888 @@
 {% load static %}
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}PeerPrep{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- Bootstrap CSS (dark theme) -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Custom Styles -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Instrument+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/index.css' %}">
-    <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
-    <link rel="stylesheet" href="{% static 'css/footer.css' %}">
-    <link rel="stylesheet" href="{% static 'css/notes.css' %}">
+    <style>
+        /* ==================== DESIGN TOKENS ==================== */
+        :root[data-theme="dark"] {
+            --bg-primary: #080c12;
+            --bg-secondary: #0d1520;
+            --bg-tertiary: #111d2e;
+            --bg-card: rgba(13, 21, 32, 0.9);
+            --bg-elevated: #141f30;
+
+            --text-primary: #eef2f7;
+            --text-secondary: rgba(238, 242, 247, 0.55);
+            --text-muted: rgba(238, 242, 247, 0.28);
+            --text-accent: #7eb8f7;
+
+            --accent-primary: #5b9cf6;
+            --accent-secondary: #3d7de0;
+            --accent-glow: rgba(91, 156, 246, 0.12);
+            --accent-dim: rgba(91, 156, 246, 0.08);
+
+            --border: rgba(255, 255, 255, 0.06);
+            --border-accent: rgba(91, 156, 246, 0.22);
+            --border-strong: rgba(91, 156, 246, 0.45);
+
+            --success: #34d399;
+            --warning: #fbbf24;
+            --danger: #f87171;
+            --rose: #fb7185;
+
+            --shadow-sm: 0 1px 4px rgba(0,0,0,0.5);
+            --shadow-md: 0 4px 20px rgba(0,0,0,0.5);
+            --shadow-lg: 0 12px 48px rgba(0,0,0,0.6);
+            --shadow-glow: 0 0 40px rgba(91, 156, 246, 0.1);
+
+            --nav-bg: rgba(8, 12, 18, 0.82);
+            --glass-bg: rgba(13, 21, 32, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.06);
+
+            --gradient-accent: linear-gradient(135deg, #5b9cf6, #7eb8f7);
+            --gradient-hero: linear-gradient(135deg, #5b9cf6 0%, #818cf8 50%, #a78bfa 100%);
+            --gradient-warm: linear-gradient(135deg, #fb7185, #fbbf24);
+            --gradient-cool: linear-gradient(135deg, #34d399, #5b9cf6);
+
+            --card-hover: rgba(91, 156, 246, 0.06);
+        }
+
+        :root[data-theme="light"] {
+            --bg-primary: #f5f2ec;
+            --bg-secondary: #ede9e0;
+            --bg-tertiary: #e5e0d5;
+            --bg-card: rgba(255, 252, 246, 0.95);
+            --bg-elevated: #fdfaf5;
+
+            --text-primary: #1a1612;
+            --text-secondary: rgba(26, 22, 18, 0.6);
+            --text-muted: rgba(26, 22, 18, 0.35);
+            --text-accent: #7c5c2e;
+
+            --accent-primary: #9c6c3a;
+            --accent-secondary: #7c5c2e;
+            --accent-glow: rgba(156, 108, 58, 0.1);
+            --accent-dim: rgba(156, 108, 58, 0.07);
+
+            --border: rgba(26, 22, 18, 0.08);
+            --border-accent: rgba(156, 108, 58, 0.2);
+            --border-strong: rgba(156, 108, 58, 0.45);
+
+            --success: #2d9e6e;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --rose: #e11d48;
+
+            --shadow-sm: 0 1px 4px rgba(26, 22, 18, 0.12);
+            --shadow-md: 0 4px 20px rgba(26, 22, 18, 0.12);
+            --shadow-lg: 0 12px 48px rgba(26, 22, 18, 0.15);
+            --shadow-glow: 0 0 40px rgba(156, 108, 58, 0.08);
+
+            --nav-bg: rgba(245, 242, 236, 0.88);
+            --glass-bg: rgba(255, 252, 246, 0.8);
+            --glass-border: rgba(156, 108, 58, 0.12);
+
+            --gradient-accent: linear-gradient(135deg, #9c6c3a, #c4914f);
+            --gradient-hero: linear-gradient(135deg, #9c6c3a 0%, #c4914f 50%, #e0b87a 100%);
+            --gradient-warm: linear-gradient(135deg, #e11d48, #d97706);
+            --gradient-cool: linear-gradient(135deg, #2d9e6e, #9c6c3a);
+
+            --card-hover: rgba(156, 108, 58, 0.05);
+        }
+
+        /* ==================== RESET ==================== */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* ==================== BASE ==================== */
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Instrument Sans', -apple-system, sans-serif;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            line-height: 1.6;
+        }
+
+        /* Grain overlay */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            opacity: 0.022;
+            pointer-events: none;
+            z-index: 9000;
+        }
+
+        [data-theme="dark"] { color-scheme: dark; }
+        [data-theme="light"] { color-scheme: light; }
+
+        /* ==================== SCROLLBAR ==================== */
+        ::-webkit-scrollbar { width: 3px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-accent);
+            border-radius: 2px;
+        }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-primary); }
+
+        /* ==================== READING PROGRESS BAR ==================== */
+        .progress-bar-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: transparent;
+            z-index: 9999;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--gradient-accent);
+            width: 0%;
+            transition: width 0.08s linear;
+        }
+
+        /* ==================== PAGE LOADER ==================== */
+        .page-loader {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 1.75rem;
+            z-index: 10000;
+            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .page-loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader-mark {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .loader-logo {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            color: var(--text-primary);
+        }
+
+        .loader-logo span {
+            color: var(--accent-primary);
+        }
+
+        .loader-bar-track {
+            width: 160px;
+            height: 2px;
+            background: var(--border);
+            border-radius: 1px;
+            overflow: hidden;
+        }
+
+        .loader-bar-fill {
+            height: 100%;
+            background: var(--gradient-accent);
+            border-radius: 1px;
+            animation: loader-progress 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        @keyframes loader-progress {
+            from { width: 0%; }
+            to { width: 100%; }
+        }
+
+        /* ==================== ANIMATED BACKGROUND ==================== */
+        .animated-background {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .gradient-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            animation: orb-drift 35s ease-in-out infinite;
+            will-change: transform;
+        }
+
+        .orb-1 {
+            width: 700px;
+            height: 700px;
+            top: -20%;
+            left: -15%;
+            animation-delay: 0s;
+        }
+
+        [data-theme="dark"] .orb-1 {
+            background: radial-gradient(circle, rgba(91, 156, 246, 0.06) 0%, transparent 65%);
+        }
+
+        [data-theme="light"] .orb-1 {
+            background: radial-gradient(circle, rgba(156, 108, 58, 0.06) 0%, transparent 65%);
+        }
+
+        .orb-2 {
+            width: 600px;
+            height: 600px;
+            top: 45%;
+            right: -12%;
+            animation-delay: 12s;
+        }
+
+        [data-theme="dark"] .orb-2 {
+            background: radial-gradient(circle, rgba(129, 140, 248, 0.05) 0%, transparent 65%);
+        }
+
+        [data-theme="light"] .orb-2 {
+            background: radial-gradient(circle, rgba(196, 145, 79, 0.05) 0%, transparent 65%);
+        }
+
+        .orb-3 {
+            width: 500px;
+            height: 500px;
+            bottom: -15%;
+            left: 40%;
+            animation-delay: 22s;
+        }
+
+        [data-theme="dark"] .orb-3 {
+            background: radial-gradient(circle, rgba(52, 211, 153, 0.04) 0%, transparent 65%);
+        }
+
+        [data-theme="light"] .orb-3 {
+            background: radial-gradient(circle, rgba(45, 158, 110, 0.04) 0%, transparent 65%);
+        }
+
+        @keyframes orb-drift {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33%  { transform: translate(50px, -80px) scale(1.08); }
+            66%  { transform: translate(-30px, 50px) scale(0.95); }
+        }
+
+        /* Subtle grid pattern */
+        .grid-bg {
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(var(--border) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 72px 72px;
+            pointer-events: none;
+            z-index: 0;
+            mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black 0%, transparent 100%);
+        }
+
+        /* ==================== NAVBAR ==================== */
+        .navbar {
+            background: var(--nav-bg);
+            backdrop-filter: blur(24px) saturate(200%);
+            -webkit-backdrop-filter: blur(24px) saturate(200%);
+            padding: 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid var(--border);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            border-bottom-color: var(--border-accent);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Subtle accent line under nav */
+        .navbar::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent-primary), transparent);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .navbar.scrolled::after {
+            opacity: 0.5;
+        }
+
+        .nav-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            gap: 2rem;
+            min-height: 68px;
+        }
+
+        /* Brand */
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-family: 'Syne', sans-serif;
+            font-size: 1.35rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            gap: 0.7rem;
+            transition: opacity 0.2s ease;
+        }
+
+        .navbar-brand:hover {
+            opacity: 0.75;
+            color: var(--text-primary);
+        }
+
+        .logo {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border-accent);
+            flex-shrink: 0;
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .navbar-brand:hover .logo img {
+            transform: scale(1.1) rotate(8deg);
+        }
+
+        .brand-dot {
+            display: inline-block;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--accent-primary);
+            margin-left: -2px;
+            vertical-align: super;
+            flex-shrink: 0;
+        }
+
+        /* Nav Center */
+        .nav-center {
+            display: flex;
+            list-style: none;
+            gap: 0;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+        }
+
+        .nav-right {
+            display: flex;
+            list-style: none;
+            gap: 0.4rem;
+            align-items: center;
+            margin: 0;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-secondary);
+            padding: 0.5rem 0.85rem;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 0.82rem;
+            letter-spacing: 0.01em;
+            transition: color 0.2s ease, background 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            white-space: nowrap;
+            position: relative;
+        }
+
+        .nav-link i {
+            font-size: 0.78rem;
+            opacity: 0.7;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 1.5px;
+            background: var(--accent-primary);
+            border-radius: 1px;
+            transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--text-primary);
+            background: transparent;
+        }
+
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 55%;
+        }
+
+        .nav-link.active {
+            color: var(--text-accent);
+        }
+
+        /* Nav separator */
+        .nav-sep {
+            width: 1px;
+            height: 18px;
+            background: var(--border);
+            margin: 0 0.5rem;
+            flex-shrink: 0;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            background: transparent;
+            border: 1px solid var(--border);
+            width: 34px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            border-radius: 6px;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--border-accent);
+            color: var(--text-primary);
+            background: var(--accent-dim);
+        }
+
+        .theme-icon {
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .theme-toggle:hover .theme-icon {
+            transform: rotate(20deg);
+        }
+
+        /* Auth Buttons */
+        .btn-login {
+            background: transparent;
+            color: var(--text-secondary);
+            padding: 0.48rem 0.9rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.82rem;
+            transition: all 0.2s ease;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            letter-spacing: 0.01em;
+        }
+
+        .btn-login:hover {
+            border-color: var(--border-accent);
+            color: var(--text-primary);
+            background: var(--accent-dim);
+        }
+
+        .btn-register {
+            background: var(--text-primary);
+            color: var(--bg-primary);
+            padding: 0.48rem 1rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.82rem;
+            letter-spacing: 0.01em;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            border: 1px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-register::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--gradient-accent);
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+
+        .btn-register:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 20px var(--accent-glow);
+            color: var(--bg-primary);
+        }
+
+        .btn-register:hover::before {
+            opacity: 1;
+        }
+
+        .btn-register span, .btn-register i {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Mobile Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            background: transparent;
+            border: 1px solid var(--border);
+            width: 38px;
+            height: 38px;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .mobile-menu-toggle:hover {
+            border-color: var(--border-accent);
+            color: var(--text-primary);
+        }
+
+        /* ==================== MAIN CONTENT ==================== */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+            min-height: calc(100vh - 68px);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ==================== SCROLL TO TOP ==================== */
+        .scroll-to-top {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            width: 40px;
+            height: 40px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-accent);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            cursor: pointer;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(8px);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 999;
+        }
+
+        .scroll-to-top.visible {
+            opacity: 1;
+            pointer-events: all;
+            transform: translateY(0);
+        }
+
+        .scroll-to-top:hover {
+            background: var(--accent-dim);
+            border-color: var(--accent-primary);
+            color: var(--text-primary);
+            transform: translateY(-2px);
+        }
+
+        /* ==================== THEME TRANSITIONS ==================== */
+        body.theme-transitioning *,
+        body.theme-transitioning *::before,
+        body.theme-transitioning *::after {
+            transition:
+                background-color 0.45s ease,
+                color 0.45s ease,
+                border-color 0.45s ease,
+                box-shadow 0.45s ease !important;
+            transition-delay: 0s !important;
+        }
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 1200px) {
+            .nav-link span { display: none; }
+            .nav-link { padding: 0.5rem 0.65rem; }
+        }
+
+        @media (max-width: 992px) {
+            .nav-sep { display: none; }
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-toggle { display: flex; }
+
+            .nav-container {
+                grid-template-columns: auto 1fr auto;
+                gap: 0.75rem;
+                min-height: 58px;
+                padding: 0 1.25rem;
+            }
+
+            .navbar-brand { font-size: 1.15rem; }
+            .logo { width: 30px; height: 30px; }
+
+            .nav-center,
+            .nav-right {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--bg-secondary);
+                border-bottom: 1px solid var(--border);
+                flex-direction: column;
+                padding: 1rem 1.25rem;
+                gap: 0.35rem;
+                z-index: 1001;
+            }
+
+            .nav-center.active,
+            .nav-right.active { display: flex; }
+
+            .nav-link {
+                width: 100%;
+                justify-content: flex-start;
+                padding: 0.7rem 0.85rem;
+                border-radius: 6px;
+                border: 1px solid transparent;
+            }
+
+            .nav-link span { display: inline !important; }
+
+            .nav-link:hover,
+            .nav-link.active {
+                border-color: var(--border-accent);
+                background: var(--accent-dim);
+            }
+
+            .nav-link::after { display: none; }
+
+            .nav-sep { display: none; }
+
+            .btn-login,
+            .btn-register {
+                width: 100%;
+                justify-content: center;
+                padding: 0.7rem;
+            }
+
+            .main-content { padding: 1.75rem 1rem; }
+        }
+    </style>
 </head>
-<body class="bg-dark text-light">
-
-    <!-- Navbar -->
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
-            <div class="container-fluid">
-                <!-- Brand -->
-                <a class="navbar-brand fw-bold" href="{% url 'home' %}">
-                 <img src="{% static 'PeerPrep.png' %}" alt="PeerPrep Logo" height="35" class="me-2">
-                 PeerPrep
-                 </a>
-
-
-                <!-- Navbar toggler (for mobile) -->
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
-                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <!-- Links -->
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'home' %}">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'notes:notes_page' %}">Notes</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-
-    <!-- Messages -->
-    <div class="container mt-3">
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            {% endfor %}
-        {% endif %}
+<body>
+    <!-- Reading progress -->
+    <div class="progress-bar-container">
+        <div class="progress-bar" id="progressBar"></div>
     </div>
 
-    <!-- Main Content -->
-    <main class="container my-4">
-        {% block content %}
-        {% endblock content %}
+    <!-- Page Loader -->
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-mark">
+            <div class="loader-logo">Peer<span>Prep</span></div>
+            <div class="loader-bar-track">
+                <div class="loader-bar-fill"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ambient Background -->
+    <div class="animated-background">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
+    </div>
+    <div class="grid-bg"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="mainNavbar">
+        <div class="nav-container">
+
+            <a href="{% url 'index' %}" class="navbar-brand">
+                <div class="logo">
+                    <img src="{% static 'PeerPrep.png' %}" alt="PeerPrep">
+                </div>
+                PeerPrep<span class="brand-dot"></span>
+            </a>
+
+            <ul class="nav-center" id="navCenter">
+                <li><a href="{% url 'index' %}" class="nav-link"><i class="fas fa-house"></i><span>Home</span></a></li>
+                <li><a href="{% url 'notes_list' %}" class="nav-link"><i class="fas fa-book-open"></i><span>Notes</span></a></li>
+                <li><a href="{% url 'questions' %}" class="nav-link"><i class="fas fa-circle-question"></i><span>Questions</span></a></li>
+                <li><a href="{% url 'timetable' %}" class="nav-link"><i class="fas fa-calendar-days"></i><span>Timetable</span></a></li>
+                <li><a href="{% url 'progress' %}" class="nav-link"><i class="fas fa-chart-line"></i><span>Progress</span></a></li>
+                <li><div class="nav-sep"></div></li>
+                <li><a href="{% url 'feature' %}" class="nav-link"><i class="fas fa-sparkles"></i><span>Features</span></a></li>
+                <li><a href="{% url 'success_stories' %}" class="nav-link"><i class="fas fa-trophy"></i><span>Stories</span></a></li>
+            </ul>
+
+            <ul class="nav-right" id="navRight">
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'profile' %}" class="btn-login"><i class="fas fa-user"></i><span>Profile</span></a></li>
+                    <li><a href="{% url 'logout' %}" class="btn-login"><i class="fas fa-arrow-right-from-bracket"></i><span>Sign out</span></a></li>
+                {% else %}
+                    <li><a href="{% url 'login' %}" class="btn-login"><i class="fas fa-arrow-right-to-bracket"></i><span>Sign in</span></a></li>
+                    <li><a href="{% url 'register' %}" class="btn-register"><i class="fas fa-arrow-up-right"></i><span>Get started</span></a></li>
+                {% endif %}
+                <li>
+                    <button class="theme-toggle" id="themeToggle" title="Toggle theme" aria-label="Toggle theme">
+                        <i class="fas fa-moon theme-icon" id="themeIcon"></i>
+                    </button>
+                </li>
+            </ul>
+
+            <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Menu">
+                <i class="fas fa-bars"></i>
+            </button>
+
+        </div>
+    </nav>
+
+    <!-- Page Content -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
     </main>
 
-    <!-- Footer -->
-    {% include "footer.html" %}
+    <!-- Scroll to top -->
+    <button class="scroll-to-top" id="scrollToTop" title="Back to top" aria-label="Back to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
 
-    <!-- Scripts -->
-    <script src="{% static 'js/main.js' %}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // ── Page Loader ──────────────────────────────────────────
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('pageLoader').classList.add('hidden');
+            }, 500);
+        });
 
+        // ── Theme ────────────────────────────────────────────────
+        const html = document.documentElement;
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+
+        const saved = localStorage.getItem('pp-theme') || 'dark';
+        html.setAttribute('data-theme', saved);
+        applyThemeIcon(saved);
+
+        function applyThemeIcon(t) {
+            themeIcon.className = t === 'light'
+                ? 'fas fa-sun theme-icon'
+                : 'fas fa-moon theme-icon';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const current = html.getAttribute('data-theme');
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.body.classList.add('theme-transitioning');
+            void document.body.offsetWidth;
+            html.setAttribute('data-theme', next);
+            localStorage.setItem('pp-theme', next);
+            applyThemeIcon(next);
+            setTimeout(() => document.body.classList.remove('theme-transitioning'), 450);
+        });
+
+        // ── Mobile menu ──────────────────────────────────────────
+        const toggle = document.getElementById('mobileMenuToggle');
+        const navC   = document.getElementById('navCenter');
+        const navR   = document.getElementById('navRight');
+
+        toggle.addEventListener('click', () => {
+            const open = navC.classList.toggle('active');
+            navR.classList.toggle('active');
+            toggle.querySelector('i').className = open ? 'fas fa-xmark' : 'fas fa-bars';
+        });
+
+        document.querySelectorAll('.nav-link, .btn-login, .btn-register').forEach(el => {
+            el.addEventListener('click', () => {
+                navC.classList.remove('active');
+                navR.classList.remove('active');
+                toggle.querySelector('i').className = 'fas fa-bars';
+            });
+        });
+
+        // ── Scroll effects ───────────────────────────────────────
+        const navbar    = document.getElementById('mainNavbar');
+        const progBar   = document.getElementById('progressBar');
+        const scrollBtn = document.getElementById('scrollToTop');
+
+        window.addEventListener('scroll', () => {
+            const total    = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const pct      = total > 0 ? (window.scrollY / total) * 100 : 0;
+            progBar.style.width = pct + '%';
+
+            navbar.classList.toggle('scrolled', window.scrollY > 40);
+            scrollBtn.classList.toggle('visible', window.scrollY > 350);
+        }, { passive: true });
+
+        scrollBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+        // ── Active nav highlight ─────────────────────────────────
+        const path = window.location.pathname;
+        document.querySelectorAll('.nav-link').forEach(link => {
+            if (link.getAttribute('href') === path) link.classList.add('active');
+        });
+
+        // ── Smooth anchor scroll ─────────────────────────────────
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', e => {
+                const target = document.querySelector(a.getAttribute('href'));
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
 </body>
 </html>

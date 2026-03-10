@@ -1,117 +1,776 @@
+{% extends "base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - Peer Prep</title>
-    <link rel="stylesheet" href="{% static 'css/index.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
-  .trail-dot {
-    position: fixed;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background-color: #6024eb;
-    pointer-events: none;
-    transform: translate(-50%, -50%);
-    z-index: 9999;
-  }
+
+{% block title %}Register — PeerPrep{% endblock %}
+
+{% block content %}
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
+
+    :root {
+        --reg-bg: #0b0c10;
+        --reg-card: #111318;
+        --reg-border: rgba(255,255,255,0.07);
+        --reg-accent: #7c6af7;
+        --reg-accent-2: #f472b6;
+        --reg-accent-glow: rgba(124, 106, 247, 0.25);
+        --reg-text: #f0f0f5;
+        --reg-muted: rgba(240,240,245,0.45);
+        --reg-input-bg: rgba(255,255,255,0.04);
+        --reg-success: #34d399;
+        --reg-danger: #f87171;
+        --reg-warning: #fbbf24;
+    }
+
+    .register-page {
+        font-family: 'DM Sans', sans-serif;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem 1rem;
+        position: relative;
+        overflow: hidden;
+        background: var(--reg-bg);
+    }
+
+    /* Animated mesh background */
+    .register-page::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background:
+            radial-gradient(ellipse 60% 50% at 20% 10%, rgba(124,106,247,0.12) 0%, transparent 60%),
+            radial-gradient(ellipse 50% 40% at 80% 80%, rgba(244,114,182,0.10) 0%, transparent 60%),
+            radial-gradient(ellipse 40% 60% at 60% 30%, rgba(52,211,153,0.06) 0%, transparent 60%);
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .register-page::after {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background-image:
+            linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+        background-size: 40px 40px;
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .register-wrap {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        max-width: 480px;
+        animation: slideUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(40px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Brand mark above card */
+    .brand-mark {
+        text-align: center;
+        margin-bottom: 2rem;
+        animation: fadeIn 0.5s ease 0.1s both;
+    }
+
+    .brand-mark span {
+        font-family: 'Syne', sans-serif;
+        font-weight: 800;
+        font-size: 1.5rem;
+        letter-spacing: -0.5px;
+        background: linear-gradient(135deg, var(--reg-accent), var(--reg-accent-2));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .brand-mark .dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        background: var(--reg-accent);
+        border-radius: 50%;
+        margin-left: 3px;
+        vertical-align: middle;
+        margin-bottom: 3px;
+        box-shadow: 0 0 10px var(--reg-accent);
+    }
+
+    /* Card */
+    .register-card {
+        background: var(--reg-card);
+        border: 1px solid var(--reg-border);
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow:
+            0 0 0 1px rgba(124,106,247,0.08),
+            0 30px 80px rgba(0,0,0,0.5),
+            0 0 60px rgba(124,106,247,0.05);
+        position: relative;
+    }
+
+    /* Top accent bar */
+    .card-accent-bar {
+        height: 3px;
+        background: linear-gradient(90deg, var(--reg-accent) 0%, var(--reg-accent-2) 50%, #38bdf8 100%);
+    }
+
+    /* Header */
+    .reg-header {
+        padding: 2.5rem 2.5rem 1.5rem;
+        text-align: center;
+    }
+
+    .reg-icon-ring {
+        width: 72px;
+        height: 72px;
+        margin: 0 auto 1.25rem;
+        position: relative;
+    }
+
+    .reg-icon-ring::before {
+        content: '';
+        position: absolute;
+        inset: -3px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--reg-accent), var(--reg-accent-2));
+        animation: spin 4s linear infinite;
+        opacity: 0.7;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    .reg-icon-inner {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background: var(--reg-card);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+    }
+
+    .reg-title {
+        font-family: 'Syne', sans-serif;
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--reg-text);
+        margin-bottom: 0.4rem;
+        letter-spacing: -0.5px;
+    }
+
+    .reg-subtitle {
+        color: var(--reg-muted);
+        font-size: 0.95rem;
+        font-weight: 300;
+        line-height: 1.5;
+    }
+
+    /* Form Body */
+    .reg-body {
+        padding: 0 2.5rem 2rem;
+    }
+
+    /* Error Alert */
+    .error-alert {
+        background: rgba(248,113,113,0.1);
+        border: 1px solid rgba(248,113,113,0.25);
+        border-radius: 10px;
+        padding: 0.875rem 1rem;
+        margin-bottom: 1.5rem;
+        color: var(--reg-danger);
+        font-size: 0.9rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+        animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-5px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Input Group */
+    .input-group-custom {
+        position: relative;
+        margin-bottom: 1.25rem;
+        transition: transform 0.2s ease;
+    }
+
+    .input-group-custom:focus-within {
+        transform: scale(1.01);
+    }
+
+    .input-label {
+        display: block;
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: var(--reg-muted);
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+    }
+
+    .input-shell {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .input-prefix {
+        position: absolute;
+        left: 1rem;
+        color: var(--reg-muted);
+        font-size: 1rem;
+        pointer-events: none;
+        transition: color 0.3s ease;
+        z-index: 1;
+    }
+
+    .input-shell:focus-within .input-prefix {
+        color: var(--reg-accent);
+    }
+
+    .input-field {
+        width: 100%;
+        padding: 0.875rem 1rem 0.875rem 2.75rem;
+        background: var(--reg-input-bg);
+        border: 1.5px solid var(--reg-border);
+        border-radius: 12px;
+        color: var(--reg-text);
+        font-family: 'DM Sans', sans-serif;
+        font-size: 0.975rem;
+        transition: all 0.3s ease;
+        outline: none;
+        /* -webkit-appearance: none; */
+    }
+
+    .input-field::placeholder { color: rgba(240,240,245,0.2); }
+
+    .input-field:focus {
+        border-color: var(--reg-accent);
+        background: rgba(124,106,247,0.06);
+        box-shadow: 0 0 0 4px rgba(124,106,247,0.1);
+    }
+
+    .input-field.valid {
+        border-color: var(--reg-success);
+        box-shadow: 0 0 0 3px rgba(52,211,153,0.08);
+    }
+
+    .input-field.invalid {
+        border-color: var(--reg-danger);
+        box-shadow: 0 0 0 3px rgba(248,113,113,0.08);
+    }
+
+    .field-error {
+        list-style: none;
+        padding: 0;
+        margin: 0.4rem 0 0;
+        font-size: 0.82rem;
+        color: var(--reg-danger);
+    }
+
+    /* Password toggle */
+    .pass-toggle {
+        position: absolute;
+        right: 0.875rem;
+        background: none;
+        border: none;
+        color: var(--reg-muted);
+        cursor: pointer;
+        font-size: 1rem;
+        padding: 0.25rem;
+        transition: color 0.2s;
+        line-height: 1;
+    }
+
+    .pass-toggle:hover { color: var(--reg-accent); }
+
+    /* Strength meter */
+    .strength-wrap {
+        margin-top: 0.6rem;
+    }
+
+    .strength-track {
+        height: 4px;
+        background: rgba(255,255,255,0.07);
+        border-radius: 2px;
+        overflow: hidden;
+        margin-bottom: 0.4rem;
+    }
+
+    .strength-fill {
+        height: 100%;
+        width: 0;
+        border-radius: 2px;
+        transition: all 0.4s ease;
+    }
+
+    .strength-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .strength-label {
+        font-size: 0.78rem;
+        color: var(--reg-muted);
+        transition: color 0.3s;
+    }
+
+    /* Requirements */
+    .req-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.35rem;
+        margin-top: 0.75rem;
+        padding: 0.875rem 1rem;
+        background: rgba(255,255,255,0.025);
+        border-radius: 10px;
+        border: 1px solid var(--reg-border);
+    }
+
+    .req-item {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.82rem;
+        color: var(--reg-muted);
+        transition: color 0.3s;
+    }
+
+    .req-item.met { color: var(--reg-success); }
+
+    .req-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+        flex-shrink: 0;
+        transition: all 0.3s;
+    }
+
+    .req-item.met .req-dot {
+        box-shadow: 0 0 6px var(--reg-success);
+    }
+
+    /* Terms */
+    .terms-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background: rgba(255,255,255,0.02);
+        border-radius: 12px;
+        border: 1px solid var(--reg-border);
+        font-size: 0.88rem;
+        color: var(--reg-muted);
+        line-height: 1.5;
+    }
+
+    .terms-row input[type="checkbox"] {
+        width: 17px;
+        height: 17px;
+        accent-color: var(--reg-accent);
+        flex-shrink: 0;
+        margin-top: 2px;
+        cursor: pointer;
+    }
+
+    .terms-row a {
+        color: var(--reg-accent);
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .terms-row a:hover { text-decoration: underline; }
+
+    /* Submit button */
+    .btn-submit {
+        width: 100%;
+        padding: 1rem;
+        background: linear-gradient(135deg, var(--reg-accent) 0%, #9d5cf6 50%, var(--reg-accent-2) 100%);
+        background-size: 200% 200%;
+        border: none;
+        border-radius: 12px;
+        color: #fff;
+        font-family: 'Syne', sans-serif;
+        font-weight: 700;
+        font-size: 1rem;
+        letter-spacing: 0.3px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 20px rgba(124,106,247,0.35);
+    }
+
+    .btn-submit::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+        transition: left 0.5s ease;
+    }
+
+    .btn-submit:hover::before { left: 100%; }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 30px rgba(124,106,247,0.45);
+        background-position: right center;
+    }
+
+    .btn-submit:active { transform: translateY(0); }
+
+    .btn-submit:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+
+    /* Divider */
+    .or-divider {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin: 1.5rem 0;
+        color: var(--reg-muted);
+        font-size: 0.82rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .or-divider::before,
+    .or-divider::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: var(--reg-border);
+    }
+
+    /* Social buttons */
+    .social-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.875rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .social-btn {
+        padding: 0.75rem 1rem;
+        background: var(--reg-input-bg);
+        border: 1.5px solid var(--reg-border);
+        border-radius: 12px;
+        color: var(--reg-text);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .social-btn:hover {
+        background: rgba(255,255,255,0.07);
+        border-color: rgba(255,255,255,0.15);
+        transform: translateY(-2px);
+        color: var(--reg-text);
+        box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    }
+
+    /* Footer */
+    .reg-footer {
+        padding: 1.5rem 2.5rem 2rem;
+        text-align: center;
+        border-top: 1px solid var(--reg-border);
+        background: rgba(255,255,255,0.015);
+        color: var(--reg-muted);
+        font-size: 0.9rem;
+    }
+
+    .reg-footer a {
+        color: var(--reg-accent);
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .reg-footer a:hover { text-decoration: underline; }
+
+    /* Benefits strip */
+    .benefits-row {
+        display: flex;
+        justify-content: center;
+        gap: 2.5rem;
+        padding: 1.25rem 2.5rem;
+        border-top: 1px solid var(--reg-border);
+    }
+
+    .benefit {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.3rem;
+        font-size: 0.8rem;
+        color: var(--reg-muted);
+        font-weight: 500;
+    }
+
+    .benefit-emoji { font-size: 1.3rem; }
+
+    /* Responsive */
+    @media (max-width: 520px) {
+        .reg-header,
+        .reg-body { padding-left: 1.5rem; padding-right: 1.5rem; }
+        .reg-footer,
+        .benefits-row { padding-left: 1.5rem; padding-right: 1.5rem; }
+        .req-grid { grid-template-columns: 1fr; }
+        .social-row { grid-template-columns: 1fr; }
+        .benefits-row { gap: 1.5rem; }
+    }
 </style>
 
-</head>
-<body>
-    <div class="bg-orb bg-orb-1"></div>
-    <div class="bg-orb bg-orb-2"></div>
-    <div class="bg-orb bg-orb-3"></div>
-    <div class="bg-orb bg-orb-4"></div>
+<div class="register-page">
+    <div class="register-wrap">
 
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="logo">
-                <img src="/static/PeerPrep.png" alt="PeerPrep Logo">
-            </div>
-            <ul class="nav-menu">
-                <button class="mode-toggle" id="modeToggle" title="Toggle Mode" onclick="toggleMode()">
-                    <i class="fas fa-moon"></i>
-                    </button>
-                <li><a href="/" class="nav-link">Home</a></li>
-                <li><a href="{% url 'login' %}" class="nav-link">Login</a></li>
-            </ul>
+        <div class="brand-mark">
+            <span>PeerPrep<span class="dot"></span></span>
         </div>
-    </nav>
 
-    <main class="main-content">
-        <div class="container" style="grid-template-columns: 1fr; max-width: 500px;">
-            <div class="right-section">
-                <h2 class="form-title">Join PeerPrep</h2>
-                <p class="form-subtitle">
-                    Create your account to start your collaborative learning journey.
-                </p>
+        <div class="register-card">
+            <div class="card-accent-bar"></div>
 
-                {% if messages %}
-                    {% for message in messages %}
-                        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-                    {% endfor %}
-                {% endif %}
-                <form method="post" class="registration-form">
+            <div class="reg-header">
+                <div class="reg-icon-ring">
+                    <div class="reg-icon-inner">✨</div>
+                </div>
+                <h1 class="reg-title">Create Account</h1>
+                <p class="reg-subtitle">Join 10,000+ students already learning smarter</p>
+            </div>
+
+            <div class="reg-body">
+                <form method="POST" id="registerForm" novalidate>
                     {% csrf_token %}
-                    <div class="form-grid" style="grid-template-columns: 1fr;">
-                        <div class="form-group">
-                            <label class="form-label">Username <span class="required">*</span></label>
-                            <input type="text" name="username" class="form-input" placeholder="Enter your username" required>
+
+                    {% if form.non_field_errors %}
+                        <div class="error-alert">
+                            <span>⚠️</span>
+                            <div>{{ form.non_field_errors }}</div>
                         </div>
-                        <div class="form-group">
-                            <label class="form-label">Password <span class="required">*</span></label>
-                            <input type="password" name="password1" class="form-input" placeholder="Enter your password" required>
+                    {% endif %}
+
+                    <!-- Username -->
+                    <div class="input-group-custom">
+                        <label class="input-label" for="id_username">Username</label>
+                        <div class="input-shell">
+                            <span class="input-prefix">👤</span>
+                            <input class="input-field"
+                                   type="text"
+                                   name="{{ form.username.name }}"
+                                   id="id_username"
+                                   placeholder="Choose a username"
+                                   autocomplete="username"
+                                   value="{{ form.username.value|default:'' }}"
+                                   required>
                         </div>
-                        <div class="form-group">
-                            <label class="form-label">Confirm Password <span class="required">*</span></label>
-                            <input type="password" name="password2" class="form-input" placeholder="Confirm your password" required>
-                        </div>
+                        {% if form.username.errors %}
+                            <ul class="field-error">{{ form.username.errors }}</ul>
+                        {% endif %}
                     </div>
-                    <button type="submit" class="submit-btn">Create an Account</button>
+
+                    <!-- Password 1 -->
+                    <div class="input-group-custom">
+                        <label class="input-label" for="id_password1">Password</label>
+                        <div class="input-shell">
+                            <span class="input-prefix">🔒</span>
+                            <input class="input-field"
+                                   type="password"
+                                   name="{{ form.password1.name }}"
+                                   id="id_password1"
+                                   placeholder="Create a strong password"
+                                   autocomplete="new-password"
+                                   required>
+                            <button type="button" class="pass-toggle" onclick="togglePass('id_password1', this)">👁</button>
+                        </div>
+                        <div class="strength-wrap">
+                            <div class="strength-track">
+                                <div class="strength-fill" id="strengthFill"></div>
+                            </div>
+                            <div class="strength-row">
+                                <span class="strength-label" id="strengthLabel">Enter a password</span>
+                            </div>
+                        </div>
+                        <div class="req-grid" id="reqGrid">
+                            <div class="req-item" id="req-len"><span class="req-dot"></span>8+ characters</div>
+                            <div class="req-item" id="req-up"><span class="req-dot"></span>Uppercase letter</div>
+                            <div class="req-item" id="req-lo"><span class="req-dot"></span>Lowercase letter</div>
+                            <div class="req-item" id="req-num"><span class="req-dot"></span>Number</div>
+                        </div>
+                        {% if form.password1.errors %}
+                            <ul class="field-error">{{ form.password1.errors }}</ul>
+                        {% endif %}
+                    </div>
+
+                    <!-- Password 2 -->
+                    <div class="input-group-custom">
+                        <label class="input-label" for="id_password2">Confirm Password</label>
+                        <div class="input-shell">
+                            <span class="input-prefix">✔</span>
+                            <input class="input-field"
+                                   type="password"
+                                   name="{{ form.password2.name }}"
+                                   id="id_password2"
+                                   placeholder="Re-enter your password"
+                                   autocomplete="new-password"
+                                   required>
+                            <button type="button" class="pass-toggle" onclick="togglePass('id_password2', this)">👁</button>
+                        </div>
+                        {% if form.password2.errors %}
+                            <ul class="field-error">{{ form.password2.errors }}</ul>
+                        {% endif %}
+                    </div>
+
+                    <!-- Terms -->
+                    <div class="terms-row">
+                        <input type="checkbox" id="terms" required>
+                        <label for="terms">
+                            I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn-submit" id="submitBtn">
+                        Create Account →
+                    </button>
                 </form>
 
-                <p style="text-align: center; margin-top: 1.5rem; color: rgba(255, 255, 255, 0.7);">
-                    Already have an account? <a href="{% url 'login' %}" style="color: #3b82f6;">Sign in</a>
-                </p>
+                <div class="or-divider"><span>or continue with</span></div>
+
+                <div class="social-row">
+                    <a href="#" class="social-btn">
+                        <span>G</span> Google
+                    </a>
+                    <a href="#" class="social-btn">
+                        <span>🐙</span> GitHub
+                    </a>
+                </div>
+            </div>
+
+            <div class="reg-footer">
+                Already have an account?
+                <a href="{% url 'login' %}">Sign in</a>
+            </div>
+
+            <div class="benefits-row">
+                <div class="benefit"><span class="benefit-emoji">🚀</span>Free Forever</div>
+                <div class="benefit"><span class="benefit-emoji">🎓</span>Learn Together</div>
+                <div class="benefit"><span class="benefit-emoji">💡</span>Smart Tools</div>
             </div>
         </div>
-    </main>
-    <script src="{% static 'js/index.js' %}"></script>
-    
+
+    </div>
+</div>
+
 <script>
-  // Number of trail dots
-  const trailCount = 15;
-  const trail = [];
+function togglePass(inputId, btn) {
+    const el = document.getElementById(inputId);
+    el.type = el.type === 'password' ? 'text' : 'password';
+    btn.textContent = el.type === 'password' ? '👁' : '🙈';
+}
 
-  for (let i = 0; i < trailCount; i++) {
-    const dot = document.createElement('div');
-    dot.className = 'trail-dot';
-    document.body.appendChild(dot);
-    trail.push({el: dot, x: 0, y: 0});
-  }
+const p1 = document.getElementById('id_password1');
+const p2 = document.getElementById('id_password2');
+const fill = document.getElementById('strengthFill');
+const label = document.getElementById('strengthLabel');
 
-  document.addEventListener('mousemove', (e) => {
-    trail[0].x = e.clientX;
-    trail[0].y = e.clientY;
-  });
+function setReq(id, met) {
+    const el = document.getElementById(id);
+    met ? el.classList.add('met') : el.classList.remove('met');
+}
 
-  function animateTrail() {
-    for (let i = trail.length - 1; i > 0; i--) {
-      trail[i].x += (trail[i-1].x - trail[i].x) * 0.25;
-      trail[i].y += (trail[i-1].y - trail[i].y) * 0.25;
-      trail[i].el.style.left = trail[i].x + 'px';
-      trail[i].el.style.top = trail[i].y + 'px';
+p1.addEventListener('input', function () {
+    const v = this.value;
+    const hasLen  = v.length >= 8;
+    const hasUp   = /[A-Z]/.test(v);
+    const hasLo   = /[a-z]/.test(v);
+    const hasNum  = /[0-9]/.test(v);
+    const hasSym  = /[!@#$%^&*]/.test(v);
+
+    setReq('req-len', hasLen);
+    setReq('req-up',  hasUp);
+    setReq('req-lo',  hasLo);
+    setReq('req-num', hasNum);
+
+    let score = [hasLen, hasUp, hasLo, hasNum, hasSym, v.length >= 12].filter(Boolean).length;
+    const pct = Math.round((score / 6) * 100);
+    fill.style.width = pct + '%';
+
+    if (!v) {
+        fill.style.background = '';
+        label.textContent = 'Enter a password';
+        label.style.color = '';
+    } else if (score <= 2) {
+        fill.style.background = 'var(--reg-danger)';
+        label.textContent = 'Too weak';
+        label.style.color = 'var(--reg-danger)';
+    } else if (score <= 4) {
+        fill.style.background = 'var(--reg-warning)';
+        label.textContent = 'Could be stronger';
+        label.style.color = 'var(--reg-warning)';
+    } else {
+        fill.style.background = 'var(--reg-success)';
+        label.textContent = 'Strong password!';
+        label.style.color = 'var(--reg-success)';
     }
-    trail[0].el.style.left = trail[0].x + 'px';
-    trail[0].el.style.top = trail[0].y + 'px';
-    requestAnimationFrame(animateTrail);
-  }
+    validateMatch();
+});
 
-  animateTrail();
+p2.addEventListener('input', validateMatch);
+
+function validateMatch() {
+    if (!p2.value) {
+        p2.classList.remove('valid', 'invalid');
+        return;
+    }
+    if (p1.value === p2.value) {
+        p2.classList.add('valid');
+        p2.classList.remove('invalid');
+    } else {
+        p2.classList.add('invalid');
+        p2.classList.remove('valid');
+    }
+}
+
+document.getElementById('registerForm').addEventListener('submit', function (e) {
+    if (!document.getElementById('terms').checked) {
+        e.preventDefault();
+        alert('Please accept the Terms of Service and Privacy Policy.');
+        return;
+    }
+    if (p1.value !== p2.value) {
+        e.preventDefault();
+        alert('Passwords do not match.');
+    }
+});
 </script>
-</body>
-</html>
+
+{% endblock %}

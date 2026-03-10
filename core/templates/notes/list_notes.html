@@ -1,0 +1,755 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Notes Library — PeerPrep{% endblock %}
+
+{% block content %}
+<style>
+    .notes-page {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%);
+        padding: 2rem 0;
+    }
+    
+    .notes-header {
+        text-align: center;
+        margin-bottom: 3rem;
+        padding: 2rem;
+        background: rgba(255,255,255,0.02);
+        border-radius: 20px;
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+    
+    .notes-header h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+    }
+    
+    .notes-subtitle {
+        color: rgba(255,255,255,0.6);
+        font-size: 1.1rem;
+    }
+    
+    .stats-bar {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin-top: 1.5rem;
+        flex-wrap: wrap;
+    }
+    
+    .stat-item {
+        text-align: center;
+        padding: 1rem 1.5rem;
+        background: rgba(102, 126, 234, 0.1);
+        border-radius: 12px;
+        border: 1px solid rgba(102, 126, 234, 0.2);
+    }
+    
+    .stat-number {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #667eea;
+    }
+    
+    .stat-label {
+        font-size: 0.9rem;
+        color: rgba(255,255,255,0.6);
+        margin-top: 0.25rem;
+    }
+    
+    .search-section {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        padding: 2rem;
+        border-radius: 20px;
+        border: 1px solid rgba(255,255,255,0.1);
+        box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        margin-bottom: 2rem;
+    }
+    
+    .search-title {
+        color: #fff;
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .search-icon {
+        font-size: 1.5rem;
+    }
+    
+    .search-input-wrapper {
+        position: relative;
+    }
+    
+    .search-input-wrapper input {
+        width: 100%;
+        padding: 1rem 1rem 1rem 3rem;
+        background: rgba(255,255,255,0.05);
+        border: 2px solid rgba(255,255,255,0.1);
+        border-radius: 12px;
+        color: #fff;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .search-input-wrapper input:focus {
+        outline: none;
+        border-color: #667eea;
+        background: rgba(255,255,255,0.08);
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    }
+    
+    .search-input-wrapper input::placeholder {
+        color: rgba(255,255,255,0.4);
+    }
+    
+    .input-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: rgba(255,255,255,0.4);
+        font-size: 1.2rem;
+    }
+    
+    .search-input-wrapper input:focus ~ .input-icon {
+        color: #667eea;
+    }
+    
+    .btn-search {
+        width: 100%;
+        padding: 1rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 12px;
+        color: #fff;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+    
+    .btn-search:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+    }
+    
+    .btn-clear {
+        width: 100%;
+        padding: 1rem;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 12px;
+        color: rgba(255,255,255,0.7);
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-clear:hover {
+        background: rgba(255,255,255,0.1);
+    }
+    
+    .filter-chips {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+    }
+    
+    .filter-chip {
+        padding: 0.5rem 1rem;
+        background: rgba(102, 126, 234, 0.2);
+        border: 1px solid rgba(102, 126, 234, 0.3);
+        border-radius: 20px;
+        color: #667eea;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .chip-close {
+        cursor: pointer;
+        font-weight: bold;
+    }
+    
+    .view-toggle {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: flex-end;
+        margin-bottom: 1.5rem;
+    }
+    
+    .view-btn {
+        padding: 0.75rem 1.25rem;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 10px;
+        color: rgba(255,255,255,0.6);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 1.2rem;
+    }
+    
+    .view-btn.active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #fff;
+        border-color: transparent;
+    }
+    
+    .view-btn:hover {
+        background: rgba(255,255,255,0.1);
+    }
+    
+    .notes-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .notes-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .note-card {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        border-radius: 16px;
+        border: 1px solid rgba(255,255,255,0.1);
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .note-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .note-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(102, 126, 234, 0.3);
+        border-color: rgba(102, 126, 234, 0.3);
+    }
+    
+    .note-card:hover::before {
+        opacity: 1;
+    }
+    
+    .note-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+    }
+    
+    .note-icon {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    }
+    
+    .note-badge {
+        padding: 0.35rem 0.75rem;
+        background: rgba(102, 126, 234, 0.2);
+        border: 1px solid rgba(102, 126, 234, 0.3);
+        border-radius: 20px;
+        font-size: 0.75rem;
+        color: #667eea;
+        font-weight: 600;
+    }
+    
+    .note-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 0.5rem;
+        display: -webkit-box;
+        /* -webkit-line-clamp: 2; */
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    .note-subject {
+        color: #667eea;
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+    
+    .note-meta {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+    }
+    
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: rgba(255,255,255,0.6);
+        font-size: 0.9rem;
+    }
+    
+    .meta-icon {
+        font-size: 1rem;
+    }
+    
+    .note-footer {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .btn-download {
+        flex: 1;
+        padding: 0.75rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 10px;
+        color: #fff;
+        font-weight: 600;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-download:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        color: #fff;
+    }
+    
+    .btn-preview {
+        padding: 0.75rem 1rem;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 10px;
+        color: rgba(255,255,255,0.7);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 1.2rem;
+    }
+    
+    .btn-preview:hover {
+        background: rgba(255,255,255,0.1);
+        color: #fff;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: rgba(255,255,255,0.02);
+        border-radius: 20px;
+        border: 2px dashed rgba(255,255,255,0.1);
+    }
+    
+    .empty-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+    
+    .empty-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: rgba(255,255,255,0.8);
+        margin-bottom: 0.5rem;
+    }
+    
+    .empty-text {
+        color: rgba(255,255,255,0.5);
+        font-size: 1rem;
+    }
+    
+    .loading-skeleton {
+        background: linear-gradient(90deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 100%);
+        background-size: 200% 100%;
+        animation: shimmer 1.5s infinite;
+        border-radius: 10px;
+    }
+    
+    @keyframes shimmer {
+        0% { background-position: -200% 0; }
+        100% { background-position: 200% 0; }
+    }
+    
+    .floating-upload {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: #fff;
+        cursor: pointer;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
+        transition: all 0.3s ease;
+        z-index: 1000;
+    }
+    
+    .floating-upload:hover {
+        transform: scale(1.1) rotate(90deg);
+        box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
+    }
+    
+    .sort-dropdown {
+        position: relative;
+        display: inline-block;
+    }
+    
+    .sort-btn {
+        padding: 0.75rem 1.25rem;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 10px;
+        color: rgba(255,255,255,0.7);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+    }
+    
+    .sort-btn:hover {
+        background: rgba(255,255,255,0.1);
+    }
+    
+    @media (max-width: 768px) {
+        .notes-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .stats-bar {
+            gap: 1rem;
+        }
+        
+        .view-toggle {
+            justify-content: center;
+        }
+        
+        .floating-upload {
+            bottom: 1rem;
+            right: 1rem;
+        }
+    }
+</style>
+
+<div class="notes-page">
+    <div class="container">
+        <!-- Header Section -->
+        <div class="notes-header">
+            <h1>📚 Study Notes Library</h1>
+            <p class="notes-subtitle">Discover, learn, and share knowledge with your peers</p>
+            
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <div class="stat-number" id="totalNotes">{{ notes|length }}</div>
+                    <div class="stat-label">Total Notes</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">24</div>
+                    <div class="stat-label">Subjects</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">1.2K</div>
+                    <div class="stat-label">Downloads</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Section -->
+        <div class="search-section">
+            <div class="search-title">
+                <span class="search-icon">🔍</span>
+                <span>Find Your Notes</span>
+            </div>
+            
+            <form method="GET" id="searchForm">
+                <div class="row g-3">
+                    <div class="col-md-5">
+                        <div class="search-input-wrapper">
+                            <input type="text" 
+                                   name="q" 
+                                   class="search-input" 
+                                   placeholder="Search by title, content, or tags..." 
+                                   value="{{ request.GET.q }}"
+                                   id="searchQuery">
+                            <span class="input-icon">🔎</span>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="search-input-wrapper">
+                            <input type="text" 
+                                   name="subject" 
+                                   class="search-input" 
+                                   placeholder="Filter by subject (e.g., Mathematics)" 
+                                   value="{{ request.GET.subject }}"
+                                   id="subjectFilter">
+                            <span class="input-icon">📖</span>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn-search">
+                            <span>Search</span>
+                            <span>→</span>
+                        </button>
+                    </div>
+                </div>
+                
+                {% if request.GET.q or request.GET.subject %}
+                <div class="filter-chips">
+                    {% if request.GET.q %}
+                    <div class="filter-chip">
+                        <span>Query: {{ request.GET.q }}</span>
+                        <span class="chip-close" onclick="clearFilter('q')">×</span>
+                    </div>
+                    {% endif %}
+                    {% if request.GET.subject %}
+                    <div class="filter-chip">
+                        <span>Subject: {{ request.GET.subject }}</span>
+                        <span class="chip-close" onclick="clearFilter('subject')">×</span>
+                    </div>
+                    {% endif %}
+                    <button type="button" class="btn-clear" onclick="clearAllFilters()" style="width: auto; padding: 0.5rem 1rem; margin-left: auto;">
+                        Clear All
+                    </button>
+                </div>
+                {% endif %}
+            </form>
+        </div>
+
+        <!-- View Toggle & Sort -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="sort-dropdown">
+                <div class="sort-btn">
+                    <span>📊</span>
+                    <span>Sort by: Recent</span>
+                    <span>▼</span>
+                </div>
+            </div>
+            
+            <div class="view-toggle">
+                <button class="view-btn active" onclick="toggleView('grid')" id="gridViewBtn">
+                    ▦
+                </button>
+                <button class="view-btn" onclick="toggleView('list')" id="listViewBtn">
+                    ☰
+                </button>
+            </div>
+        </div>
+
+        <!-- Notes Grid -->
+        <div class="notes-grid" id="notesContainer">
+            {% for note in notes %}
+            <div class="note-card" data-aos="fade-up" data-aos-delay="{{ forloop.counter0 }}"></div>
+                <div class="note-header">
+                    <div class="note-icon">📄</div>
+                    <div class="note-badge">{{ note.subject|default:"General" }}</div>
+                </div>
+                
+                <h3 class="note-title">{{ note.title }}</h3>
+                <div class="note-subject">{{ note.subject }}</div>
+                
+                <div class="note-meta">
+                    <div class="meta-item">
+                        <span class="meta-icon">👤</span>
+                        <span>{{ note.uploader.username }}</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-icon">📅</span>
+                        <span>{{ note.created_at|date:"M d, Y"|default:"Recently" }}</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-icon">⬇️</span>
+                        <span>{{ note.downloads|default:"0" }} downloads</span>
+                    </div>
+                </div>
+                
+                <div class="note-footer">
+                    <a href="{{ note.file.url }}" class="btn-download" download>
+                        <span>Download</span>
+                        <span>⬇️</span>
+                    </a>
+                    <button class="btn-preview" title="Quick Preview">
+                        👁️
+                    </button>
+                </div>
+            </div>
+            {% empty %}
+            <div class="empty-state" style="grid-column: 1 / -1;">
+                <div class="empty-icon">📭</div>
+                <h3 class="empty-title">No Notes Found</h3>
+                <p class="empty-text">
+                    {% if request.GET.q or request.GET.subject %}
+                        Try adjusting your search filters or explore all notes.
+                    {% else %}
+                        Be the first to share your knowledge! Upload a note to get started.
+                    {% endif %}
+                </p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Floating Upload Button -->
+        <div class="floating-upload" title="Upload New Note" onclick="window.location.href='#upload'">
+            ➕
+        </div>
+    </div>
+</div>
+
+<script>
+// View Toggle Function
+let currentView = 'grid';
+
+function toggleView(view) {
+    const container = document.getElementById('notesContainer');
+    const gridBtn = document.getElementById('gridViewBtn');
+    const listBtn = document.getElementById('listViewBtn');
+    
+    if (view === 'grid') {
+        container.classList.remove('notes-list');
+        container.classList.add('notes-grid');
+        gridBtn.classList.add('active');
+        listBtn.classList.remove('active');
+    } else {
+        container.classList.remove('notes-grid');
+        container.classList.add('notes-list');
+        listBtn.classList.add('active');
+        gridBtn.classList.remove('active');
+    }
+    
+    currentView = view;
+    localStorage.setItem('notesView', view);
+}
+
+// Load saved view preference
+window.addEventListener('DOMContentLoaded', function() {
+    const savedView = localStorage.getItem('notesView');
+    if (savedView) {
+        toggleView(savedView);
+    }
+});
+
+// Clear individual filter
+function clearFilter(filterName) {
+    const url = new URL(window.location.href);
+    url.searchParams.delete(filterName);
+    window.location.href = url.toString();
+}
+
+// Clear all filters
+function clearAllFilters() {
+    window.location.href = window.location.pathname;
+}
+
+// Search input animations
+const searchInputs = document.querySelectorAll('.search-input');
+searchInputs.forEach(input => {
+    input.addEventListener('focus', function() {
+        this.parentElement.style.transform = 'scale(1.02)';
+    });
+    
+    input.addEventListener('blur', function() {
+        this.parentElement.style.transform = 'scale(1)';
+    });
+});
+
+// Note card click animation
+document.querySelectorAll('.note-card').forEach(card => {
+    card.addEventListener('click', function(e) {
+        if (!e.target.closest('.btn-download') && !e.target.closest('.btn-preview')) {
+            this.style.transform = 'scale(0.98)';
+            setTimeout(() => {
+                this.style.transform = '';
+            }, 200);
+        }
+    });
+});
+
+// Floating button pulse animation
+const floatingBtn = document.querySelector('.floating-upload');
+setInterval(() => {
+    floatingBtn.style.transform = 'scale(1.1)';
+    setTimeout(() => {
+        floatingBtn.style.transform = 'scale(1)';
+    }, 200);
+}, 3000);
+
+// Live search suggestion (optional enhancement)
+let searchTimeout;
+document.getElementById('searchQuery').addEventListener('input', function() {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+        // You can add AJAX search suggestions here
+        console.log('Searching for:', this.value);
+    }, 500);
+});
+
+// Update total notes counter with animation
+function animateCounter() {
+    const counter = document.getElementById('totalNotes');
+    const target = parseInt(counter.textContent);
+    let current = 0;
+    const increment = target / 30;
+    
+    const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+            counter.textContent = target;
+            clearInterval(timer);
+        } else {
+            counter.textContent = Math.floor(current);
+        }
+    }, 30);
+}
+
+// Run counter animation on load
+window.addEventListener('load', animateCounter);
+</script>
+
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}PeerPrep — Learn. Collaborate. Grow.{% endblock %}
+
+{% block content %}
+
+<!-- BG Floating Orbs -->
+<div class="bg-orb bg-orb-1"></div>
+<div class="bg-orb bg-orb-2"></div>
+<div class="bg-orb bg-orb-3"></div>
+<div class="bg-orb bg-orb-4"></div>
+
+<!-- HERO SECTION -->
+<section class="hero">
+    <h1>PeerPrep</h1>
+    <p>Your all-in-one platform for studying smarter, collaborating better, and tracking your progress.</p>
+
+    <div class="mt-4">
+        <a href="{% url 'register' %}" class="btn btn-primary me-2">Get Started</a>
+        <a href="{% url 'feature' %}" class="btn btn-outline">Explore Features</a>
+    </div>
+</section>
+
+<!-- FEATURES SECTION -->
+<section class="features-section">
+    <h2>Powerful Features for Easy Learning</h2>
+
+    <div class="features-grid">
+
+        <div class="feature-card">
+            <div class="feature-icon">📚</div>
+            <h3 class="feature-title">Collaborative Notes</h3>
+            <p class="feature-description">
+                Upload, browse, and download high-quality study materials.
+            </p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">🤝</div>
+            <h3 class="feature-title">Find Study Partners</h3>
+            <p class="feature-description">
+                Connect with peers who align with your study habits and goals.
+            </p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">📊</div>
+            <h3 class="feature-title">Track Progress</h3>
+            <p class="feature-description">
+                Visualize your learning journey with smart analytics.
+            </p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">⏰</div>
+            <h3 class="feature-title">Timetable Planner</h3>
+            <p class="feature-description">
+                Organize and structure your study schedule effortlessly.
+            </p>
+        </div>
+
+    </div>
+</section>
+
+<!-- CTA SECTION -->
+<section class="cta mt-5">
+    <h2>Ready to Start Your Journey?</h2>
+    <p>Join thousands of students improving their study habits every day.</p>
+    <a href="{% url 'register' %}" class="btn btn-dark mt-3 px-4 py-2">Join Now</a>
+</section>
+
+{% endblock %}

@@ -1,144 +1,97 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Peer Prep</title>
-    <link rel="stylesheet" href="{% static 'css/index.css' %}">
-</head>
-<body>
-    <!-- Background Orbs -->
-    <div class="bg-orb bg-orb-1"></div>
-    <div class="bg-orb bg-orb-2"></div>
-    <div class="bg-orb bg-orb-3"></div>
-    <div class="bg-orb bg-orb-4"></div>
+{% extends "base.html" %}
 
-    <!-- Navbar -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="logo">
-                <img src="/static/PeerPrep.png" alt="PeerPrep Logo">
+{% block title %}Dashboard — PeerPrep{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <h1 class="mb-4">Dashboard</h1>
+
+    {% if user.is_authenticated %}
+        <p class="lead mb-4">Welcome back, <strong>{{ user.username }}</strong> 👋</p>
+
+        <!-- Dashboard Grid -->
+        <div class="row g-4">
+
+            <!-- Notes -->
+            <div class="col-md-4">
+                <a href="{% url 'notes_list' %}" class="text-decoration-none">
+                <div class="card bg-dark text-light p-4 dashboard-card">
+                    <h4>📘 Notes</h4>
+                    <p>Manage and upload your notes</p>
+                </div>
+                </a>
             </div>
-            <ul class="nav-menu">
-                <li><a href="{% url 'dashboard' %}" class="nav-link active">Dashboard</a></li>
-                <li><a href="/" class="nav-link">Home</a></li>
-                <li><a href="{% url 'faq' %}" class="nav-link">FAQ</a></li>
 
-                <li>
-                    <form method="post" action="{% url 'logout' %}" style="display:inline;">
-                        {% csrf_token %}
-                        <button type="submit" class="nav-link" style="background:none; border:none; color:white; font-size:1rem; cursor:pointer;">
-                            Logout
-                        </button>
-                    </form>
-                </li>
-                 <li class="profile-dropdown">
-    <a href="{% url 'profile' %}" class="profile-icon">👤</a>
-</li>
+            <!-- Study Partners -->
+            <div class="col-md-4">
+                <a href="{% url 'study_partners' %}" class="text-decoration-none">
+                <div class="card bg-dark text-light p-4 dashboard-card">
+                    <h4>🤝 Study Partners</h4>
+                    <p>Connect with peers</p>
+                </div>
+                </a>
+            </div>
 
-            </ul>
+            <!-- Progress -->
+            <div class="col-md-4">
+                <a href="{% url 'progress' %}" class="text-decoration-none">
+                <div class="card bg-dark text-light p-4 dashboard-card">
+                    <h4>📊 Progress</h4>
+                    <p>Track your learning progress</p>
+                </div>
+                </a>
+            </div>
+
+            <!-- Timetable -->
+            <div class="col-md-4">
+                <a href="{% url 'timetable' %}" class="text-decoration-none">
+                <div class="card bg-dark text-light p-4 dashboard-card">
+                    <h4>🗓 Timetable</h4>
+                    <p>Manage your study schedule</p>
+                </div>
+                </a>
+            </div>
+
+            <!-- Questions -->
+            <div class="col-md-4">
+                <a href="{% url 'questions' %}" class="text-decoration-none">
+                <div class="card bg-dark text-light p-4 dashboard-card">
+                    <h4>❓ Questions</h4>
+                    <p>Practice important questions</p>
+                </div>
+                </a>
+            </div>
+
+            <!-- Success Stories -->
+            <div class="col-md-4">
+                <a href="{% url 'success_stories' %}" class="text-decoration-none">
+                <div class="card bg-dark text-light p-4 dashboard-card">
+                    <h4>🏆 Success Stories</h4>
+                    <p>Read and share achievements</p>
+                </div>
+                </a>
+            </div>
+
         </div>
-    </nav>
+    {% else %}
+        <p>You need to log in to view your dashboard.</p>
+        <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
+    {% endif %}
 
-    <!-- Dashboard Content -->
-    <main class="main-content">
-        <div class="container" style="grid-template-columns: 1fr;">
-            <div class="dashboard-header">
-                <h1 class="main-title">Welcome, {{ user.username }}!</h1>
-                <p class="subtitle">
-                    Ready to start your collaborative learning journey? Explore the features below.
-                </p>
-            </div>
-            <div class="dashboard-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">❓</div>
-                    <h3 class="feature-title">Questions & Answers</h3>
-                    <p class="feature-description">Ask questions, help others, and learn from the community discussion forum.</p>
-                    <a href="{% url 'questions' %}">
-                        <button class="submit-btn" style="margin-top: 1rem;">Go to Q&A</button>
-                    </a>
-                </div>
+</div>
 
-                <div class="feature-card">
-                    <div class="feature-icon">🏆</div>
-                    <h3 class="feature-title">Success Stories</h3>
-                    <p class="feature-description">Share your achievements and get inspired by others' journeys. View it</p>
-                    <a href="{% url 'success_stories' %}">
-                        <button class="submit-btn" style="margin-top: 1rem;">View Stories</button>
-                    </a>
-                </div>
+<style>
+.dashboard-card {
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    transition: 0.3s ease;
+}
+.dashboard-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(59,130,246,0.5);
+    background: rgba(30,50,80,0.6);
+}
+</style>
 
-                <div class="feature-card">
-                    <div class="feature-icon">🗓️</div>
-                    <h3 class="feature-title">Reminders & Timetable</h3>
-                    <p class="feature-description">
-                        Organize your study schedule, track assignments, and set reminders for exams.
-                    </p>
-                    <a href="{% url 'timetable' %}">
-                        <button class="submit-btn" style="margin-top: 1rem;">Go to Timetable</button>
-                    </a>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">👥</div>
-                    <h3 class="feature-title">Find Study Partners</h3>
-                    <p class="feature-description">Connect with peers who share your learning goals and interests. Find</p>
-                    <button class="submit-btn" style="margin-top: 1rem;">Coming Soon</button>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">📚</div>
-                    <h3 class="feature-title">Study Materials</h3>
-                    <p class="feature-description">Access curated learning materials and practice problems.</p>
-                    <button class="submit-btn" style="margin-top: 1rem;">Coming Soon</button>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">📈</div>
-                    <h3 class="feature-title">Progress Tracking</h3>
-                    <p class="feature-description">Monitor your learning progress and achievements.</p>
-                    <button class="submit-btn" style="margin-top: 1rem;">Coming Soon</button>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">💬</div>
-                    <h3 class="feature-title">Live Chat</h3>
-                    <p class="feature-description">Get instant support from peers and mentors.</p>
-                    <button class="submit-btn" style="margin-top: 1rem;">Coming Soon</button>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <style>
-        .dashboard-header {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-        
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-        
-        .feature-card {
-            background: rgba(30, 41, 59, 0.4);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            border-radius: 16px;
-            padding: 2rem;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-        
-        .feature-card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(59, 130, 246, 0.4);
-        }
-    </style>
-    {% include "footer.html" %}
-    <script src="{% static 'js/index.js' %}"></script>
-</body>
-</html>
+{% endblock %}
