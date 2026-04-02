@@ -44,6 +44,8 @@ urlpatterns = [
 
     # FAQ
     path("faq/", views.faq, name="faq"),
+    path("faq/add/", views.add_faq, name="add_faq"),
+    path("faq/delete/<int:faq_id>/", views.delete_faq, name="delete_faq"),
 
     # API
     path("api/auth-check/", views.auth_check, name="auth_check"),

@@ -7,6 +7,7 @@ from django.db.models import Q, F
 from .models import SuccessStory, StoryReaction, StudyNote
 from .forms import SuccessStoryForm
 import json
+from .models import FAQ
 
 def index(request):
     return render(request, "index.html")
@@ -49,7 +50,30 @@ def profile(request):
     return render(request, "profile.html")
 
 def faq(request):
-    return render(request, "add_faq.html")
+    faqs = FAQ.objects.filter(is_active=True).order_by('order', '-created_at')
+    return render(request, "faq.html", {"faqs": faqs})
+@login_required
+def add_faq(request):
+    if not request.user.is_superuser:
+        return redirect("faq")
+    if request.method == "POST":
+        question = request.POST.get("question", "").strip()
+        answer = request.POST.get("answer", "").strip()
+        if question and answer:
+            FAQ.objects.create(question=question, answer=answer)
+            messages.success(request, "FAQ added successfully!")
+        return redirect("faq")
+    return redirect("faq")
+
+@login_required  
+def delete_faq(request, faq_id):
+    if not request.user.is_superuser:
+        return redirect("faq")
+    faq_obj = get_object_or_404(FAQ, id=faq_id)
+    faq_obj.delete()
+    messages.success(request, "FAQ deleted.")
+    return redirect("faq")
+
 
 @login_required
 def questions(request):
